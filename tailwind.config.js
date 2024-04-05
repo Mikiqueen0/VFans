@@ -18,14 +18,15 @@ export default {
     },
     extend: {
       fontFamily: {
-        poppin: ['Poppins', 'sans-serif']
+        poppins: ['Poppins', 'sans-serif']
       },
       colors: {
         'primary': "#262626",
+        'lighter-primary': '#353535',
         "emerald-green": "#00BE85",
         "darkest-black": "#0F0F0F",
         "dark-field": "#111111",
-        "field": "#181818"
+        "dark-background": "#181818"
       },
       boxShadow: {
         '3xl': '0 10px 40px rgba(0, 0, 0, 0.1)'
@@ -35,6 +36,31 @@ export default {
       }
     },
   },
-  plugins: []
+  plugins: [
+    function ({addUtilities}) {
+      const newUtilities = {
+        ".scrollbar-thin" : {
+          scrollbarWidth: "thin",
+          scrollbarColor: "rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1)"
+        },
+        ".scrollbar-webkit": {
+          "&::-webkit-scrollbar": {
+            width: "8px"
+            // height: "6px"
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "rgba(0, 0, 0, 0)"
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "rgba(0, 0, 0, 0.2)"
+            // borderRadius: "20px",
+            // border: "1px solid white"
+          }
+        }
+      }
+
+      addUtilities(newUtilities, ['responsive', 'hover'])
+    }
+  ]
 }
 
