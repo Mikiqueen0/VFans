@@ -170,7 +170,7 @@ export default function Home() {
                 <br />
                 <button name="/signup" onClick={routeChange} className="text-white">signup</button>
             </div> */}
-            <nav className="sticky top-0 bg-primary grid grid-cols-[20%_40%_20%] justify-between items-center h-[5rem]">
+            <nav className="sticky top-0 bg-primary grid grid-cols-[20%_40%_20%] justify-between items-center h-[5rem] z-50">
                 <a href="/" className="ml-[5rem] max-lg:ml-[2rem]">
                     <img src="./assets/images/white-vfans.png" alt="vfans" className="h-[1.8rem]" />
                 </a>
@@ -193,7 +193,7 @@ export default function Home() {
                 </div>
             </nav>
             <div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem]">
-                <section className="px-[2.5rem] border-r border-primary bg-dark-background max-xl:hidden w-[300px] h-full sticky top-[6.25rem]">
+                <section className="px-[2.5rem] border-r border-primary bg-dark-background max-xl:hidden w-[300px] h-full sticky top-[6.25rem] z-40">
                     <div className="flex flex-col items-start divide-solid divide-y-[1px] divide-primary">
                         <div className="flex flex-col items-center w-full">
                             <button name="/" onClick={routeChange} className="font-poppins font-medium text-base py-[1.25rem] px-[1.2rem] w-full h-full text-start rounded-[10px] bg-transparent text-white text-opacity-90 hover:bg-primary active:text-emerald-green active:bg-lighter-primary">
