@@ -1,5 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
+import { Fragment } from 'react'
+import { Menu, Transition } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 
 export default function Home() {
     const username = "Mikiqueen";
@@ -54,6 +57,14 @@ export default function Home() {
         }
     });
 
+    const [path, setPath] = useState("");
+
+    const getPath = (val) => {
+        let convertedPath = val.replace(/ /g, "_");
+        setPath(convertedPath);
+    };
+    
+    
     const onToggleDropdown = () => {
         setAllDropdown(!allDropdown);
     };
@@ -131,6 +142,31 @@ export default function Home() {
         setCreatePostTag([]);
     }, [popup]);
 
+
+    const [hamburgerIsOpen, setHamburgerIsOpen] = useState(false);
+    const genericHamburgerLine = `h-[0.14rem] w-8 my-1 rounded-full bg-white transition ease transform duration-300`;
+    const hamburgerPopupRef = useRef(null);
+    const hamburgerButtonRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (hamburgerPopupRef.current && !hamburgerPopupRef.current.contains(e.target) && !hamburgerButtonRef.current.contains(e.target)) {
+                setHamburgerIsOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+    }, [hamburgerPopupRef]);
+
+    useEffect(() => {
+        document.body.style.overflow = hamburgerIsOpen ? "hidden" : "auto";
+        document.body.style.paddingRight = hamburgerIsOpen ? "15px" : "0";
+        
+    }, [hamburgerIsOpen]);
+
+
     const removeTag = (tag) => {
         let temp = [ ...createPostTag ];
         let index = temp.indexOf(tag);
@@ -163,6 +199,71 @@ export default function Home() {
         }
     }
 
+    const LanguageDropdown = ({ language, isActive }) => {
+        return(
+            <div>
+                <ul className="font-poppins font-normal text-base text-white text-opacity-[78%]">
+                    <li className="flex justify-between mt-[1.25rem] px-[1.2rem] pl-[2rem] my-2">
+                        <a name={`${language}`} onClick={(e) => getPath(e.target.name)} className="text-start hover:underline hover:cursor-pointer">{language}</a>
+                        <button onClick={() => onToggleLanguageDropdown(language)}>
+                            <img src="./assets/images/arrow-up.png" alt="up" className="w-4 h-4"/>
+                        </button>
+                    </li>
+                    {isActive && 
+                        companyDropdown[language] && (
+                        <>
+                            {Object.entries(companyDropdown[language]).map(([company, isCompanyActive]) => (
+                                <CompanyDropdown
+                                    key={company}
+                                    language={language}
+                                    company={company}
+                                    isCompanyActive={isCompanyActive}
+                                />
+                            ))}
+                        </>
+                    )}
+                </ul>
+            </div>
+        );
+    }
+
+    const CompanyDropdown = ({ language, company, isCompanyActive }) => {
+        return(
+            <>
+                <li className="flex justify-between mt-[1.25rem] px-[1.2rem] pl-[3rem] my-2 text-base font-light">
+                    <a name={`${language}/${company}`} onClick={(e) => getPath(e.target.name)} className="text-start hover:underline hover:cursor-pointer">{company}</a>
+                    <button onClick={() => onToggleCompanyDropdown(language, company)}>
+                        <img src="./assets/images/arrow-up.png" alt="up" className="w-4 h-4"/>
+                    </button>
+                </li>
+                {isCompanyActive && (
+                    <>
+                        {Object.entries(talentDropdown[language][company]).map(([talent, isTalentActive]) => (
+                            <TalentDropdown
+                                key={talent}
+                                language={language}
+                                company={company}
+                                talent={talent}
+                            />
+                        ))}
+                    </>
+                )}
+            </>
+        );
+    }
+
+    const TalentDropdown = ({ language, company, talent }) => {
+        return(
+            <li key={talent} className="flex justify-between mt-[1.25rem] px-[1.2rem] pl-[4rem] my-2 text-base font-extralight">
+                <a name={`${language}/${company}/${talent}`} onClick={(e) => getPath(e.target.name)} className="text-start hover:underline hover:cursor-pointer">{talent}</a>
+            </li>
+        );
+    }
+
+    function classNames(...classes) {
+        return classes.filter(Boolean).join(' ')
+    }
+
     return (
         <div className="bg-dark-background scrollbar-thin">
             {/* <div>
@@ -170,29 +271,131 @@ export default function Home() {
                 <br />
                 <button name="/signup" onClick={routeChange} className="text-white">signup</button>
             </div> */}
-            <nav className="sticky top-0 bg-primary grid grid-cols-[20%_40%_20%] justify-between items-center h-[5rem] z-50">
-                <a href="/" className="ml-[5rem] max-lg:ml-[2rem]">
-                    <img src="./assets/images/white-vfans.png" alt="vfans" className="h-[1.8rem]" />
-                </a>
-                <div className="bg-white h-[2.8rem] rounded-[10px] flex items-center">
-                    <img src="./assets/images/search.png" alt="search" className="opacity-90 h-[1.3rem] ml-4 mr-2"/>
-                    <input type="text" placeholder="Search" className="font-poppins font-normal text-[14px] text-black text-opacity-[78%] bg-white mr-[2rem] w-full focus:outline-none"/> 
+            {/* nav section */}
+            <nav className="sticky top-0 bg-primary grid grid-cols-[30%_40%_30%] max-sm:grid-cols-[20%_60%_20%] justify-between items-center h-[5rem] z-50">
+                <div className="ml-[5rem] max-xl:ml-[1.5rem] flex items-center gap-10 max-sm:gap-3">
+                    <button
+                        className="xl:hidden flex flex-col justify-center items-center group z-50"
+                        ref={hamburgerButtonRef}
+                        onClick={() => setHamburgerIsOpen(!hamburgerIsOpen)}
+                        >
+                        <div
+                            className={`${genericHamburgerLine} ${
+                                hamburgerIsOpen
+                                ? "rotate-45 translate-y-[0.64rem] group-hover:opacity-100"
+                                : "group-hover:opacity-100"
+                            }`}
+                        />
+                        <div
+                            className={`${genericHamburgerLine} ${
+                                hamburgerIsOpen ? "opacity-0" : "group-hover:opacity-100"
+                            }`}
+                        />
+                        <div
+                            className={`${genericHamburgerLine} ${
+                                hamburgerIsOpen
+                                ? "-rotate-45 -translate-y-[0.64rem] group-hover:opacity-100"
+                                : "group-hover:opacity-100"
+                            }`}
+                        />
+                    </button>
+                    <a href="/" className="">
+                        <img src="./assets/images/white-vfans.png" alt="vfans" className="h-[1.8rem]" />
+                    </a>
                 </div>
-                <div className="flex flex-row-reverse mr-[5rem] max-lg:mr-[2rem]">
+                <div className="bg-white h-[2.8rem] rounded-[20px] flex items-center p-2">
+                    <img src="./assets/images/search.png" alt="search" className="opacity-90 h-[1.3rem] ml-2" />
+                    {path !== "" && 
+                    <div className={`ml-1 bg-[#BABABA] rounded-[12px] flex items-center px-2 py-1 min-w-[3rem]`} style={{ maxWidth: "calc(100% - 120px)" }}>
+                        <p className="text-xs xl:hidden">...</p>
+                        <p dir='rtl' className="font-poppins font-normal text-[14px] overflow-hidden whitespace-nowrap">{path}</p>
+                        <button onClick={() => setPath("")} className="h-4 w-4 ml-1">
+                            <img src="./assets/images/pathCross.png" alt="cross" className="w-[0.85rem] min-w-[0.85rem]" />
+                        </button>
+                    </div>
+                    }
+                    <input type="text" placeholder="Search" className="font-poppins font-normal text-[14px] text-black text-opacity-[78%] bg-white ml-1 mr-[1rem] h-full flex-1 focus:outline-none min-w-[6rem]"/>
+                </div>
+
+
+                <div className="flex flex-row-reverse mr-[5rem] max-xl:mr-[1.5rem]">
                     <div className="flex flex-row items-center justify-end">
                         <img src="./assets/images/test-profile.jpg" alt="profile" className="rounded-full h-[2.5rem] max-lg:hidden"/>
-                        <p id="username" className="font-poppins font-medium text-opacity-90 text-[14px] text-white ml-2 flex-1">
+                        <p id="username" className="font-poppins font-medium text-opacity-90 text-[14px] text-white ml-2 flex-1 max-sm:hidden">
                             {username}
                         </p>
-                        <div className="flex items-center ml-2">
-                            <button className="w-4 h-4">
-                                <img src="./assets/images/arrow-down.png" alt="arrow-down" className="w-full h-full"/>
-                            </button>
-                        </div>
+                        <Menu as="div" className="relative inline-block text-left">
+                            <div className="flex justify-center ml-2">
+                                <Menu.Button className="w-8 h-8 inline-flex">
+                                    <ChevronDownIcon className="-mr-1 h-full w-full text-white" aria-hidden="true" />
+                                    {/* <img src="./assets/images/arrow-down.png" alt="arrow-down" className="w-full h-full"/> */}
+                                </Menu.Button>
+                            </div>
+
+                            <Transition
+                                as={Fragment}
+                                enter="transition ease-out duration-100"
+                                enterFrom="transform opacity-0 scale-95"
+                                enterTo="transform opacity-100 scale-100"
+                                leave="transition ease-in duration-75"
+                                leaveFrom="transform opacity-100 scale-100"
+                                leaveTo="transform opacity-0 scale-95"
+                            >
+                                <Menu.Items className="absolute right-0 z-10 mt-4 w-56 origin-top-right rounded-md bg-black shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-white border-opacity-30">
+                                <div className="py-1">
+                                    <Menu.Item>
+                                    {({ active }) => (
+                                        <a
+                                        href="#"
+                                        className={classNames(
+                                            active ? 'bg-dark-background text-opacity-90' : 'text-opacity-[78%]',
+                                            'block px-4 py-2 text-sm font-poppins text-white'
+                                        )}
+                                        >
+                                        <img src="./assets/images/profile.png" alt="profile" className="inline-flex h-5 mr-2"/>
+                                        Profile
+                                        </a>
+                                    )}
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                    {({ active }) => (
+                                        <a
+                                        href="#"
+                                        className={classNames(
+                                            active ? 'bg-dark-background text-opacity-90' : 'text-opacity-[78%]',
+                                            'block px-4 py-2 text-sm font-poppins text-white'
+                                        )}
+                                        >
+                                            <img src="./assets/images/setting.png" alt="setting" className="inline-flex h-5 mr-2"/>
+                                        Setting
+                                        </a>
+                                    )}
+                                    </Menu.Item>
+                                    <form method="POST" action="#">
+                                        <Menu.Item>
+                                            {({ active }) => (
+                                            <button
+                                                type="submit"
+                                                className={classNames(
+                                                active ? 'bg-dark-background text-white text-opacity-90' : 'text-opacity-[78%]',
+                                                'block w-full px-4 py-2 font-poppins text-left text-sm text-white'
+                                                )}
+                                            >
+                                                <img src="./assets/images/logout.png" alt="logout" className="inline-flex w-5 mr-2"/>
+                                                Sign out
+                                            </button>
+                                            )}
+                                        </Menu.Item>
+                                    </form>
+                                </div>
+                                </Menu.Items>
+                            </Transition>
+                            </Menu>
                     </div>
                 </div>
             </nav>
-            <div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem]">
+            <div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem] z-40">
+                {/* left section */}
                 <section className="px-[2.5rem] border-r border-primary bg-dark-background max-xl:hidden w-[300px] h-full sticky top-[6.25rem] z-40">
                     <div className="flex flex-col items-start divide-solid divide-y-[1px] divide-primary">
                         <div className="flex flex-col items-center w-full">
@@ -244,39 +447,11 @@ export default function Home() {
                             </div>
                             {allDropdown && 
                                 Object.entries(languageDropdown).map(([language, isActive]) => (
-                                    <div key={language}>
-                                        <ul className="font-poppins font-normal text-base text-white text-opacity-[78%]">
-                                            <li className="flex justify-between mt-[1.25rem] px-[1.2rem] pl-[2rem] my-2">
-                                                <p className="text-start">{language}</p>
-                                                <button onClick={() => onToggleLanguageDropdown(language)}>
-                                                    <img src="./assets/images/arrow-up.png" alt="up" className="w-4 h-4"/>
-                                                </button>
-                                            </li>
-                                            {isActive && 
-                                                companyDropdown[language] && 
-                                                Object.entries(companyDropdown[language]).map(([company, isCompanyActive]) => (
-                                                    <li key={company} className="flex justify-between mt-[1.25rem] px-[1.2rem] pl-[3rem] my-2 text-base font-light">
-                                                        <p className="text-start">{company}</p>
-                                                        <button onClick={() => onToggleCompanyDropdown(language, company)}>
-                                                            <img src="./assets/images/arrow-up.png" alt="up" className="w-4 h-4"/>
-                                                        </button>
-                                                    </li>
-                                                ))
-                                            }
-                                            {isActive && 
-                                                companyDropdown[language] && 
-                                                Object.entries(companyDropdown[language]).map(([company, isCompanyActive]) => (
-                                                    isCompanyActive && 
-                                                    talentDropdown[language][company] && 
-                                                    Object.entries(talentDropdown[language][company]).map(([talent, isTalentActive]) => (
-                                                        <li key={talent} className="flex justify-between mt-[1.25rem] px-[1.2rem] pl-[4rem] my-2 text-base font-extralight">
-                                                            <button className="text-start">{talent}</button>
-                                                        </li>
-                                                    ))
-                                                ))
-                                            }
-                                        </ul>
-                                    </div>
+                                    <LanguageDropdown 
+                                        key={language}
+                                        language={language}
+                                        isActive={isActive}
+                                    />
                                 ))
                             }
                         </div>
@@ -439,6 +614,7 @@ export default function Home() {
                         </div>
                     </div>
                 </section>
+                {/* right section */}
                 <section className="bg-dark-background px-[2.5rem] max-xl:hidden border-l border-primary w-[300px]">
                     <div className="flex flex-col sticky top-[6.25rem] w-full">
                         <button className="font-poppins font-medium text-base py-[1.25rem] px-[1.2rem] w-full h-full text-start rounded-[10px] bg-transparent text-white text-opacity-90 hover:bg-primary active:text-emerald-green active:bg-lighter-primary">
@@ -450,8 +626,9 @@ export default function Home() {
                     </div>
                 </section>
             </div>
+            {/* popup when click create post */}
             { popup &&
-                <div className="fixed overflow-y-scroll inset-0 h-full backdrop-brightness-50 backdrop-blur-0 flex flex-col justify-center items-center max-lg:px-[2rem] px-[10rem] xl:px-[4rem]">
+                <div className="fixed overflow-y-scroll inset-0 h-full backdrop-brightness-50 backdrop-blur-0 flex flex-col justify-center items-center max-lg:px-[2rem] px-[10rem] xl:px-[4rem] z-50">
                     <div className="bg-primary rounded-[10px] flex flex-col min-w-[700px] max-xl:min-w-full max-w-[60vh]" ref={createPostPopupRef}>
                         <div className="flex flex-row-reverse px-6 py-4 border-b border-white border-opacity-10">
                             <button onClick={() => setPopup(false)}>
@@ -485,9 +662,7 @@ export default function Home() {
                                             </div>
                                         ))
                                     }
-                                    <div className="justify-center items-center h-full w-[25%]">
-                                        <input type="text" placeholder="Add Tag..." className="block bg-transparent resize-none font-poppins font-light text-base text-white placeholder-white text-opacity-90 placeholder-opacity-60 focus:outline-none mx-2 caret-[#8c8c8c] h-full w-full" value={tagVal} onKeyDown={handleKeyDown} onChange={(e) => setTagVal(e.target.value)} ></input>
-                                    </div>
+                                    <input type="text" placeholder="Add Tag..." className="block bg-transparent resize-none font-poppins font-light text-base text-white placeholder-white text-opacity-90 placeholder-opacity-60 focus:outline-none mx-2 caret-[#8c8c8c] h-full min-w-[4rem] flex-1" value={tagVal} onKeyDown={handleKeyDown} onChange={(e) => setTagVal(e.target.value)} ></input>
                                 </div>
                                 <div className="bg-[#202020] h-auto rounded-[10px] max-h-[9rem] mt-2 flex flex-wrap gap-2 p-2 overflow-y-scroll">
                                     { 
@@ -531,6 +706,74 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            }
+            {hamburgerIsOpen && 
+                <div className="fixed overflow-y-scroll inset-0 h-full backdrop-brightness-50 backdrop-blur-0 flex flex-col items-start z-70 xl:hidden">
+                    <div className="bg-dark-background h-full w-[400px] flex flex-col mt-[5rem]" ref={hamburgerPopupRef}>
+                        {/* left section */}
+                        <section className="px-[2.5rem] bg-dark-background pt-[1.25rem]">
+                            <div className="flex flex-col items-start divide-solid divide-y-[1px] divide-primary">
+                                <div className="flex flex-col items-center w-full">
+                                    <button className="font-poppins font-medium text-base py-[1.25rem] px-[1.2rem] w-full h-full text-start rounded-[10px] text-opacity-90 text-emerald-green bg-lighter-primary">
+                                        Home
+                                    </button>
+                                    <button name="/Following" onClick={routeChange} className="font-poppins font-medium text-base py-[1.25rem] px-[1.2rem] w-full h-full text-start rounded-[10px] bg-transparent text-white text-opacity-90 hover:bg-primary active:text-emerald-green active:bg-lighter-primary">
+                                        Following
+                                    </button>
+                                </div>
+                                <div className="my-5">
+                                    <h1 className="font-poppins font-medium text-base text-white text-opacity-90 mt-[1.25rem] px-[1.2rem]">
+                                        Tag
+                                    </h1>
+                                    <div className="flex flex-wrap gap-2 my-[1.5rem]">
+                                        <button className="font-poppins text-white text-sm text-opacity-[78%] bg-primary rounded-[20px] py-[0.8rem] px-[0.8rem] flex items-center">
+                                            <img src="./assets/images/plus.png" alt="" className="h-[0.8rem] mr-2"/>
+                                            News
+                                        </button>
+                                        <button className="font-poppins text-white text-sm  text-opacity-[78%] bg-primary rounded-[20px] py-[0.8rem] px-[0.8rem] flex items-center">
+                                        <img src="./assets/images/plus.png" alt="" className="h-[0.8rem] mr-2"/>
+                                            Debut
+                                        </button>
+                                        <button className="font-poppins text-black text-sm  text-opacity-[78%] bg-emerald-green rounded-[20px] py-[0.8rem] px-[0.8rem] flex items-center ">
+                                            <img src="./assets/images/minus.png" alt="" className="w-[0.8rem] mr-2"/>
+                                            Meme
+                                        </button>
+                                        <button className="font-poppins text-white text-sm  text-opacity-[78%] bg-primary rounded-[20px] py-[0.8rem] px-[0.8rem] flex items-center">
+                                            <img src="./assets/images/plus.png" alt="" className="w-[0.8rem] mr-2"/>
+                                            Image
+                                        </button>
+                                    </div>
+                                    <button className="font-poppins text-white text-opacity-[78%] rounded-[20px] border-[0.5px] border-emerald-green py-[0.8rem] px-[1.2rem] w-full font-medium text-[14px]">
+                                        Show more
+                                    </button>
+                                </div>
+                                <div className="text-white mb-5 w-full">
+                                    <div className="flex justify-between mt-[1.25rem] px-[1.2rem] my-2">
+                                        <p className="font-poppins font-medium text-base text-white text-opacity-90">
+                                            Language
+                                        </p>
+                                        <button onClick={onToggleDropdown}>
+                                            {allDropdown ? 
+                                                <img src="./assets/images/arrow-up.png" alt="up" className="w-4 h-4"/>
+                                                : 
+                                                <img src="./assets/images/arrow-up.png" alt="down" className="w-4 h-4 rotate-180"/>
+                                            }
+                                        </button>
+                                    </div>
+                                    {allDropdown && 
+                                        Object.entries(languageDropdown).map(([language, isActive]) => (
+                                            <LanguageDropdown 
+                                                key={language}
+                                                language={language}
+                                                isActive={isActive}
+                                            />
+                                        ))
+                                    }
+                                </div>
+                            </div>
+                        </section>
                     </div>
                 </div>
             }
