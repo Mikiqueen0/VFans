@@ -371,6 +371,34 @@ export default function Home() {
                                         </a>
                                     )}
                                     </Menu.Item>
+                                    <Menu.Item>
+                                    {({ active }) => (
+                                        <a
+                                        href="/Login"
+                                        className={classNames(
+                                            active ? 'bg-dark-background text-opacity-90' : 'text-opacity-[78%]',
+                                            'block px-4 py-2 text-sm font-poppins text-white'
+                                        )}
+                                        >
+                                            <img src="" alt="login" className="inline-flex h-5 mr-2"/>
+                                        Login
+                                        </a>
+                                    )}
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                    {({ active }) => (
+                                        <a
+                                        href="/Signup"
+                                        className={classNames(
+                                            active ? 'bg-dark-background text-opacity-90' : 'text-opacity-[78%]',
+                                            'block px-4 py-2 text-sm font-poppins text-white'
+                                        )}
+                                        >
+                                            <img src="" alt="signup" className="inline-flex h-5 mr-2"/>
+                                        Sign up 
+                                        </a>
+                                    )}
+                                    </Menu.Item>
                                     <form method="POST" action="#">
                                         <Menu.Item>
                                             {({ active }) => (
