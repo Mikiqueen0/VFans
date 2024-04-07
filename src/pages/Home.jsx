@@ -374,7 +374,7 @@ export default function Home() {
                                     <Menu.Item>
                                     {({ active }) => (
                                         <a
-                                        href="/Login"
+                                        href="/login"
                                         className={classNames(
                                             active ? 'bg-dark-background text-opacity-90' : 'text-opacity-[78%]',
                                             'block px-4 py-2 text-sm font-poppins text-white'
@@ -388,7 +388,7 @@ export default function Home() {
                                     <Menu.Item>
                                     {({ active }) => (
                                         <a
-                                        href="/Signup"
+                                        href="/signup"
                                         className={classNames(
                                             active ? 'bg-dark-background text-opacity-90' : 'text-opacity-[78%]',
                                             'block px-4 py-2 text-sm font-poppins text-white'
