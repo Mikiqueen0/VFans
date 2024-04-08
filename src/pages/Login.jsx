@@ -15,7 +15,7 @@ export default function Login() {
                     </h1>
                 </div>
             </section>
-            <section className="bg-primary flex items-center justify-center row-span-3 xl:col-span-1 text-wrap bottom-0 top-0 left-0 right-0 px-[6rem] shadow-2xl shadow-primary">
+            <section className="bg-primary flex items-center justify-center row-span-3 xl:col-span-1 text-wrap bottom-0 top-0 left-0 right-0 px-[6rem] shadow-2xl shadow-primary p-10">
                 <div className="w-full max-w-[550px]">
                     <h1 className="font-poppins text-emerald-green font-bold text-[1.6rem]">
                         Login

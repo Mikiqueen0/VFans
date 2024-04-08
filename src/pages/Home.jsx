@@ -3,6 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import {
+    Tabs,
+    TabsHeader,
+    TabsBody,
+    Tab,
+    TabPanel,
+} from "@material-tailwind/react";
+
 
 export default function Home() {
     const username = "Mikiqueen";
@@ -264,6 +272,8 @@ export default function Home() {
         return classes.filter(Boolean).join(' ')
     }
 
+    const [tagCheckbox, setTagCheckbox] = useState(false);
+
     return (
         <div className="bg-dark-background scrollbar-thin">
             {/* <div>
@@ -314,7 +324,7 @@ export default function Home() {
                         </button>
                     </div>
                     }
-                    <input type="text" placeholder="Search" className="font-poppins font-normal text-[14px] text-black text-opacity-[78%] bg-white ml-1 mr-[1rem] h-full flex-1 focus:outline-none min-w-[6rem]"/>
+                    <input type="text" placeholder="Search" className="font-poppins font-normal text-[14px] text-black text-opacity-[78%] bg-white ml-[0.4rem] mr-[1rem] h-full flex-1 focus:outline-none min-w-[6rem]"/>
                 </div>
 
 
@@ -656,54 +666,59 @@ export default function Home() {
             </div>
             {/* popup when click create post */}
             { popup &&
-                <div className="fixed overflow-y-scroll inset-0 h-full backdrop-brightness-50 backdrop-blur-0 flex flex-col justify-center items-center max-lg:px-[2rem] px-[10rem] xl:px-[4rem] z-50">
-                    <div className="bg-primary rounded-[10px] flex flex-col min-w-[700px] max-xl:min-w-full max-w-[60vh]" ref={createPostPopupRef}>
-                        <div className="flex flex-row-reverse px-6 py-4 border-b border-white border-opacity-10">
-                            <button onClick={() => setPopup(false)}>
+                <div className="fixed overflow-y-scroll inset-0 h-full backdrop-brightness-50 backdrop-blur-[1px] flex flex-col justify-center items-center max-lg:px-[2rem] px-[10rem] xl:px-[4rem] z-50 overflow-x-hidden">
+                    <div className="bg-primary rounded-[10px] flex flex-col max-md:w-full w-[700px]" ref={createPostPopupRef}>
+                        <div className="grid grid-cols-[1/3_1/3_1/3] items-center px-6 py-4 border-b border-white border-opacity-10">
+                            <p className="col-start-2 font-poppins text-white text-opacity-90 flex justify-center">Create Post</p>
+                            <button onClick={() => setPopup(false)} className="col-start-3 flex justify-end">
                                 <img src="./assets/images/cross.png" alt="cross" className="w-5 h-5" />
                             </button>
                         </div>
                         {/* yere */}
-                        <div className="mx-6 mt-2 mb-4"> 
-                            <div className="flex items-center">
-                                <img src="./assets/images/test-profile.jpg" alt="profile" className="rounded-full h-[2rem]"/>
-                                <p id="username" className="font-poppins font-normal text-opacity-90 text-base text-white ml-2 w-full h-fit">
-                                    {username}
-                                </p>
-                            </div>
+                        <div className="mx-6 mt-2 mb-4">
                             <div className="mt-2">
+                                <div></div>
+                            </div>
+                            <div className="mt-2 flex gap-2">
+                                <img src="./assets/images/test-profile.jpg" alt="profile" className="rounded-full h-[2rem]"/>
                                 <textarea className="bg-dark-background p-3 font-poppins font-light text-white text-base text-opacity-90 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="5" placeholder="Write Something..." onChange={(e) => setCreatePostContent(e.target.value)}></textarea>
                             </div>
-                            <div className="mt-4">
-                                <h1 className="font-poppins text-white font-normal text-lg">
-                                    Tag
-                                </h1>
-                                <div className="bg-dark-background min-h-[3rem] rounded-[10px] mt-4 flex flex-wrap gap-2 items-center p-2">
-                                    {/* added tag */}
-                                    { 
-                                        createPostTag.map((tag, index) => (
-                                            <div key={index} className="bg-emerald-green rounded-[4px] flex p-[0.4rem]">
-                                                <p className="font-poppins text-black opacity-90 text-base font-normal">{tag}</p>
-                                                <button onClick={() => removeTag(tag)} className="ml-1">
-                                                    <img src="./assets/images/tagCross.png" alt="cross" className="h-4"/>
-                                                </button>
-                                            </div>
-                                        ))
-                                    }
-                                    <input type="text" placeholder="Add Tag..." className="block bg-transparent resize-none font-poppins font-light text-base text-white placeholder-white text-opacity-90 placeholder-opacity-60 focus:outline-none mx-2 caret-[#8c8c8c] h-full min-w-[4rem] flex-1" value={tagVal} onKeyDown={handleKeyDown} onChange={(e) => setTagVal(e.target.value)} ></input>
-                                </div>
-                                <div className="bg-[#202020] h-auto rounded-[10px] max-h-[9rem] mt-2 flex flex-wrap gap-2 p-2 overflow-y-scroll">
-                                    { 
-                                        tagData.map((tag, index) => (
-                                            <button className={`font-poppins font-normal text-${createPostTag.includes(tag) ? 'black' : 'white'} text-opacity-90 bg-${createPostTag.includes(tag) ? 'emerald-green' : 'dark-background'} rounded-[20px] py-[0.6rem] px-[0.8rem] flex items-center`} onClick={() => createPostTag.includes(tag) ? removeTag(tag) : addTag(tag)}>
-                                                <img src={createPostTag.includes(tag) ? './assets/images/minus.png' : './assets/images/plus.png'} alt="" className="w-[0.9rem] mr-2"/>
-                                                {tag}
-                                            </button>
-                                        ))
-                                    }
-                                </div>
+                            <div className="mt-2">
+                                <section className="bg-primary rounded-[10px] shadow-md shadow-darkest-black">
+                                    <label onClick={() => setTagCheckbox(!tagCheckbox)} className="flex justify-between items-center h-10 cursor-pointer font-poppins text-white font-normal text-lg p-3 rounded-[10px] bg-primary">
+                                        Tag
+                                        <img src={tagCheckbox ? "./assets/images/whiteMinus.png" : "./assets/images/plus.png"} alt="collapse" className="w-4" />
+                                    </label>
+                                    <div className={`block overflow-hidden py-0 transition-all duration-500 ${tagCheckbox ? "max-h-80" : "max-h-0"}`}>
+                                        <div className="bg-dark-background min-h-[2.8rem] rounded-[10px] mt-1 flex flex-wrap gap-2 items-center p-2">
+                                            {/* added tag */}
+                                            { 
+                                                createPostTag.map((tag, index) => (
+                                                    <div key={index} className="bg-emerald-green rounded-[4px] flex px-[0.3rem] py-1">
+                                                        <p className="font-poppins text-black opacity-90 text-sm font-medium">{tag}</p>
+                                                        <button onClick={() => removeTag(tag)} className="ml-1">
+                                                            <img src="./assets/images/tagCross.png" alt="cross" className="h-3"/>
+                                                        </button>
+                                                    </div>
+                                                ))
+                                            }
+                                            <input type="text" placeholder="Add Tag..." className="block bg-transparent resize-none font-poppins font-normal text-sm text-white placeholder-white text-opacity-90 placeholder-opacity-60 focus:outline-none caret-[#8c8c8c] h-full min-w-[4rem] flex-1" value={tagVal} onKeyDown={handleKeyDown} onChange={(e) => setTagVal(e.target.value)} />
+                                        </div>
+                                        <div className="bg-[#202020] h-auto rounded-[10px] max-h-[9rem] mt-1 flex flex-wrap gap-2 p-2 overflow-y-scroll">
+                                            { 
+                                                tagData.map((tag, index) => (
+                                                    <button key={index} className={`font-poppins text-sm font-medium text-${createPostTag.includes(tag) ? 'black' : 'white'} text-opacity-90 bg-${createPostTag.includes(tag) ? 'emerald-green' : 'dark-background'} rounded-[20px] py-[0.6rem] px-[0.8rem] flex items-center`} onClick={() => createPostTag.includes(tag) ? removeTag(tag) : addTag(tag)}>
+                                                        <img src={createPostTag.includes(tag) ? './assets/images/minus.png' : './assets/images/plus.png'} alt="" className="w-[0.9rem] mr-2"/>
+                                                        {tag}
+                                                    </button>
+                                                ))
+                                            }
+                                        </div>
+                                    </div>
+                                </section>
+
                                 {/* can't preview image yet */}
-                                <div className="flex justify-between mt-2 mx-4 items-center">
+                                <div className="flex justify-between mt-4 mx-4 items-center">
                                     <div className="flex gap-5">
                                         <div>
                                             <input 
@@ -738,7 +753,7 @@ export default function Home() {
                 </div>
             }
             {hamburgerIsOpen && 
-                <div className="fixed overflow-y-scroll inset-0 h-full backdrop-brightness-50 backdrop-blur-0 flex flex-col items-start z-70 xl:hidden">
+                <div className="fixed overflow-y-scroll inset-0 h-full backdrop-brightness-50 backdrop-blur-[1px] flex flex-col items-start z-40 xl:hidden">
                     <div className="bg-dark-background h-full w-[400px] flex flex-col mt-[5rem]" ref={hamburgerPopupRef}>
                         {/* left section */}
                         <section className="px-[2.5rem] bg-dark-background pt-[1.25rem]">
