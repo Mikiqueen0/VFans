@@ -2,19 +2,13 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { ChevronDownIcon, PhotoIcon } from '@heroicons/react/20/solid'
 import {
-    Tabs,
-    TabsHeader,
-    TabsBody,
-    Tab,
-    TabPanel,
+    Carousel
 } from "@material-tailwind/react";
-
 
 export default function Home() {
     const username = "Mikiqueen";
-    const [createPostContent, setCreatePostContent] = useState("");
     const [allDropdown, setAllDropdown] = useState(false);
     const [languageDropdown, setLanguageDropdown] = useState({ 
         "English": false,
@@ -111,6 +105,7 @@ export default function Home() {
     }
 
     const [ popup, setPopup ] = useState(false); //popup create post in detail when click create post at home page
+    const [createPostContent, setCreatePostContent] = useState(""); // create post content text field
     const [ tagVal, setTagVal ] = useState(""); //tag in text field
     const [ createPostTag, setCreatePostTag ] = useState([]); //tag add already added in create post
     //tag user can choose
@@ -147,7 +142,12 @@ export default function Home() {
     useEffect(() => {
         document.body.style.overflow = popup ? "hidden" : "auto";
         document.body.style.paddingRight = popup ? "15px" : "0";
+        setCreatePostContent("");
+        setTagCheckbox(false);
         setCreatePostTag([]);
+        setTagVal("");
+        setToggleTabState(1);
+        setImageFile([]);
     }, [popup]);
 
 
@@ -202,6 +202,7 @@ export default function Home() {
 
     const handleKeyDown = (e) => {
         if(e.key === 'Enter'){
+            e.preventDefault();
             onEnterTag(e);
             setTagVal("");
         }
@@ -274,14 +275,82 @@ export default function Home() {
 
     const [tagCheckbox, setTagCheckbox] = useState(false);
 
+    const [toggleTabState, setToggleTabState] = useState(1);
+    const toggleTab = (tab) => {
+        setToggleTabState(tab);
+    }
+
+    const [imageFile, setImageFile] = useState([]);
+    const handleFileSelect = (e) => {
+        const fileList = Array.from(e);
+        // Create an array to hold promises for each file read operation
+        const promises = fileList.map(file => readFileAsDataURL(file));
+        // Execute all promises concurrently
+        Promise.all(promises)
+            .then(results => {
+                // Update state with the results of all file reads
+                setImageFile(prevImageFile => [...prevImageFile, ...results]);
+            })
+            .catch(error => {
+                console.error('Error reading files:', error);
+            });
+    }
+    
+    // Function to read a file as a Data URL using a FileReader
+    const readFileAsDataURL = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                // Resolve the promise with the result of the file read
+                resolve(e.target.result);
+            }
+            reader.onerror = (error) => {
+                // Reject the promise if an error occurs
+                reject(error);
+            }
+            reader.readAsDataURL(file); // Read the file as a Data URL
+        });
+    }
+
+    function dragEnter(e) {
+        // console.log("Drag Enter");
+        e.preventDefault();
+        // e.target.classList.add('border-blue-500');
+    }
+    
+    function dragOver(e) {
+        // console.log("Drag Over");
+        e.preventDefault();
+        // e.target.classList.add('border-blue-500');
+    }
+    
+    function dragLeave(e) {
+        // console.log("Drag Leave");
+        e.preventDefault();
+        // e.target.classList.remove('border-blue-500');
+    }
+    
+    function drop(e) {
+        console.log("Drop");
+        e.preventDefault();
+        // e.target.classList.remove('border-blue-500');
+    
+        const files = e.dataTransfer.files;
+        handleFileSelect(files);
+    }
+
+    // When submit Post 
+    const handleSubmitPost = (e) => {
+        e.preventDefault();
+        console.log("Post Content: " + createPostContent);
+        console.log("Post Tag: " + createPostTag);
+        console.log("Post Image: " + imageFile);
+        console.log("Post time: " + new Date().toLocaleString());
+        setPopup(false);
+    }
+
     return (
         <div className="bg-dark-background scrollbar-thin">
-            {/* <div>
-                <button name="/login" onClick={routeChange} className="text-white">login</button>
-                <br />
-                <button name="/signup" onClick={routeChange} className="text-white">signup</button>
-            </div> */}
-            {/* nav section */}
             <nav className="sticky top-0 bg-primary grid grid-cols-[30%_40%_30%] max-sm:grid-cols-[20%_60%_20%] justify-between items-center h-[5rem] z-50">
                 <div className="ml-[5rem] max-xl:ml-[1.5rem] flex items-center gap-10 max-sm:gap-3">
                     <button
@@ -327,7 +396,7 @@ export default function Home() {
                     <input type="text" placeholder="Search" className="font-poppins font-normal text-[14px] text-black text-opacity-[78%] bg-white ml-[0.4rem] mr-[1rem] h-full flex-1 focus:outline-none min-w-[6rem]"/>
                 </div>
 
-
+                
                 <div className="flex flex-row-reverse mr-[5rem] max-xl:mr-[1.5rem]">
                     <div className="flex flex-row items-center justify-end">
                         <img src="./assets/images/test-profile.jpg" alt="profile" className="rounded-full h-[2.5rem] max-lg:hidden"/>
@@ -666,91 +735,107 @@ export default function Home() {
             </div>
             {/* popup when click create post */}
             { popup &&
-                <div className="fixed overflow-y-scroll inset-0 h-full backdrop-brightness-50 backdrop-blur-[1px] flex flex-col justify-center items-center max-lg:px-[2rem] px-[10rem] xl:px-[4rem] z-50 overflow-x-hidden">
+                <form onSubmit={handleSubmitPost} className="fixed overflow-y-scroll inset-0 h-full backdrop-brightness-50 backdrop-blur-[1px] flex flex-col justify-center items-center max-lg:px-[2rem] px-[10rem] xl:px-[4rem] z-50 overflow-x-hidden">
                     <div className="bg-primary rounded-[10px] flex flex-col max-md:w-full w-[700px]" ref={createPostPopupRef}>
                         <div className="grid grid-cols-[1/3_1/3_1/3] items-center px-6 py-4 border-b border-white border-opacity-10">
                             <p className="col-start-2 font-poppins text-white text-opacity-90 flex justify-center">Create Post</p>
-                            <button onClick={() => setPopup(false)} className="col-start-3 flex justify-end">
+                            <button type="button" onClick={() => setPopup(false)} className="col-start-3 flex justify-end">
                                 <img src="./assets/images/cross.png" alt="cross" className="w-5 h-5" />
                             </button>
                         </div>
-                        {/* yere */}
-                        <div className="mx-6 mt-2 mb-4">
-                            <div className="mt-2">
-                                <div></div>
+                        <div className="mx-6 mt-2">
+                            <div className="font-poppins mb-4 grid grid-cols-[5rem_5rem]">
+                                <div onClick={() => toggleTab(1)} className={`p-2 px-4 cursor-pointer text-white text-center transition-colors duration-100 hover:bg-dark-background active:bg-darkest-black ${toggleTabState === 1 ? "bg-transparent border-b-[3px] border-emerald-green" : "border-transparent bg-transparent"}`}>Text</div>
+                                <div onClick={() => toggleTab(2)} className={`p-2 px-4 cursor-pointer text-white text-center transition-colors duration-100 hover:bg-dark-background active:bg-darkest-black ${toggleTabState === 2 ? "bg-transparent border-b-[3px] border-emerald-green" : "border-transparent bg-transparent"}`}>Image</div>
                             </div>
-                            <div className="mt-2 flex gap-2">
-                                <img src="./assets/images/test-profile.jpg" alt="profile" className="rounded-full h-[2rem]"/>
-                                <textarea className="bg-dark-background p-3 font-poppins font-light text-white text-base text-opacity-90 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="5" placeholder="Write Something..." onChange={(e) => setCreatePostContent(e.target.value)}></textarea>
-                            </div>
-                            <div className="mt-2">
-                                <section className="bg-primary rounded-[10px] shadow-md shadow-darkest-black">
-                                    <label onClick={() => setTagCheckbox(!tagCheckbox)} className="flex justify-between items-center h-10 cursor-pointer font-poppins text-white font-normal text-lg p-3 rounded-[10px] bg-primary">
-                                        Tag
-                                        <img src={tagCheckbox ? "./assets/images/whiteMinus.png" : "./assets/images/plus.png"} alt="collapse" className="w-4" />
-                                    </label>
-                                    <div className={`block overflow-hidden py-0 transition-all duration-500 ${tagCheckbox ? "max-h-80" : "max-h-0"}`}>
-                                        <div className="bg-dark-background min-h-[2.8rem] rounded-[10px] mt-1 flex flex-wrap gap-2 items-center p-2">
-                                            {/* added tag */}
-                                            { 
-                                                createPostTag.map((tag, index) => (
-                                                    <div key={index} className="bg-emerald-green rounded-[4px] flex px-[0.3rem] py-1">
-                                                        <p className="font-poppins text-black opacity-90 text-sm font-medium">{tag}</p>
-                                                        <button onClick={() => removeTag(tag)} className="ml-1">
-                                                            <img src="./assets/images/tagCross.png" alt="cross" className="h-3"/>
-                                                        </button>
-                                                    </div>
-                                                ))
-                                            }
-                                            <input type="text" placeholder="Add Tag..." className="block bg-transparent resize-none font-poppins font-normal text-sm text-white placeholder-white text-opacity-90 placeholder-opacity-60 focus:outline-none caret-[#8c8c8c] h-full min-w-[4rem] flex-1" value={tagVal} onKeyDown={handleKeyDown} onChange={(e) => setTagVal(e.target.value)} />
-                                        </div>
-                                        <div className="bg-[#202020] h-auto rounded-[10px] max-h-[9rem] mt-1 flex flex-wrap gap-2 p-2 overflow-y-scroll">
-                                            { 
-                                                tagData.map((tag, index) => (
-                                                    <button key={index} className={`font-poppins text-sm font-medium text-${createPostTag.includes(tag) ? 'black' : 'white'} text-opacity-90 bg-${createPostTag.includes(tag) ? 'emerald-green' : 'dark-background'} rounded-[20px] py-[0.6rem] px-[0.8rem] flex items-center`} onClick={() => createPostTag.includes(tag) ? removeTag(tag) : addTag(tag)}>
-                                                        <img src={createPostTag.includes(tag) ? './assets/images/minus.png' : './assets/images/plus.png'} alt="" className="w-[0.9rem] mr-2"/>
-                                                        {tag}
-                                                    </button>
-                                                ))
-                                            }
-                                        </div>
+                            <div className={`transition-all duration-[400ms] ${toggleTabState === 1 ? "opacity-100" : "opacity-0"}`}>
+                                {toggleTabState === 1 && 
+                                <div>
+                                    <div className="mt-2 flex gap-2">
+                                        <img src="./assets/images/test-profile.jpg" alt="profile" className="rounded-full h-[2rem]"/>
+                                        <textarea className="bg-dark-background p-3 font-poppins font-light text-white text-base text-opacity-90 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="5" placeholder="Write Something..." onChange={(e) => setCreatePostContent(e.target.value)} value={createPostContent} required></textarea>
                                     </div>
-                                </section>
-
-                                {/* can't preview image yet */}
-                                <div className="flex justify-between mt-4 mx-4 items-center">
-                                    <div className="flex gap-5">
-                                        <div>
-                                            <input 
-                                                id="imageInput"
-                                                type="file" 
-                                                accept="image/*" 
-                                                className="hidden" 
-                                                // onChange={handleFileSelect} 
-                                            />
-                                            <label htmlFor="imageInput" className="cursor-pointer">
-                                                <img src="./assets/images/photo.png" alt="photo" className="w-8 h-8" />
-                                            </label>                                            
-                                        </div>
-                                        <div>
-                                            <input 
-                                                id="videoInput"
-                                                type="file" 
-                                                accept="video/*" 
-                                                className="hidden" 
-                                                // onChange={handleFileSelect} 
-                                            />
-                                            <label htmlFor="videoInput" className="cursor-pointer">
-                                                <img src="./assets/images/video.png" alt="video" className="w-8 h-8" />
-                                            </label>                                            
-                                        </div>
+                                    <div className="mt-2">
+                                        <section className="bg-primary rounded-[10px] shadow-md shadow-darkest-black">
+                                            <label onClick={() => setTagCheckbox(!tagCheckbox)} className="flex justify-between items-center h-10 cursor-pointer font-poppins text-white font-normal text-lg p-3 rounded-[10px] bg-primary">
+                                                Tag
+                                                <img src={tagCheckbox ? "./assets/images/whiteMinus.png" : "./assets/images/plus.png"} alt="collapse" className="w-4" />
+                                            </label>
+                                            <div className={`block overflow-hidden py-0 transition-all duration-500 ${tagCheckbox ? "max-h-80" : "max-h-0"}`}>
+                                                <div className="bg-dark-background min-h-[2.8rem] rounded-[10px] mt-1 flex flex-wrap gap-2 items-center p-2">
+                                                    {/* added tag */}
+                                                    { 
+                                                        createPostTag.map((tag, index) => (
+                                                            <div key={index} className="bg-emerald-green rounded-[4px] flex px-[0.3rem] py-1">
+                                                                <p className="font-poppins text-black opacity-90 text-sm font-medium">{tag}</p>
+                                                                <button type="button" onClick={() => removeTag(tag)} className="ml-1">
+                                                                    <img src="./assets/images/tagCross.png" alt="cross" className="h-3"/>
+                                                                </button>
+                                                            </div>
+                                                        ))
+                                                    }
+                                                    <input type="text" placeholder="Add Tag..." className="block bg-transparent resize-none font-poppins font-normal text-sm text-white placeholder-white text-opacity-90 placeholder-opacity-60 focus:outline-none caret-[#8c8c8c] h-full min-w-[4rem] flex-1" value={tagVal} onKeyDown={handleKeyDown} onChange={(e) => setTagVal(e.target.value)} />
+                                                </div>
+                                                <div className="bg-[#202020] h-auto rounded-[10px] max-h-[9rem] mt-1 flex flex-wrap gap-2 p-2 overflow-y-scroll">
+                                                    { 
+                                                        tagData.map((tag, index) => (
+                                                            <button type="button" key={index} className={`font-poppins text-sm font-medium text-${createPostTag.includes(tag) ? 'black' : 'white'} text-opacity-90 bg-${createPostTag.includes(tag) ? 'emerald-green' : 'dark-background'} rounded-[20px] py-[0.6rem] px-[0.8rem] flex items-center`} onClick={() => createPostTag.includes(tag) ? removeTag(tag) : addTag(tag)}>
+                                                                <img src={createPostTag.includes(tag) ? './assets/images/minus.png' : './assets/images/plus.png'} alt="" className="w-[0.9rem] mr-2"/>
+                                                                {tag}
+                                                            </button>
+                                                        ))
+                                                    }
+                                                </div>
+                                            </div>
+                                        </section>
                                     </div>
-                                    <button className="bg-emerald-green rounded-[20px] font-poppins font-medium text-black text-opacity-[78%] text-lg py-4 px-16">Post</button>
                                 </div>
+                                }
+                            </div>
+                            <div className={`transition-all duration-[400ms] ${toggleTabState === 2 ? "opacity-100" : "opacity-0"}`}>
+                                {toggleTabState === 2 &&
+                                <div className="flex flex-col gap-4">
+                                    <div className="mt-2">
+                                        <div className="flex items-center justify-center w-full">
+                                            <label htmlFor="dropzone-file" className="font-poppins flex flex-col items-center justify-center w-full h-40 border-2 border-white border-dashed border-opacity-60 rounded-lg cursor-pointer bg-dark-background dark:hover:border-opacity-40 hover:bg-lighter-primary" 
+                                                onDragEnter={(e) => dragEnter(e)}
+                                                onDragOver={(e) => dragOver(e)}
+                                                onDragLeave={(e) => dragLeave(e)}
+                                                onDrop={(e) => drop(e)}>
+                                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                    <PhotoIcon className="size-14 p-2 text-white text-opacity-60" aria-hidden="true"/>
+                                                    <p className="mb-2 text-sm text-white text-opacity-60"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                                                    <p className="text-xs text-white text-opacity-60">SVG, PNG, JPG or JPEG (MAX. 800x400px)</p>
+                                                </div>
+                                                <input id="dropzone-file" type="file" multiple accept="image/jpeg, image/png" className="hidden" onChange={(e) => handleFileSelect(e.target.files)}/>
+                                            </label>
+                                        </div> 
+                                    </div>
+                                    <div className="w-full h-full bg-dark-background rounded-[10px]">
+                                        <Carousel transition={{ duration: 0.2 }} className="rounded-xl flex items-center aspect-[2/1]">
+                                            {imageFile.length > 0 ? (
+                                                imageFile.map((img, index) => (
+                                                    <img
+                                                        src={img}
+                                                        alt="image"
+                                                        key={index}
+                                                        className="h-full w-full object-contain"
+                                                    />
+                                                ))
+                                            ) : (
+                                                <div className="h-full w-full flex items-center justify-center text-white text-opacity-60 text-xl font-poppins font-normal">
+                                                    Image Preview
+                                                </div>
+                                            )}
+                                        </Carousel>
+                                    </div>
+                                </div>
+                                }
                             </div>
                         </div>
+                        <button type="submit" className="bg-emerald-green rounded-[20px] font-poppins font-medium text-black text-opacity-[78%] text-lg py-4 px-16 mt-4 mx-10 mb-6 flex justify-center self-end">Post</button>
                     </div>
-                </div>
+                </form>
             }
             {hamburgerIsOpen && 
                 <div className="fixed overflow-y-scroll inset-0 h-full backdrop-brightness-50 backdrop-blur-[1px] flex flex-col items-start z-40 xl:hidden">
