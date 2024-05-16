@@ -1,5 +1,84 @@
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function SignUp() {
+    const [data, setData] = useState({
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
+
+    // const callApi = async () => {
+    //     const res = await axios.get("https://jsonplaceholder.typicode.com/todos")
+    //     const data_format = await res.data
+    
+    //     data_format.map((item) => {
+    //         setData((prev) => [...prev, item.title])
+    //     })
+
+    //     console.log(data)
+    // }
+
+    // useEffect(() => {
+    //     const fetch = async () => {
+    //         const response = await axios({
+    //             method: 'get',
+    //             baseURL: 'http://localhost:5173',
+    //             url: '/api/signup',
+    //         });
+    //         console.log(response);
+    //     }
+    //     fetch();
+    // }, []);
+
+    // const handleSubmit = () => {
+    //     const postData = async () => {
+    //         try {
+    //             const response = await axios({
+    //                 method: 'post',
+    //                 baseURL: 'http://localhost:5173',
+    //                 url: '/api/signup',
+    //                 data: {
+    //                     username: data.username,
+    //                     email: data.email,
+    //                     password: data.password,
+    //                 },
+    //             });
+    //             console.log(response);
+    //         } catch (error) {
+    //             console.error('Error:', error);
+    //         }
+    //     };
+    //     postData();
+
+    const navigate = useNavigate();
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        axios
+        .post("/api/signup", data)
+        .then((response) => {
+            navigate('/login');
+            console.log(response);
+        })
+        .catch((error) => {
+            if (error.response) {
+            console.log(error.response);
+            console.log("server responded");
+            } else if (error.request) {
+                console.log("network error");
+            } else {
+                console.log(error);
+            }
+        });
+    };
+
+    const handleChange = (e) => {
+        setData({ ...data, [e.target.name]: e.target.value });
+    }
+
     return (
         <div className="bg-darkest-black h-full w-full min-h-[100vh] grid grid-rows-4 xl:grid-cols-2 xl:grid-rows-1 gap-0">
             <section className="bg-emerald-green row-span-1 xl:col-span-1 bottom-0 top-0 left-0 right-0 h-auto xl:rounded-bl-[90px] xl:rounded-tl-[90px] xl:ml-[4rem] xl:my-[3.8rem]">
@@ -38,12 +117,12 @@ export default function SignUp() {
                         <div className="font-poppins text-emerald-green text-sm">or</div>
                         <div className="flex-grow bg-emerald-green h-[1.35px]"></div>
                     </div>
-                    <form action="">
+                    <form onSubmit={handleSubmit}>
                         <div className="flex flex-col gap-4 h-auto">
-                            <input type="text" placeholder="Username" className="font-poppinss text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"/>
-                            <input type="text" placeholder="Email" className="font-poppinss text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"/>
-                            <input type="password" placeholder="Password" className="font-poppinss text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"/>
-                            <input type="password" placeholder="Confirm Password" className="font-poppinss text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"/>
+                            <input type="text" name="username" placeholder="Username" className="font-poppinss text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none" onChange={handleChange}/>
+                            <input type="text" name="email" placeholder="Email" className="font-poppinss text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none" onChange={handleChange}/>
+                            <input type="password" name="password" placeholder="Password" className="font-poppinss text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none" onChange={handleChange}/>
+                            <input type="password" name="confirmPassword" placeholder="Confirm Password" className="font-poppinss text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none" onChange={handleChange}/>
                         </div>
                         <button type="submit" className="font-poppins text-base text-white font-bold bg-emerald-green w-full xl:mt-8 mt-6 xl:py-6 py-4 rounded-[10px]">SIGN UP</button>
                         <p className="font-poppins font-light text-xs text-emerald-green mt-4 text-center">already have an account?

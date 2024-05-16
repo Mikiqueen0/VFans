@@ -1,13 +1,14 @@
 import { useEffect, useState, useRef } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon, PhotoIcon } from '@heroicons/react/20/solid'
 import {
     Carousel
 } from "@material-tailwind/react";
+import HomeCommuButton from '../components/HomeCommuButton';
 
-export default function Home() {
+export default function JoinedCommunity() {
     const username = "Mikiqueen";
     const [allDropdown, setAllDropdown] = useState(false);
     const [languageDropdown, setLanguageDropdown] = useState({ 
@@ -98,7 +99,8 @@ export default function Home() {
         }));
     };
 
-    let navigate = useNavigate(); 
+    const location = useLocation();
+    const navigate = useNavigate(); 
     const routeChange = (e) =>{ 
         let path = e.target.name; 
         navigate(path);
@@ -506,12 +508,7 @@ export default function Home() {
                 <section className="px-[2.5rem] border-r border-primary bg-dark-background max-xl:hidden w-[300px] h-full sticky top-[6.25rem] z-40">
                     <div className="flex flex-col items-start divide-solid divide-y-[1px] divide-primary">
                         <div className="flex flex-col items-center w-full">
-                            <button name="/" onClick={routeChange} className="font-poppins font-medium text-base py-[1.25rem] px-[1.2rem] w-full h-full text-start rounded-[10px] bg-transparent text-white text-opacity-90 hover:bg-primary active:text-emerald-green active:bg-lighter-primary">
-                                Home
-                            </button>
-                            <button className="font-poppins font-medium text-base py-[1.25rem] px-[1.2rem] w-full h-full text-start rounded-[10px] text-opacity-90 text-emerald-green bg-lighter-primary">
-                                Following
-                            </button>
+                            <HomeCommuButton location={location} routeChange={routeChange}/>
                         </div>
                         <div className="my-5">
                             <h1 className="font-poppins font-medium text-base text-white text-opacity-90 mt-[1.25rem] px-[1.2rem]">
@@ -844,12 +841,7 @@ export default function Home() {
                         <section className="px-[2.5rem] bg-dark-background pt-[1.25rem]">
                             <div className="flex flex-col items-start divide-solid divide-y-[1px] divide-primary">
                                 <div className="flex flex-col items-center w-full">
-                                    <button className="font-poppins font-medium text-base py-[1.25rem] px-[1.2rem] w-full h-full text-start rounded-[10px] text-opacity-90 text-emerald-green bg-lighter-primary">
-                                        Home
-                                    </button>
-                                    <button name="/Following" onClick={routeChange} className="font-poppins font-medium text-base py-[1.25rem] px-[1.2rem] w-full h-full text-start rounded-[10px] bg-transparent text-white text-opacity-90 hover:bg-primary active:text-emerald-green active:bg-lighter-primary">
-                                        Following
-                                    </button>
+                                    <HomeCommuButton location={location} routeChange={routeChange}/>
                                 </div>
                                 <div className="my-5">
                                     <h1 className="font-poppins font-medium text-base text-white text-opacity-90 mt-[1.25rem] px-[1.2rem]">

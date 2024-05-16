@@ -1,11 +1,13 @@
 import { useEffect, useState, useRef } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon, PhotoIcon } from '@heroicons/react/20/solid'
+// import { ChevronDownIcon, PhotoIcon } from '@heroicons/react/16/solid'
 import {
     Carousel
 } from "@material-tailwind/react";
+import HomeCommuButton from '../components/HomeCommuButton';
 
 export default function Home() {
     const username = "Mikiqueen";
@@ -97,8 +99,8 @@ export default function Home() {
             }
         }));
     };
-
-    let navigate = useNavigate(); 
+    const location = useLocation();
+    const navigate = useNavigate(); 
     const routeChange = (e) =>{ 
         let path = e.target.name; 
         navigate(path);
@@ -349,6 +351,14 @@ export default function Home() {
         setPopup(false);
     }
 
+    const [pathSelect, setPathSelect] = useState();
+
+    const pathSelectChoices = [
+        "English",
+        "Japanese",
+        "Thai"
+    ];
+
     return (
         <div className="bg-dark-background scrollbar-thin">
             <nav className="sticky top-0 bg-primary grid grid-cols-[30%_40%_30%] max-sm:grid-cols-[20%_60%_20%] justify-between items-center h-[5rem] z-50">
@@ -506,12 +516,7 @@ export default function Home() {
                 <section className="px-[2.5rem] border-r border-primary bg-dark-background max-xl:hidden w-[300px] h-full sticky top-[6.25rem] z-40">
                     <div className="flex flex-col items-start divide-solid divide-y-[1px] divide-primary">
                         <div className="flex flex-col items-center w-full">
-                            <button className="font-poppins font-medium text-base py-[1.25rem] px-[1.2rem] w-full h-full text-start rounded-[10px] text-opacity-90 text-emerald-green bg-lighter-primary">
-                                Home
-                            </button>
-                            <button name="/Following" onClick={routeChange} className="font-poppins font-medium text-base py-[1.25rem] px-[1.2rem] w-full h-full text-start rounded-[10px] bg-transparent text-white text-opacity-90 hover:bg-primary active:text-emerald-green active:bg-lighter-primary">
-                                Following
-                            </button>
+                            <HomeCommuButton location={location} routeChange={routeChange}/>
                         </div>
                         <div className="my-5">
                             <h1 className="font-poppins font-medium text-base text-white text-opacity-90 mt-[1.25rem] px-[1.2rem]">
@@ -751,6 +756,52 @@ export default function Home() {
                             <div className={`transition-all duration-[400ms] ${toggleTabState === 1 ? "opacity-100" : "opacity-0"}`}>
                                 {toggleTabState === 1 && 
                                 <div>
+                                    {/* select community before posting */}
+                                    {/* <div>
+                                        <select name="selectCommunity" defaultValue="placeholder" className="bg-transparent font-poppins text-white font-normal text-opacity-90 appearance-none border border-emerald-green border-opacity-70 rounded-[20px] px-4 py-2 w-[50%] focus:outline-none">
+                                            <option value="placeholder" disabled hidden>Select Community</option>
+                                            <option value="english">English</option>
+                                            <option value="thai">Thai</option>
+                                        </select>
+                                        
+                                    </div> */}
+                                    {/* <div class="flex h-12 w-[50%] border border-emerald-green border-opacity-70 rounded-[20px] relative">
+                                        <select defaultValue="placeholder" class="appearance-none bg-transparent font-poppins text-white font-normal text-opacity-90 px-4 py-2 w-full focus:outline-none">
+                                            <option value="placeholder" disabled hidden>Select Community</option>
+                                            <option value="search">
+                                                <input type="text" />
+                                            </option>
+                                            <option value="english">English</option>
+                                            <option value="thai">Thai</option>
+                                        </select>
+                                        <ChevronDownIcon className="h-8 text-white absolute right-3 self-center my-auto pointer-events-none opacity-90"/>
+                                    </div> */}
+                                    <div className={`h-12 w-[50%] relative`}>
+                                        <div value="Select Community" onClick={() => setPathSelect(!pathSelect)} className={`appearance-none bg-transparent font-poppins font-light text-base text-white text-opacity-80 h-full w-full inline-flex items-center p-2 focus:outline-none border border-emerald-green border-opacity-70 ${pathSelect ? "rounded-b-[0px] rounded-t-[20px]" : "rounded-[20px]"}`}>
+                                            Select Community
+                                            <span>
+                                                <ChevronDownIcon className="h-8 text-white absolute right-3 top-0 bottom-0 my-auto pointer-events-none opacity-90"/>
+                                            </span>
+                                        </div>
+                                        {pathSelect &&
+                                            <div className="bg-dark-background absolute w-full border border-t-0 border-emerald-green p-2 overflow-y-scroll max-h-[200px]">
+                                                {/* {pathSelectChoices.map((choice, index) => (
+                                                    <div key={index} className="font-poppins font-light text-base text-white p-2 hover:bg-darkest-black">
+                                                        {choice}
+                                                    </div>
+                                                ))} */}
+                                                {allDropdown && 
+                                                    Object.entries(languageDropdown).map(([language, isActive]) => (
+                                                        <LanguageDropdown 
+                                                            key={language}
+                                                            language={language}
+                                                            isActive={isActive}
+                                                        />
+                                                    ))
+                                                }
+                                            </div>
+                                        }
+                                    </div>
                                     <div className="mt-2 flex gap-2">
                                         <img src="./assets/images/test-profile.jpg" alt="profile" className="rounded-full h-[2rem]"/>
                                         <textarea className="bg-dark-background p-3 font-poppins font-light text-white text-base text-opacity-90 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="5" placeholder="Write Something..." onChange={(e) => setCreatePostContent(e.target.value)} value={createPostContent} required></textarea>
@@ -844,12 +895,7 @@ export default function Home() {
                         <section className="px-[2.5rem] bg-dark-background pt-[1.25rem]">
                             <div className="flex flex-col items-start divide-solid divide-y-[1px] divide-primary">
                                 <div className="flex flex-col items-center w-full">
-                                    <button className="font-poppins font-medium text-base py-[1.25rem] px-[1.2rem] w-full h-full text-start rounded-[10px] text-opacity-90 text-emerald-green bg-lighter-primary">
-                                        Home
-                                    </button>
-                                    <button name="/Following" onClick={routeChange} className="font-poppins font-medium text-base py-[1.25rem] px-[1.2rem] w-full h-full text-start rounded-[10px] bg-transparent text-white text-opacity-90 hover:bg-primary active:text-emerald-green active:bg-lighter-primary">
-                                        Following
-                                    </button>
+                                    <HomeCommuButton location={location} routeChange={routeChange}/>
                                 </div>
                                 <div className="my-5">
                                     <h1 className="font-poppins font-medium text-base text-white text-opacity-90 mt-[1.25rem] px-[1.2rem]">
