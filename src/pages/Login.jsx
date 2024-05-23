@@ -15,7 +15,7 @@ export default function Login() {
         axios
         .post("/api/login", data)
         .then((response) => {
-            navigate('/');
+            navigate('/home');
             console.log(response);
         })
         .catch((error) => {
@@ -38,7 +38,7 @@ export default function Login() {
     return (
         <div className="bg-darkest-black h-full w-full min-h-[100vh] grid grid-rows-4 xl:grid-cols-2 xl:grid-rows-1 gap-0">
             <section className="bg-emerald-green row-span-1 xl:col-span-1 bottom-0 top-0 left-0 right-0 h-auto xl:rounded-bl-[90px] xl:rounded-tl-[90px] xl:ml-[4rem] xl:my-[3.8rem]">
-                <a href="/" className="xl:mt-20 xl:ml-20 mt-8 ml-8 absolute">
+                <a href="/home" className="xl:mt-20 xl:ml-20 mt-8 ml-8 absolute">
                     <img src="../assets/images/black-vfans.png" alt="vfans" className="xl:h-[3.5rem] h-[2.5rem]"/>
                 </a>
                 <div className="flex flex-col text-center text-nowrap w-auto h-full justify-center mx-[20%]">

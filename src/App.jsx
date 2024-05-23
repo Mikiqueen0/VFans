@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
@@ -11,7 +11,8 @@ import Save from "./pages/Save";
 const App = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Navigate to="/home" />} />
+      <Route path="/home" element={<Home />} />
       <Route path="/joinedCommunities" element={<JoinedCommunities />} />
       <Route path="/like" element={<Like />} />
       <Route path="/save" element={<Save />} />
