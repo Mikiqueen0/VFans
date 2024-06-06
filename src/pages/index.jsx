@@ -7,6 +7,8 @@ import Save from "./Save";
 import Community from "./Community";
 import AllCommunity from "./AllCommunity";
 import CreateCommunity from "./CreateCommunity";
+import Profile from "./Profile";
+import JoinedCommunity from "./JoinedCommunity";
 
 export { 
     SignUp, 
@@ -17,5 +19,7 @@ export {
     Save,
     Community,
     AllCommunity,
-    CreateCommunity
+    CreateCommunity,
+    Profile,
+    JoinedCommunity
 }

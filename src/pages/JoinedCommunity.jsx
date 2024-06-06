@@ -1,17 +1,23 @@
 import { useEffect, useState, useRef, useContext } from 'react';
-import { NavBar, LeftSideBar, RightSideBar } from '../components/index';
+import { NavBar, LeftSideBar, RightSideBar, CreatePostPopup } from '../components/index';
 import { StatusContext } from '../context/StatusContext';
+import { useParams } from 'react-router-dom';
 
-export default function Community() {
+export default function JoinedCommunity() {
     const username = "Mikiqueen";
     const { hamburger, setHamburger } = useContext(StatusContext);
     const hamburgerPopupRef = useRef(null);
+    const { profileUsername } = useParams();
 
     useEffect(() => {
         document.body.style.overflow = hamburger ? "hidden" : "auto";
         document.body.style.paddingRight = hamburger ? "15px" : "0";
         
     }, [hamburger]);
+
+    // useEffect(() => {
+    //     console.log(profileUsername);
+    // });
 
 
     return (
@@ -20,9 +26,9 @@ export default function Community() {
             <div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem] pb-[1.25rem] z-40">
                 <LeftSideBar name="large" />
                 {/* middle section */}
-                <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[4rem] w-[800px] text-white">
+                <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[4rem] w-[800px]">
                     <div className="flex justify-between items-center py-[1rem] max-md:px-[1.5rem] px-[1rem] text-white">
-                        hey
+                        Joined Community of {profileUsername}
                     </div>
                 </section>
                 <RightSideBar />

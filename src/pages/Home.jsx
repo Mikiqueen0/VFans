@@ -1,9 +1,11 @@
 import { useEffect, useState, useRef, useContext } from 'react';
+import { useNavigate } from 'react-router-dom'
 import { NavBar, LeftSideBar, RightSideBar, Post, CreatePostPopup } from '../components/index';
 import { StatusContext } from '../context/StatusContext';
 import topIcon from '../assets/images/top.png'; 
 import newIcon from '../assets/images/new.png'; 
 import profileTestIcon from '../assets/images/test-profile.jpg';
+
 
 export default function Home() {
     const username = "Mikiqueen";

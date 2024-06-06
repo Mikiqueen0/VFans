@@ -133,10 +133,10 @@ export default function CreatePostPopup({ handleSubmitPost, setPopup }) {
             <div className="bg-primary rounded-[10px] flex flex-col max-md:w-full w-[700px]" ref={createPostPopupRef}>
                 <div className="grid grid-cols-[1/3_1/3_1/3] items-center px-6 py-4 border-b border-white border-opacity-10">
                     <p className="col-start-2 text-white text-opacity-90 flex justify-center">Create Post</p>
-                    <button type="button" onClick={() => setPopup(false)} className="col-start-3 flex justify-end">
+                    <div className="col-start-3 flex justify-end">
                         {/* <img src="./assets/images/cross.png" alt="cross" className="w-5 h-5" /> */}
-                        <XMarkIcon className="size-8 text-white" />
-                    </button>
+                        <XMarkIcon className="size-8 text-white hover:cursor-pointer" onClick={() => setPopup(false)} />
+                    </div>
                 </div>
                 <div className="mx-6 mt-2">
                     <div className="mb-4 grid grid-cols-[5rem_5rem]">

@@ -1,4 +1,5 @@
 import { useRef, useEffect, Fragment } from "react";
+import { useNavigate } from "react-router-dom";
 import { Menu, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import logo from '../assets/images/white-vfans.png';
@@ -11,6 +12,7 @@ import logoutIcon from '../assets/images/logout.png';
 
 
 export default function NavBar({ setHamburger, hamburger, hamburgerPopupRef, username }) {
+    const navigate = useNavigate();
     const hamburgerButtonRef = useRef(null);
     const genericHamburgerLine = `h-[0.14rem] w-8 my-1 rounded-full bg-white transition ease transform duration-300`;
     function classNames(...classes) {
@@ -68,9 +70,9 @@ export default function NavBar({ setHamburger, hamburger, hamburgerPopupRef, use
             <div className="flex flex-row-reverse mr-[5rem] max-xl:mr-[1.5rem]">
                 <div className="flex flex-row items-center justify-end">
                     <img src={profileTestIcon} alt="profile" className="rounded-full h-[2.5rem] max-lg:hidden" />
-                    <p id="username" className="font-medium text-opacity-90 text-[14px] text-white ml-2 flex-1 max-sm:hidden">
+                    <div id="username" className="font-medium text-opacity-90 text-[14px] text-white ml-2 flex-1 max-sm:hidden hover:underline hover:cursor-pointer" onClick={() => navigate(`/profile/${username}`)}>
                         {username}
-                    </p>
+                    </div>
                     <Menu as="div" className="relative inline-block text-left">
                         <div className="flex justify-center ml-2">
                             <Menu.Button className="w-8 h-8 inline-flex">

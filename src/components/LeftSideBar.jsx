@@ -1,13 +1,14 @@
 import React from "react";
 import { PageButton } from "./index";
 import { useState, useContext } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
 import { StatusContext } from "../context/StatusContext";
 
+
 export default function LeftSideBar({ name }) {
     const { sidebarCommunity, setSidebarCommunity } = useContext(StatusContext);
-    // const [showCommunityList, setShowCommunityList] = useState(false);
+    const navigate = useNavigate();
     const [communityList, setCommunityList] = useState([
         {
             communityId: 1,
@@ -73,19 +74,27 @@ export default function LeftSideBar({ name }) {
                 {/* show community list here */}
                 <div className="text-white w-full">
                     <div className="flex justify-between mt-[1.25rem] px-[1.2rem] my-2">
-                        <Link to={`/community`} className="font-poppins font-medium text-base text-white text-opacity-90 hover:underline">
+                        <p onClick={() => navigate('/community')} className="font-poppins font-medium text-base text-white text-opacity-90 hover:underline hover:cursor-pointer">
                             Community
-                        </Link>
+                        </p>
                         {sidebarCommunity ? 
-                            <ChevronUpIcon className="h-5 text-white hover:cursor-pointer" onClick={() => setSidebarCommunity(!sidebarCommunity)} /> 
-                            : <ChevronDownIcon className="h-5 text-white hover:cursor-pointer" onClick={() => setSidebarCommunity(!sidebarCommunity)} />}
+                            <div className="flex-grow hover:cursor-pointer" onClick={() => setSidebarCommunity(!sidebarCommunity)} >
+                                <ChevronUpIcon className="h-5 text-white ml-auto"/> 
+                            </div>
+                            : 
+                            <div className="flex-grow hover:cursor-pointer " onClick={() => setSidebarCommunity(!sidebarCommunity)} >
+                                <ChevronDownIcon className="h-5 text-white ml-auto"/>
+                            </div>
+                        }
                     </div>
                     {sidebarCommunity && <div className="w-full">
                         {communityList.map((community, key) => {
                             return (
-                                <div key={key} className="w-full h-[3.2rem] px-[1.2rem] text-white text-[13px] flex items-center justify-center gap-2">
+                                <div key={key} onClick={() => navigate(`/community/${community.communityName}`, { state: { communityId: community.communityId } })} className="w-full h-[3.2rem] px-[1.2rem] text-white text-[13px] flex items-center justify-start gap-2 hover:underline hover:cursor-pointer">
                                     <img src="" alt="" className="rounded-full size-6 bg-emerald-green" />
-                                    <Link to={`/community/${community.communityId}?showCommunityList=${sidebarCommunity}`} className="hover:underline">{community.communityName}</Link>
+                                    {/* <p onClick={() => navigate.push(`/community/${community.communityId}?showCommunityList=${sidebarCommunity}`)} className="hover:underline">{community.communityName}</p> */}
+                                    {/* <p onClick={() => navigate(`/community/${community.communityName}`, { state: { communityId: community.communityId } })} className="hover:underline hover:cursor-pointer">{community.communityName}</p> */}
+                                    <p>{community.communityName}</p>
                                 </div>
                             );
                         })}

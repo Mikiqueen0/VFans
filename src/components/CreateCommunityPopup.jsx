@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import { XMarkIcon } from "@heroicons/react/20/solid";
 
 export default function CreateCommunityPopup({ handleCreate, setPopup }) {
     const createPostPopupRef = useRef(null);
@@ -39,7 +40,8 @@ export default function CreateCommunityPopup({ handleCreate, setPopup }) {
                 <div className="grid grid-cols-[1/3_1/3_1/3] items-center px-6 py-4 border-b border-white border-opacity-10">
                     <p className="col-start-2 text-white text-opacity-90 flex justify-center">Create Community</p>
                     <div className="col-start-3 flex justify-end">
-                        <img src="./assets/images/cross.png" alt="cross" onClick={() => setPopup(false)} className="w-5 h-5 hover:cursor-pointer" />
+                        {/* <img src="./assets/images/cross.png" alt="cross" onClick={() => setPopup(false)} className="w-5 h-5 hover:cursor-pointer" /> */}
+                        <XMarkIcon className="size-8 text-white hover:cursor-pointer" onClick={() => setPopup(false)} />
                     </div>
                 </div>
                 <div className="mx-6 mt-2 text-white">
