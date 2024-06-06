@@ -69,7 +69,7 @@ router.get("/:id", async (req, res) => {
 //get all post
 router.get("/", async (req, res) => {
   try {
-    const posts = await Post.find();
+    const posts = await Post.find().populate("userID");
     res.status(200).json(posts);
   } catch (err) {
     res.status(500).json(err);
