@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { NavBar, LeftSideBar, RightSideBar, Post, CreatePostPopup } from '../components/index';
+import { StatusContext } from '../context/StatusContext';
 
 export default function Home() {
     const username = "Mikiqueen";
@@ -10,7 +11,7 @@ export default function Home() {
         document.body.style.paddingRight = popup ? "15px" : "0";
     }, [popup]);
 
-    const [hamburgerIsOpen, setHamburgerIsOpen] = useState(false);
+    const { hamburger, setHamburger } = useContext(StatusContext);
     const hamburgerPopupRef = useRef(null);
 
     useEffect(() => {
@@ -31,13 +32,13 @@ export default function Home() {
 
     return (
         <div className="bg-dark-background scrollbar-thin">
-            <NavBar setHamburgerIsOpen={setHamburgerIsOpen} hamburgerIsOpen={hamburgerIsOpen} hamburgerPopupRef={hamburgerPopupRef} username={username} />
+            <NavBar setHamburger={setHamburger} hamburger={hamburger} hamburgerPopupRef={hamburgerPopupRef} username={username} />
             <div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem] pb-[1.25rem] z-40">
                 <LeftSideBar name="large" />
                 {/* middle section */}
                 <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[4rem] w-[800px]">
                     {/* filter */}
-                    <div className="box-border flex flex-row items-center bg-primary rounded-[10px] font-poppins font-medium px-4 py-2">
+                    <div className="box-border flex flex-row items-center bg-primary rounded-[10px] font-medium px-4 py-2">
                         <button className="mr-8 flex items-center gap-1 text-white font-normal text-base text-opacity-[78%] hover:text-opacity-90">
                             <img src="./assets/images/top.png" alt="top" className="h-[1.5rem]"/>
                             Top
@@ -51,7 +52,7 @@ export default function Home() {
                     <div className="bg-primary rounded-[10px] px-5 py-2">
                         <div className="flex items-center">
                             <img src="./assets/images/test-profile.jpg" alt="profile" className="rounded-full h-[2.5rem] max-lg:h-[2.5rem]"/>
-                            <textarea readOnly placeholder="Create Post" className="font-poppins font-normal text-white text-base text-opacity-90 bg-transparent focus:outline-none caret-[#8c8c8c] border-b border-white border-opacity-10 pt-4 ml-3 w-full h-[3.2rem] box-border resize-none overflow-hidden cursor-text" onClick={() => setPopup(true)}/>
+                            <textarea readOnly placeholder="Create Post" className="font-normal text-white text-base text-opacity-90 bg-transparent focus:outline-none caret-[#8c8c8c] border-b border-white border-opacity-10 pt-4 ml-3 w-full h-[3.2rem] box-border resize-none overflow-hidden cursor-text" onClick={() => setPopup(true)}/>
                         </div>
                     </div>
                     {/* display post */}
