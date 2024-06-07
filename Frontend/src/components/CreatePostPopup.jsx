@@ -8,7 +8,7 @@ import crossIcon from '../assets/images/tagCross.png';
 
 export default function CreatePostPopup({ setPopup, popup }) {
     const { communityName } = useParams();
-    const formattedCommunityName = communityName.replace(/_/g, ' ');
+    const formattedCommunityName = communityName?.replace(/_/g, ' ');
     const [communityDropdown, setCommunityDropdown] = useState(false); // community dropdown
     const [communitySelect, setCommunitySelect] = useState({}); // selected community
     const [communitySearch, setCommunitySearch] = useState(""); //search community field
