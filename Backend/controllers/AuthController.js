@@ -53,17 +53,3 @@ module.exports.Login = async (req, res, next) => {
     console.error(error);
   }
 };
-
-// Profile
-module.exports.Profile = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    res.status(200).json({ success: true, user });
-    next();
-  } catch (error) {
-    console.error(error);
-  }
-};
