@@ -2,6 +2,8 @@ import axios from "axios";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import logo from "../assets/images/black-vfans.png";
+import googleLogo from "../assets/images/google.png";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -11,7 +13,7 @@ export default function SignUp() {
     confirmPassword: "",
   });
 
-  const api = "http://localhost:3000/auth";
+  // const api = "http://localhost:3000/auth";
 
   // const callApi = async () => {
   //     const res = await axios.get("https://jsonplaceholder.typicode.com/todos")
@@ -70,7 +72,7 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(`${api}/signup`, formData, {
+      const { data } = await axios.post(`/auth/signup`, formData, {
         withCredentials: true,
       });
       const { success, message } = data;
@@ -96,19 +98,19 @@ export default function SignUp() {
       <section className="bg-emerald-green row-span-1 xl:col-span-1 bottom-0 top-0 left-0 right-0 h-auto xl:rounded-bl-[90px] xl:rounded-tl-[90px] xl:ml-[4rem] xl:my-[3.8rem]">
         <a href="/home" className="xl:mt-20 xl:ml-20 mt-8 ml-8 absolute">
           <img
-            src="../assets/images/black-vfans.png"
+            src={logo}
             alt="vfans"
             className="xl:h-[3.5rem] h-[2.5rem]"
           />
         </a>
-        <div className="flex flex-col text-center text-nowrap w-auto h-full justify-center mx-[20%]">
+        <div className="flex flex-col text-center w-auto h-full justify-center mx-[20%]">
           <h1 className="font-poppins font-semibold xl:text-[1.5rem] text-[1.25rem]">
             Welcome to
           </h1>
           <h1 className="font-poppins font-bold xl:text-[5rem] text-[3.25rem]">
             VFans
           </h1>
-          <h1 className="font-poppins font-medium xl:text-[1.25rem] text-[0.8rem]">
+          <h1 className="font-poppins font-medium xl:text-[1.25rem] text-[0.9rem]">
             Create an account to unlock the ability to post content and engage
             in conversations!
           </h1>
@@ -119,12 +121,12 @@ export default function SignUp() {
           <h1 className="font-poppins text-emerald-green font-bold text-[1.6rem]">
             Create an account
           </h1>
-          <p className="font-poppins text-emerald-green font-normal text-sm mt-[16px]">
+          <p className="font-poppins text-emerald-green font-medium text-sm mt-[16px]">
             Let’s Become a part of our community!
           </p>
           <button className="bg-white rounded-[10px] w-full h-[52px] flex items-center justify-between mt-8 px-4">
             <img
-              src="../assets/images/google.png"
+              src={googleLogo}
               alt="google"
               className="size-8"
             />
@@ -144,28 +146,28 @@ export default function SignUp() {
                 type="text"
                 name="username"
                 placeholder="Username"
-                className="font-poppinss text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"
+                className="font-poppinss text-sm font-normal placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"
                 onChange={handleChange}
               />
               <input
                 type="text"
                 name="email"
                 placeholder="Email"
-                className="font-poppinss text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"
+                className="font-poppinss text-sm font-normal placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"
                 onChange={handleChange}
               />
               <input
                 type="password"
                 name="password"
                 placeholder="Password"
-                className="font-poppinss text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"
+                className="font-poppinss text-sm font-normal placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"
                 onChange={handleChange}
               />
               <input
                 type="password"
                 name="confirmPassword"
                 placeholder="Confirm Password"
-                className="font-poppinss text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"
+                className="font-poppinss text-sm font-normal placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"
                 onChange={handleChange}
               />
             </div>
@@ -175,7 +177,7 @@ export default function SignUp() {
             >
               SIGN UP
             </button>
-            <p className="font-poppins font-light text-xs text-emerald-green mt-4 text-center">
+            <p className="font-poppins font-normal text-xs text-emerald-green mt-4 text-center">
               already have an account?
               <span className="text-white underline m-1">
                 <a href="/login">Login</a>

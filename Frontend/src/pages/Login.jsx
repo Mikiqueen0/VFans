@@ -2,6 +2,8 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import logo from "../assets/images/black-vfans.png";
+import googleLogo from "../assets/images/google.png";
 
 export default function Login() {
   const [formData, setFormdata] = useState({
@@ -11,7 +13,7 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  const api = "http://localhost:3000/auth";
+  // const api = "http://localhost:3000/auth";
 
   const handleError = (err) =>
     toast.error(err, {
@@ -25,7 +27,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(`${api}/login`, formData, {
+      const { data } = await axios.post(`auth/login`, formData, {
         withCredentials: true,
       });
       console.log(data);
@@ -52,7 +54,7 @@ export default function Login() {
       <section className="bg-emerald-green row-span-1 xl:col-span-1 bottom-0 top-0 left-0 right-0 h-auto xl:rounded-bl-[90px] xl:rounded-tl-[90px] xl:ml-[4rem] xl:my-[3.8rem]">
         <a href="/home" className="xl:mt-20 xl:ml-20 mt-8 ml-8 absolute">
           <img
-            src="../assets/images/black-vfans.png"
+            src={logo}
             alt="vfans"
             className="xl:h-[3.5rem] h-[2.5rem]"
           />
@@ -67,12 +69,12 @@ export default function Login() {
       <section className="bg-primary flex items-center justify-center row-span-3 xl:col-span-1 text-wrap bottom-0 top-0 left-0 right-0 px-[6rem] shadow-2xl shadow-primary p-10">
         <div className="w-full max-w-[550px]">
           <h1 className="text-emerald-green font-bold text-[1.6rem]">Login</h1>
-          <p className="text-emerald-green font-normal text-sm mt-[16px]">
+          <p className="text-emerald-green font-medium text-sm mt-[16px]">
             Welcome back! Please login to your account.
           </p>
           <button className="bg-white rounded-[10px] w-full h-[52px] flex items-center justify-between mt-8 px-4">
             <img
-              src="../assets/images/google.png"
+              src={googleLogo}
               alt="google"
               className="size-8"
             />
@@ -90,14 +92,14 @@ export default function Login() {
                 type="text"
                 name="username"
                 placeholder="Username"
-                className="text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"
+                className="text-sm font-normal placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"
                 onChange={handleChange}
               />
               <input
                 type="password"
                 name="password"
                 placeholder="Password"
-                className="text-sm font-extralight placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"
+                className="text-sm font-normal placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"
                 onChange={handleChange}
               />
             </div>
@@ -107,7 +109,7 @@ export default function Login() {
             >
               LOGIN
             </button>
-            <p className="font-light text-xs text-emerald-green mt-4 text-center">
+            <p className="font-normal text-xs text-emerald-green mt-4 text-center">
               new to VFans?
               <span className="text-white underline m-1">
                 <a href="/signup">Create an account</a>

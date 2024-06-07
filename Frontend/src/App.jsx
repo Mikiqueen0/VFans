@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { StatusContextProvider } from "./context/StatusContext";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthProvider } from "./context/AuthContext";
-
 import {
   SignUp,
   Login,
@@ -16,6 +15,10 @@ import {
   Profile,
   JoinedCommunity,
 } from "./pages/index";
+import axios from "axios";
+axios.defaults.baseURL = "http://localhost:3000";
+
+
 
 const App = () => (
   <StatusContextProvider>

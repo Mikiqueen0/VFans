@@ -23,7 +23,7 @@ export default function Home() {
   const hamburgerPopupRef = useRef(null);
   const { hamburger, setHamburger } = useContext(StatusContext);
   const navigate = useNavigate();
-  const api = "http://localhost:3000/auth";
+  // const api = "http://localhost:3000/auth";
 
   useEffect(() => {
     const verifyCookie = async () => {
@@ -31,7 +31,7 @@ export default function Home() {
         navigate("/login");
       }
       const { data } = await axios.post(
-        `${api}/verify`,
+        `/auth/verify`,
         {},
         { withCredentials: true }
       );
