@@ -1,240 +1,216 @@
 import { useRef, useState, useEffect } from "react";
 import { Carousel } from "@material-tailwind/react";
 import { useParams } from "react-router-dom";
-import { ChevronDownIcon, ChevronUpIcon ,PhotoIcon, MinusIcon, PlusIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import profileTestIcon from '../assets/images/test-profile.jpg';
-import crossIcon from '../assets/images/tagCross.png';
-
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  PhotoIcon,
+  MinusIcon,
+  PlusIcon,
+  XMarkIcon,
+} from "@heroicons/react/20/solid";
+import profileTestIcon from "../assets/images/test-profile.jpg";
+import crossIcon from "../assets/images/tagCross.png";
 
 export default function CreatePostPopup({ setPopup, popup }) {
-    const { communityName } = useParams();
-    const formattedCommunityName = communityName?.replace(/_/g, ' ');
-    const [communityDropdown, setCommunityDropdown] = useState(false); // community dropdown
-    const [communitySelect, setCommunitySelect] = useState({}); // selected community
-    const [communitySearch, setCommunitySearch] = useState(""); //search community field
-    const [createPostContent, setCreatePostContent] = useState(""); // create post content text field
-    const [createPostTag, setCreatePostTag] = useState([]); //tag list
-    const [tagVal, setTagVal] = useState(""); //tag in text field
-    const [tagCheckbox, setTagCheckbox] = useState(false); // tag dropdown
+  const { communityName } = useParams();
+  const formattedCommunityName = communityName?.replace(/_/g, " ");
+  const [communityDropdown, setCommunityDropdown] = useState(false); // community dropdown
+  const [communitySelect, setCommunitySelect] = useState({}); // selected community
+  const [communitySearch, setCommunitySearch] = useState(""); //search community field
+  const [createPostContent, setCreatePostContent] = useState(""); // create post content text field
+  const [createPostTag, setCreatePostTag] = useState([]); //tag list
+  const [tagVal, setTagVal] = useState(""); //tag in text field
+  const [tagCheckbox, setTagCheckbox] = useState(false); // tag dropdown
 
-    // fetch community function and auto set select community for user
-    // fetchedCommunity setCommunitySelect(fetchedCommunity)
+  // fetch community function and auto set select community for user
+  // fetchedCommunity setCommunitySelect(fetchedCommunity)
 
-    //tag user can choose
-    const [ tagData, setTagData] = useState([
-        "News",
-        "Debut",
-        "Meme",
-        "Image",
-        "Video",
-        "Fanart",
-        "Fanfiction",
-        "Discussion",
-        "Question",
-        "Poll",
-        "Announcement",
-        "Event",
-        "Guide",
-        "Review"
-    ]);
+  //tag user can choose
+  const [tagData, setTagData] = useState([
+    "News",
+    "Debut",
+    "Meme",
+    "Image",
+    "Video",
+    "Fanart",
+    "Fanfiction",
+    "Discussion",
+    "Question",
+    "Poll",
+    "Announcement",
+    "Event",
+    "Guide",
+    "Review",
+  ]);
 
-    useEffect(() => {
-        if(formattedCommunityName){
-            setCommunitySelect({
-                communityId: 99,
-                communityName: formattedCommunityName,
-                communityImage: ""
-            });
-        }
-    }, [popup]);
-
-    const createPostPopupRef = useRef(null);
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (createPostPopupRef.current && !createPostPopupRef.current.contains(e.target)) {
-                setPopup(false);
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        }
-    }, [createPostPopupRef]);
-
-    const addTag = (tag) => {
-        setCreatePostTag([ ...createPostTag, tag]);
+  useEffect(() => {
+    if (formattedCommunityName) {
+      setCommunitySelect({
+        communityId: 99,
+        communityName: formattedCommunityName,
+        communityImage: "",
+      });
     }
+  }, [popup]);
 
-    // prevent tag duplicate (but not working with upper/lower case)
-    const onEnterTag = (e) => {
-        let tagName = e.target.value;
-        let temp = [ ...createPostTag ];
-        let index = temp.indexOf(tagName);
-        if(index !== -1){
-            setTagVal("");
-        }else{
-            addTag(tagName);
-        }
-    }
-
-    const removeTag = (tag) => {
-        let temp = [ ...createPostTag ];
-        let index = temp.indexOf(tag);
-        if (index !== -1) {
-            temp.splice(index, 1);
-            setCreatePostTag(temp);
-        }
-    }
-
-    const handleTagEnter = (e) => {
-        if(e.key === 'Enter'){
-            e.preventDefault();
-            onEnterTag(e);
-            setTagVal("");
-        }
-    }
-
-    const [toggleTabState, setToggleTabState] = useState(1);
-    const toggleTab = (tab) => {
-        setToggleTabState(tab);
-    }
-
-    const dragEnter = (e) => {
-        e.preventDefault();
-    }
-    const dragOver = (e) => {
-        e.preventDefault();
-    }
-    const dragLeave = (e) => {
-        e.preventDefault();
-    }
-    const drop = (e) => {
-        console.log("Drop");
-        e.preventDefault();
-    
-        const files = e.dataTransfer.files;
-        handleFileSelect(files);
-    }
-
-    const [imageFile, setImageFile] = useState([]);
-    const handleFileSelect = (e) => {
-        const fileList = Array.from(e);
-        // Create an array to hold promises for each file read operation
-        const promises = fileList.map(file => readFileAsDataURL(file));
-        // Execute all promises concurrently
-        Promise.all(promises)
-            .then(results => {
-                // Update state with the results of all file reads
-                setImageFile(prevImageFile => [...prevImageFile, ...results]);
-            })
-            .catch(error => {
-                console.error('Error reading files:', error);
-            });
-    }
-    // Function to read a file as a Data URL using a FileReader
-    const readFileAsDataURL = (file) => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                // Resolve the promise with the result of the file read
-                resolve(e.target.result);
-            }
-            reader.onerror = (error) => {
-                // Reject the promise if an error occurs
-                reject(error);
-            }
-            reader.readAsDataURL(file); // Read the file as a Data URL
-        });
-    }
-
-    useEffect(() =>  {
-        if(!popup){
-            setCreatePostContent("");
-            setCreatePostTag([]);
-            setTagVal("");
-            setImageFile([]);
-            setToggleTabState(1);
-            setCommunityDropdown(false);
-            setCommunitySelect({});
-            setCommunitySearch("");
-        }
-    }, [popup]);
-
-    const [communityList, setCommunityList] = useState([
-        {
-            communityId: 1,
-            communityName: "Community 1",
-            communityImage: ""
-        },
-        {
-            communityId: 2,
-            communityName: "Community 2",
-            communityImage: ""
-        },
-        {
-            communityId: 3,
-            communityName: "Community 3",
-            communityImage: ""
-        },
-        {
-            communityId: 4,
-            communityName: "Community 4",
-            communityImage: ""
-        },
-        {
-            communityId: 5,
-            communityName: "Community 5",
-            communityImage: ""
-        },
-        {
-            communityId: 6,
-            communityName: "Community 6",
-            communityImage: ""
-        },
-        {
-            communityId: 7,
-            communityName: "Community 7",
-            communityImage: ""
-        },
-        {
-            communityId: 8,
-            communityName: "Community 8",
-            communityImage: ""
-        },
-        {
-            communityId: 9,
-            communityName: "Community 9",
-            communityImage: ""
-        },
-        {
-            communityId: 10,
-            communityName: "Community 10",
-            communityImage: ""
-        }
-    ]);
-
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-        }
-    };
-
-    const handleCommunitySearch = (e) => {
-        if (e.key === 'Enter') {
-            console.log(communitySearch);
-        }
-    };
-
-    // When submit Post
-    const handleSubmitPost = (e) => {
-        e.preventDefault();
-        console.log("Community Select: " + communitySelect.communityName);
-        console.log("Post Content: " + createPostContent);
-        console.log("Post Tag: " + createPostTag);
-        console.log("Post Image: " + imageFile);
-        console.log("Post time: " + new Date().toLocaleString());
+  const createPostPopupRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        createPostPopupRef.current &&
+        !createPostPopupRef.current.contains(e.target)
+      ) {
         setPopup(false);
+      }
     };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [createPostPopupRef]);
+
+  const addTag = (tag) => {
+    setCreatePostTag([...createPostTag, tag]);
+  };
+
+  // prevent tag duplicate (but not working with upper/lower case)
+  const onEnterTag = (e) => {
+    let tagName = e.target.value;
+    let temp = [...createPostTag];
+    let index = temp.indexOf(tagName);
+    if (index !== -1) {
+      setTagVal("");
+    } else {
+      addTag(tagName);
+    }
+  };
+
+  const removeTag = (tag) => {
+    let temp = [...createPostTag];
+    let index = temp.indexOf(tag);
+    if (index !== -1) {
+      temp.splice(index, 1);
+      setCreatePostTag(temp);
+    }
+  };
+
+  const handleTagEnter = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      onEnterTag(e);
+      setTagVal("");
+    }
+  };
+
+  const [toggleTabState, setToggleTabState] = useState(1);
+  const toggleTab = (tab) => {
+    setToggleTabState(tab);
+  };
+
+  const dragEnter = (e) => {
+    e.preventDefault();
+  };
+  const dragOver = (e) => {
+    e.preventDefault();
+  };
+  const dragLeave = (e) => {
+    e.preventDefault();
+  };
+  const drop = (e) => {
+    console.log("Drop");
+    e.preventDefault();
+
+  useEffect(() => {
+    if (!popup) {
+      setCreatePostContent("");
+      setCreatePostTag([]);
+      setTagVal("");
+      setImageFile([]);
+      setToggleTabState(1);
+      setCommunityDropdown(false);
+      setCommunitySelect({});
+      setCommunitySearch("");
+    }
+  }, [popup]);
+
+  const [communityList, setCommunityList] = useState([
+    {
+      communityId: 1,
+      communityName: "Community 1",
+      communityImage: "",
+    },
+    {
+      communityId: 2,
+      communityName: "Community 2",
+      communityImage: "",
+    },
+    {
+      communityId: 3,
+      communityName: "Community 3",
+      communityImage: "",
+    },
+    {
+      communityId: 4,
+      communityName: "Community 4",
+      communityImage: "",
+    },
+    {
+      communityId: 5,
+      communityName: "Community 5",
+      communityImage: "",
+    },
+    {
+      communityId: 6,
+      communityName: "Community 6",
+      communityImage: "",
+    },
+    {
+      communityId: 7,
+      communityName: "Community 7",
+      communityImage: "",
+    },
+    {
+      communityId: 8,
+      communityName: "Community 8",
+      communityImage: "",
+    },
+    {
+      communityId: 9,
+      communityName: "Community 9",
+      communityImage: "",
+    },
+    {
+      communityId: 10,
+      communityName: "Community 10",
+      communityImage: "",
+    },
+  ]);
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
+
+  const handleCommunitySearch = (e) => {
+    if (e.key === "Enter") {
+      console.log(communitySearch);
+    }
+  };
+
+  // When submit Post
+  const handleSubmitPost = (e) => {
+    e.preventDefault();
+    console.log("Community Select: " + communitySelect.communityName);
+    console.log("Post Content: " + createPostContent);
+    console.log("Post Tag: " + createPostTag);
+    console.log("Post Image: " + imageFile);
+    console.log("Post time: " + new Date().toLocaleString());
+    setPopup(false);
+  };
+
+  const [imageFile, setImageFile] = useState([]);
 
     return ( 
         <form onSubmit={handleSubmitPost} onKeyDown={handleKeyPress} className={`fixed overflow-y-scroll inset-0 h-full flex flex-col justify-center items-center max-lg:px-[2rem] px-[10rem] xl:px-[4rem] z-50 overflow-x-hidden duration-[200ms] ${popup ? "scale-100 opacity-100": "scale-0 opacity-0"}`}>

@@ -2,6 +2,7 @@ const User = require("../models/user");
 const { createSecretToken } = require("../util/SecretToken");
 const bcrypt = require("bcryptjs");
 
+// Signup
 module.exports.Signup = async (req, res, next) => {
   try {
     const { email, password, username } = req.body;
@@ -24,6 +25,7 @@ module.exports.Signup = async (req, res, next) => {
   }
 };
 
+// Login
 module.exports.Login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
@@ -46,6 +48,20 @@ module.exports.Login = async (req, res, next) => {
     res
       .status(201)
       .json({ message: "User logged in successfully", success: true });
+    next();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// Profile
+module.exports.Profile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ success: true, user });
     next();
   } catch (error) {
     console.error(error);
