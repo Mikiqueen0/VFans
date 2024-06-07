@@ -1,5 +1,5 @@
 import { useRef, useEffect, Fragment } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import logo from "../assets/images/white-vfans.png";
@@ -79,9 +79,9 @@ export default function NavBar({
             }`}
           />
         </button>
-        <a href="/home">
+        <Link to={`/home`}>
           <img src={logo} alt="vfans" className="h-[1.8rem]" />
-        </a>
+        </Link>
       </div>
       <div className="bg-white h-[2.8rem] rounded-[20px] flex items-center p-2">
         <img
@@ -141,8 +141,8 @@ export default function NavBar({
                 <div className="py-1">
                   <Menu.Item>
                     {({ active }) => (
-                      <a
-                        href="#"
+                      <Link
+                        to={`/profile/${username}`}
                         className={classNames(
                           active
                             ? "bg-dark-background text-opacity-90"
@@ -156,13 +156,13 @@ export default function NavBar({
                           className="inline-flex h-5 mr-2"
                         />
                         Profile
-                      </a>
+                      </Link>
                     )}
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
-                      <a
-                        href="#"
+                      <Link
+                        to={`#`}
                         className={classNames(
                           active
                             ? "bg-dark-background text-opacity-90"
@@ -176,13 +176,13 @@ export default function NavBar({
                           className="inline-flex h-5 mr-2"
                         />
                         Setting
-                      </a>
+                      </Link>
                     )}
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
-                      <a
-                        href="/login"
+                      <Link
+                        to={`/login`}
                         className={classNames(
                           active
                             ? "bg-dark-background text-opacity-90"
@@ -196,13 +196,13 @@ export default function NavBar({
                           className="inline-flex h-5 mr-2"
                         />
                         Login
-                      </a>
+                      </Link>
                     )}
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
-                      <a
-                        href="/signup"
+                      <Link
+                        to={`/signup`}
                         className={classNames(
                           active
                             ? "bg-dark-background text-opacity-90"
@@ -216,7 +216,47 @@ export default function NavBar({
                           className="inline-flex h-5 mr-2"
                         />
                         Sign up
-                      </a>
+                      </Link>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        to={`/save`}
+                        className={classNames(
+                          active
+                            ? "bg-dark-background text-opacity-90"
+                            : "text-opacity-[78%]",
+                          "block px-4 py-2 text-sm text-white"
+                        )}
+                      >
+                        <img
+                          src=""
+                          alt="save"
+                          className="inline-flex h-5 mr-2"
+                        />
+                        Save
+                      </Link>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        to={`like`}
+                        className={classNames(
+                          active
+                            ? "bg-dark-background text-opacity-90"
+                            : "text-opacity-[78%]",
+                          "block px-4 py-2 text-sm text-white"
+                        )}
+                      >
+                        <img
+                          src=""
+                          alt="like"
+                          className="inline-flex h-5 mr-2"
+                        />
+                        Like
+                      </Link>
                     )}
                   </Menu.Item>
                   <form method="POST" action="#">

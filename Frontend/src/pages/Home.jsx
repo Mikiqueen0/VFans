@@ -56,16 +56,6 @@ export default function Home() {
     document.body.style.paddingRight = hamburger ? "15px" : "0";
   }, [hamburger]);
 
-  // When submit Post
-  const handleSubmitPost = (e) => {
-    e.preventDefault();
-    console.log("Post Content: " + createPostContent);
-    console.log("Post Tag: " + createPostTag);
-    console.log("Post Image: " + imageFile);
-    console.log("Post time: " + new Date().toLocaleString());
-    setPopup(false);
-  };
-
   return (
     <div className="bg-dark-background scrollbar-thin">
       <NavBar
@@ -107,16 +97,16 @@ export default function Home() {
           </div>
           {/* display post */}
           <Post username={username} />
+          <Post username={username} />
+          <Post username={username} />
         </section>
         <RightSideBar />
       </div>
       {/* popup when click create post */}
-      {popup && (
-        <CreatePostPopup
-          handleSubmitPost={handleSubmitPost}
-          setPopup={setPopup}
-        />
-      )}
+      <CreatePostPopup
+        setPopup={setPopup}
+        popup={popup}
+      />
       {hamburger && (
         <div className="fixed overflow-y-scroll inset-0 h-full backdrop-brightness-50 backdrop-blur-[1px] flex flex-col items-start z-40 xl:hidden">
           <div
@@ -131,4 +121,4 @@ export default function Home() {
       <ToastContainer />
     </div>
   );
-}
+  }

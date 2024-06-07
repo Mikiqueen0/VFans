@@ -30,9 +30,9 @@ export default function Profile() {
         
     }, [hamburger]);
 
-    useEffect(() => {
-        console.log(tab);
-    }, [tab]);
+    // useEffect(() => {
+    //     console.log(tab);
+    // }, [tab]);
 
     const handleFileUpload = (e) => {
         console.log(e.target.files[0]);
@@ -69,7 +69,7 @@ export default function Profile() {
             <div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem] pb-[1.25rem] z-40">
                 <LeftSideBar name="large" />
                 {/* middle section */}
-                <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[4rem] w-[800px] text-white">
+                <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[1rem] w-[800px] text-white">
                     {/* user info */}
                     <div className={`w-full h-[26rem] min-h-[26rem] rounded-[10px] flex flex-col justify-end relative`}>
                         <img
@@ -82,8 +82,8 @@ export default function Profile() {
                                 {profileUsername}
                             </p>
                         </div>
-                        <div className="relative w-full min-h-[34%] rounded-b-[10px] bg-primary flex flex-col">
-                            <div className="size-[8rem] rounded-full border-[0.4rem] border-primary absolute -top-[5.5rem] ml-[1.5rem] hover:cursor-pointer">
+                        <div className="relative w-full min-h-[25%] rounded-b-[10px] bg-primary flex flex-col justify-center px-6">
+                            <div className="size-[8rem] rounded-full border-[0.4rem] border-primary absolute -top-[5.5rem] hover:cursor-pointer">
                                 <img
                                     src={profileData.profileImage || profileDataCopy.profileImage || profileTestIcon}
                                     alt="profile"
@@ -99,7 +99,7 @@ export default function Profile() {
                                     onChange={(e) => handleFileUpload(e)}
                                     accept="image/jpeg, image/png, image/jpg"
                                 />
-                                <div className="size-8 bg-dark-background p-2 rounded-full ml-[7.2rem] mt-1 absolute cursor-pointer">
+                                <div className="size-8 bg-dark-background p-2 rounded-full ml-[5.7rem] mt-1 absolute cursor-pointer">
                                     <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24"
@@ -110,22 +110,22 @@ export default function Profile() {
                                     </svg>
                                 </div>
                             </label>
-                            <p className="ml-[10rem] mt-3 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/${profileUsername}/joinedCommunity`)}>
+                            <p className="ml-[8.5rem] mt-3 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/${profileUsername}/joinedCommunity`)}>
                                 <span className="font-semibold opacity-100 mr-1">279</span>
                                 <span className="font-normal opacity-80 tracking-wide group-hover:underline">Communities joined</span>
                             </p>
-                            <div className="ml-[1.5rem] mr-[2.5rem] mt-4 flex-grow flex items-center justify-between gap-2">
+                            <div className="mx-[1rem] mt-5 flex-grow flex flex-col gap-1">
                                 {editDescription ? 
                                     // <textarea value={profileDataCopy.userDescription} placeHolder="Description..."></textarea>
                                     <div className="flex flex-col w-full">
-                                        <textarea type="text" className="bg-dark-background p-3 font-light text-white text-[14px] text-opacity-90 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="3" placeholder="Description..." onChange={e => handleDescriptionChange(e)} value={profileDataCopy.userDescription}></textarea>
+                                        <textarea type="text" className="bg-dark-background p-3 font-light text-white text-[14px] text-opacity-90 focus:outline-none caret-[#8c8c8c] h-[5.5rem] resize-none overscroll-none w-full rounded-[10px]" placeholder="Description..." onChange={e => handleDescriptionChange(e)} value={profileDataCopy.userDescription}></textarea>
                                         <p className="text-end font-light opacity-70 text-[13px] mt-1">{profileDataCopy.userDescription.length}/{maxProfileDescription}</p>
                                     </div>
                                     : <p className="font-normal opacity-80 tracking-wide text-[13px]">
                                         {profileData.userDescription || profileDataCopy.userDescription || "No description yet"}
                                     </p>
                                 }
-                                {!editDescription && <p className="text-emerald-green underline text-[14px] text-end cursor-pointer" onClick={() => {setEditDescription(true); setChangeProfile(true);}}>edit</p>}
+                                {!editDescription && <p className="text-emerald-green underline text-[14px] text-end cursor-pointer" onClick={() => {setEditDescription(true); setChangeProfile(true);}}>Edit description</p>}
                             </div>
                             {changeProfile && 
                                 <div className="flex gap-2 mt-3 justify-end px-[1.5rem]">
@@ -141,7 +141,7 @@ export default function Profile() {
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col gap-3 max-md:px-[1.5rem] px-[1rem] text-white">
+                    <div className="flex flex-col gap-3 max-md:px-[1.5rem] px-[4rem] text-white">
                         <Post username={profileUsername}/>
                         <Post username={profileUsername}/>
                     </div>

@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import { NavBar, LeftSideBar, RightSideBar, CreateCommunityPopup } from '../components/index';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { StatusContext } from '../context/StatusContext';
 
 export default function AllCommunity() {
+    const navigate = useNavigate();
     const username = "Mikiqueen";
     const { hamburger, setHamburger } = useContext(StatusContext);
     const hamburgerPopupRef = useRef(null);
@@ -97,10 +98,13 @@ export default function AllCommunity() {
                     <div className="grid grid-cols-3 max-md:grid-cols-2 max-md:px-6 justify-items-center gap-4">
                         {communityList.map((community, key) => {
                             return (
-                                <Link to={`/community/${community.communityId}`} key={key} className="w-[12rem] h-[3.2rem] px-[1.2rem] text-white text-[14px] text-opacity-90 font-normal flex items-center justify-center gap-2 bg-primary rounded-[8px] hover:cursor-pointer py-7">
+                                <div onClick={() => {
+                                    const formattedCommunityName = community.communityName.replace(/\s+/g, '_'); // Replace spaces with underscores
+                                    navigate(`/community/${encodeURIComponent(formattedCommunityName)}`, { state: { communityId: community.communityId } });
+                                    }} key={key} className="w-[12rem] h-[3.2rem] px-[1.2rem] text-white text-[14px] text-opacity-90 font-normal flex items-center justify-center gap-2 bg-primary rounded-[8px] hover:cursor-pointer py-7">
                                     <img src="" alt="" className="rounded-full size-8 bg-emerald-green" />
                                     <p>{community.communityName}</p>
-                                </Link>
+                                </div>
                             );
                         })}
                     </div>

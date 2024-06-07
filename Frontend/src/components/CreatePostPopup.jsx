@@ -1,11 +1,25 @@
 import { useRef, useState, useEffect } from "react";
 import { Carousel } from "@material-tailwind/react";
+import { useParams } from "react-router-dom";
 import { ChevronDownIcon, ChevronUpIcon ,PhotoIcon, MinusIcon, PlusIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import profileTestIcon from '../assets/images/test-profile.jpg';
 import crossIcon from '../assets/images/tagCross.png';
 
 
-export default function CreatePostPopup({ handleSubmitPost, setPopup }) {
+export default function CreatePostPopup({ setPopup, popup }) {
+    const { communityName } = useParams();
+    const formattedCommunityName = communityName.replace(/_/g, ' ');
+    const [communityDropdown, setCommunityDropdown] = useState(false); // community dropdown
+    const [communitySelect, setCommunitySelect] = useState({}); // selected community
+    const [communitySearch, setCommunitySearch] = useState(""); //search community field
+    const [createPostContent, setCreatePostContent] = useState(""); // create post content text field
+    const [createPostTag, setCreatePostTag] = useState([]); //tag list
+    const [tagVal, setTagVal] = useState(""); //tag in text field
+    const [tagCheckbox, setTagCheckbox] = useState(false); // tag dropdown
+
+    // fetch community function and auto set select community for user
+    // fetchedCommunity setCommunitySelect(fetchedCommunity)
+
     //tag user can choose
     const [ tagData, setTagData] = useState([
         "News",
@@ -23,11 +37,16 @@ export default function CreatePostPopup({ handleSubmitPost, setPopup }) {
         "Guide",
         "Review"
     ]);
-    const [pathSelect, setPathSelect] = useState(null);
-    const [createPostContent, setCreatePostContent] = useState(""); // create post content text field
-    const [tagVal, setTagVal] = useState(""); //tag in text field
-    const [createPostTag, setCreatePostTag] = useState([]); //tag add already added in create post
-    const [tagCheckbox, setTagCheckbox] = useState(false);
+
+    useEffect(() => {
+        if(formattedCommunityName){
+            setCommunitySelect({
+                communityId: 99,
+                communityName: formattedCommunityName,
+                communityImage: ""
+            });
+        }
+    }, [popup]);
 
     const createPostPopupRef = useRef(null);
     useEffect(() => {
@@ -67,7 +86,7 @@ export default function CreatePostPopup({ handleSubmitPost, setPopup }) {
         }
     }
 
-    const handleKeyDown = (e) => {
+    const handleTagEnter = (e) => {
         if(e.key === 'Enter'){
             e.preventDefault();
             onEnterTag(e);
@@ -128,9 +147,99 @@ export default function CreatePostPopup({ handleSubmitPost, setPopup }) {
         });
     }
 
-    return (
-        <form onSubmit={handleSubmitPost} className="fixed overflow-y-scroll inset-0 h-full backdrop-brightness-50 backdrop-blur-[1px] flex flex-col justify-center items-center max-lg:px-[2rem] px-[10rem] xl:px-[4rem] z-50 overflow-x-hidden">
-            <div className="bg-primary rounded-[10px] flex flex-col max-md:w-full w-[700px]" ref={createPostPopupRef}>
+    useEffect(() =>  {
+        if(!popup){
+            setCreatePostContent("");
+            setCreatePostTag([]);
+            setTagVal("");
+            setImageFile([]);
+            setToggleTabState(1);
+            setCommunityDropdown(false);
+            setCommunitySelect({});
+            setCommunitySearch("");
+        }
+    }, [popup]);
+
+    const [communityList, setCommunityList] = useState([
+        {
+            communityId: 1,
+            communityName: "Community 1",
+            communityImage: ""
+        },
+        {
+            communityId: 2,
+            communityName: "Community 2",
+            communityImage: ""
+        },
+        {
+            communityId: 3,
+            communityName: "Community 3",
+            communityImage: ""
+        },
+        {
+            communityId: 4,
+            communityName: "Community 4",
+            communityImage: ""
+        },
+        {
+            communityId: 5,
+            communityName: "Community 5",
+            communityImage: ""
+        },
+        {
+            communityId: 6,
+            communityName: "Community 6",
+            communityImage: ""
+        },
+        {
+            communityId: 7,
+            communityName: "Community 7",
+            communityImage: ""
+        },
+        {
+            communityId: 8,
+            communityName: "Community 8",
+            communityImage: ""
+        },
+        {
+            communityId: 9,
+            communityName: "Community 9",
+            communityImage: ""
+        },
+        {
+            communityId: 10,
+            communityName: "Community 10",
+            communityImage: ""
+        }
+    ]);
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+        }
+    };
+
+    const handleCommunitySearch = (e) => {
+        if (e.key === 'Enter') {
+            console.log(communitySearch);
+        }
+    };
+
+    // When submit Post
+    const handleSubmitPost = (e) => {
+        e.preventDefault();
+        console.log("Community Select: " + communitySelect.communityName);
+        console.log("Post Content: " + createPostContent);
+        console.log("Post Tag: " + createPostTag);
+        console.log("Post Image: " + imageFile);
+        console.log("Post time: " + new Date().toLocaleString());
+        setPopup(false);
+    };
+
+    return ( 
+        <form onSubmit={handleSubmitPost} onKeyDown={handleKeyPress} className={`fixed overflow-y-scroll inset-0 h-full flex flex-col justify-center items-center max-lg:px-[2rem] px-[10rem] xl:px-[4rem] z-50 overflow-x-hidden duration-[200ms] ${popup ? "scale-100 opacity-100": "scale-0 opacity-0"}`}>
+            {/* <div className={`fixed inset-0 backdrop-brightness-50 backdrop-blur-[1px]`}></div> */}
+            <div className={`bg-primary rounded-[10px] flex flex-col max-md:w-full w-[700px] transform border-[2px] border-emerald-green`} ref={createPostPopupRef}>
                 <div className="grid grid-cols-[1/3_1/3_1/3] items-center px-6 py-4 border-b border-white border-opacity-10">
                     <p className="col-start-2 text-white text-opacity-90 flex justify-center">Create Post</p>
                     <div className="col-start-3 flex justify-end">
@@ -147,15 +256,35 @@ export default function CreatePostPopup({ handleSubmitPost, setPopup }) {
                         {toggleTabState === 1 && <div>
                             {/* select community before posting */}
                             <div className={`h-12 w-[50%] relative`}>
-                                <div value="Select Community" onClick={() => setPathSelect(!pathSelect)} className={`appearance-none bg-transparent font-light text-base text-white text-opacity-80 h-full w-full inline-flex items-center p-2 focus:outline-none border border-emerald-green border-opacity-70 ${pathSelect ? "rounded-b-[0px] rounded-t-[20px]" : "rounded-[20px]"}`}>
-                                    Select Community
-                                    <span>
-                                        <ChevronDownIcon className="h-8 text-white absolute right-3 top-0 bottom-0 my-auto pointer-events-none opacity-90" />
-                                    </span>
+                                <div value="Select Community" className={`appearance-none bg-transparent text-base text-white text-opacity-80 h-full w-full inline-flex items-center py-2 px-4 focus:outline-none border justify-between border-emerald-green border-opacity-70 ${communityDropdown ? "rounded-b-[0px] rounded-t-[20px]" : "rounded-[20px]"}`}>
+                                    {communityDropdown ? 
+                                        <input type="text" onChange={(e) => setCommunitySearch(e.target.value)} onKeyDown={handleCommunitySearch} value={communitySearch} className="bg-primary caret-[#8c8c8c] h-full w-full font-light focus:outline-none" placeholder="Search Community..."></input>
+                                        : 
+                                        <p className="flex items-center">
+                                            {communitySelect.communityName && (
+                                                <>
+                                                <img src={communitySelect.communityImage} alt="" className="bg-red-500 rounded-full size-6 mr-2" />
+                                                {communitySelect.communityName}
+                                                </>
+                                            )}
+                                            {!communitySelect.communityName && "Select Community"}
+                                        </p>
+                                        
+                                    }
+                                    <div onClick={() => setCommunityDropdown(!communityDropdown)} className="cursor-pointer">
+                                        <ChevronDownIcon className="h-8 text-white right-3 top-0 bottom-0 my-auto pointer-events-none opacity-90" />
+                                    </div>
                                 </div>
-                                {pathSelect && 
-                                    <div className="bg-dark-background absolute w-full border border-t-0 border-emerald-green p-2 overflow-y-scroll max-h-[200px]">
-                                        {}
+                                {communityDropdown && 
+                                    <div className="bg-dark-background absolute w-full border border-t-0 border-emerald-green overflow-y-scroll max-h-[200px]">
+                                        {communityList.map((community, index) => {
+                                            return (
+                                                <div key={index} className="flex items-center px-4 py-3 gap-3 group cursor-pointer hover:bg-darkest-black" onClick={() => {setCommunitySelect(community); setCommunityDropdown(false)}}>
+                                                    <img src="" alt="" className="rounded-full size-8 bg-emerald-green object-cover"/>
+                                                    <p className="text-white opacity-80 group-hover:text-emerald-green duration-100 flex-grow">{community.communityName}</p>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 }
                             </div>
@@ -179,7 +308,7 @@ export default function CreatePostPopup({ handleSubmitPost, setPopup }) {
                                                             <img src={crossIcon} alt="cross" className="h-3 opacity-80" />
                                                         </button>
                                                     </div>)}
-                                            <input type="text" placeholder="Add Tag..." className="block bg-transparent resize-none font-normal text-sm text-white placeholder-white text-opacity-80 placeholder-opacity-60 focus:outline-none caret-[#8c8c8c] h-full min-w-[4rem] flex-1" value={tagVal} onKeyDown={handleKeyDown} onChange={e => setTagVal(e.target.value)} />
+                                            <input type="text" placeholder="Add Tag..." className="block bg-transparent resize-none font-normal text-sm text-white placeholder-white text-opacity-80 placeholder-opacity-60 focus:outline-none caret-[#8c8c8c] h-full min-w-[4rem] flex-1" value={tagVal} onKeyDown={handleTagEnter} onChange={e => setTagVal(e.target.value)} />
                                         </div>
                                         <div className="bg-[#202020] h-auto rounded-[10px] max-h-[9rem] mt-1 flex flex-wrap gap-2 p-2 overflow-y-scroll">
                                             {tagData.map((tag, index) => 

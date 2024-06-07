@@ -5,6 +5,7 @@ import RightSideBar from './RightSideBar';
 import Post from './Post';
 import CreatePostPopup from './CreatePostPopup';
 import CreateCommunityPopup from './CreateCommunityPopup';
+import CommunitySideBar from './CommunitySideBar';
 
 export { 
     PageButton, 
@@ -13,5 +14,6 @@ export {
     RightSideBar, 
     Post, 
     CreatePostPopup,
-    CreateCommunityPopup
+    CreateCommunityPopup,
+    CommunitySideBar
 }
