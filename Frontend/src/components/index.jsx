@@ -6,6 +6,8 @@ import Post from './Post';
 import CreatePostPopup from './CreatePostPopup';
 import CreateCommunityPopup from './CreateCommunityPopup';
 import CommunitySideBar from './CommunitySideBar';
+import Filter from './Filter';
+import CommunitySetting from './CommunitySetting';
 
 export { 
     PageButton, 
@@ -15,5 +17,7 @@ export {
     Post, 
     CreatePostPopup,
     CreateCommunityPopup,
-    CommunitySideBar
+    CommunitySideBar,
+    Filter,
+    CommunitySetting
 }

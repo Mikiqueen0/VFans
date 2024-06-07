@@ -15,9 +15,9 @@ export default function Profile() {
     const [editDescription, setEditDescription] = useState(false);
     const hamburgerPopupRef = useRef(null);
     const [profileData, setProfileData] = useState({
-        profileBackground: "",
-        profileImage: "",
-        userDescription: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint aperiam neque minima autem et deserunt alias voluptates earum, ullam corporis temporibus repudiandae",
+        background: profileBackground,
+        image: profileTestIcon,
+        description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint aperiam neque minima autem et deserunt alias voluptates earum, ullam corporis temporibus repudiandae",
     });
 
     const [profileDataCopy, setProfileDataCopy] = useState(profileData);
@@ -34,22 +34,29 @@ export default function Profile() {
     //     console.log(tab);
     // }, [tab]);
 
-    const handleFileUpload = (e) => {
+    const handleProfileChange = (e) => {
         console.log(e.target.files[0]);
-        setProfileDataCopy({ ...profileDataCopy, profileImage: URL.createObjectURL(e.target.files[0])});
+        setProfileDataCopy({ ...profileDataCopy, image: URL.createObjectURL(e.target.files[0])});
         setChangeProfile(true);
+        e.target.value = null;
+    };
+
+    const handleBackgroundChange = (e) => {
+        console.log(e.target.files[0]);
+        setProfileDataCopy({ ...profileDataCopy, background: URL.createObjectURL(e.target.files[0])});
+        setChangeProfile(true);
+        e.target.value = null;
     };
 
     const handleDescriptionChange = (e) => {
         const value = e.target.value;
         if (value.length <= maxProfileDescription) {
-            setProfileDataCopy({ ...profileDataCopy, userDescription: value});
+            setProfileDataCopy({ ...profileDataCopy, description: value});
         }
     };
 
     const handleSave = (e) => {
         setProfileData(profileDataCopy);
-        console.log(profileDataCopy);
         setChangeProfile(false);
         setEditDescription(false);
         console.log("Saved");
@@ -72,11 +79,30 @@ export default function Profile() {
                 <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[1rem] w-[800px] text-white">
                     {/* user info */}
                     <div className={`w-full h-[26rem] min-h-[26rem] rounded-[10px] flex flex-col justify-end relative`}>
-                        <img
+                        {/* <img
                             src={profileBackground}
                             alt="Profile Background"
-                            className="absolute inset-0 w-full h-full object-cover pb-20 z-0 rounded-[10px]"
-                        />
+                            className="absolute inset-0 w-full h-[80%] object-cover pb-20 z-0 rounded-[10px]"
+                        /> */}
+                        <label htmlFor="background-input" className="absolute inset-0 w-full h-[85%] pb-20 cursor-pointer">
+                            <input
+                                id="background-input"
+                                type="file"
+                                className="hidden"
+                                onChange={handleBackgroundChange}
+                                accept="image/jpeg, image/png, image/jpg"
+                            />
+                            <div className="w-full h-full relative">
+                                <img
+                                    src={profileDataCopy.background} // Use a default image or the updated image
+                                    alt="background"
+                                    className="w-full h-full object-cover rounded-[10px]"
+                                />
+                                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-[10px]">
+                                    <PencilIcon className="w-8 h-8 text-white" />
+                                </div>
+                            </div>
+                        </label>
                         <div className="h-12 w-full backdrop-blur-sm flex items-center">
                             <p className="text-[26px] font-bold ml-[10rem] tracking-wide">
                                 {profileUsername}
@@ -85,7 +111,7 @@ export default function Profile() {
                         <div className="relative w-full min-h-[25%] rounded-b-[10px] bg-primary flex flex-col justify-center px-6">
                             <div className="size-[8rem] rounded-full border-[0.4rem] border-primary absolute -top-[5.5rem] hover:cursor-pointer">
                                 <img
-                                    src={profileData.profileImage || profileDataCopy.profileImage || profileTestIcon}
+                                    src={profileDataCopy.image}
                                     alt="profile"
                                     className="absolute inset-0 w-full h-full object-cover z-0 rounded-full"
                                 />
@@ -96,7 +122,7 @@ export default function Profile() {
                                     id="file-input"
                                     type="file"
                                     className="hidden"
-                                    onChange={(e) => handleFileUpload(e)}
+                                    onChange={handleProfileChange}
                                     accept="image/jpeg, image/png, image/jpg"
                                 />
                                 <div className="size-8 bg-dark-background p-2 rounded-full ml-[5.7rem] mt-1 absolute cursor-pointer">
@@ -118,11 +144,11 @@ export default function Profile() {
                                 {editDescription ? 
                                     // <textarea value={profileDataCopy.userDescription} placeHolder="Description..."></textarea>
                                     <div className="flex flex-col w-full">
-                                        <textarea type="text" className="bg-dark-background p-3 font-light text-white text-[14px] text-opacity-90 focus:outline-none caret-[#8c8c8c] h-[5.5rem] resize-none overscroll-none w-full rounded-[10px]" placeholder="Description..." onChange={e => handleDescriptionChange(e)} value={profileDataCopy.userDescription}></textarea>
-                                        <p className="text-end font-light opacity-70 text-[13px] mt-1">{profileDataCopy.userDescription.length}/{maxProfileDescription}</p>
+                                        <textarea type="text" className="bg-dark-background p-3 font-light text-white text-[14px] text-opacity-90 focus:outline-none caret-[#8c8c8c] h-[5.5rem] resize-none overscroll-none w-full rounded-[10px]" placeholder="Description..." onChange={e => handleDescriptionChange(e)} value={profileDataCopy.description}></textarea>
+                                        <p className="text-end font-light opacity-70 text-[13px] mt-1">{profileDataCopy.description.length}/{maxProfileDescription}</p>
                                     </div>
                                     : <p className="font-normal opacity-80 tracking-wide text-[13px]">
-                                        {profileData.userDescription || profileDataCopy.userDescription || "No description yet"}
+                                        {profileData.description || profileDataCopy.description || "No description yet"}
                                     </p>
                                 }
                                 {!editDescription && <p className="text-emerald-green underline text-[14px] text-end cursor-pointer" onClick={() => {setEditDescription(true); setChangeProfile(true);}}>Edit description</p>}

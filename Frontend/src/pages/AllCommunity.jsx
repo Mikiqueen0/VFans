@@ -73,16 +73,6 @@ export default function AllCommunity() {
         document.body.style.paddingRight = popup ? "15px" : "0";
     }, [popup]);
 
-    // When submit Post 
-    const handleCreate = (e) => {
-        e.preventDefault();
-        console.log("Post Content: " + createPostContent);
-        console.log("Post Tag: " + createPostTag);
-        console.log("Post Image: " + imageFile);
-        console.log("Post time: " + new Date().toLocaleString());
-        setPopup(false);
-    }
-
 
     return (
         <div className="bg-dark-background scrollbar-thin">
@@ -112,9 +102,11 @@ export default function AllCommunity() {
                 <RightSideBar />
             </div>
             {/* popup when click create community */}
-            { popup &&
-                <CreateCommunityPopup handleCreate={handleCreate} setPopup={setPopup} />
-            }
+            {popup && <div className={`fixed inset-0 backdrop-brightness-50 backdrop-blur-[1px] z-50`}></div>}
+            <CreateCommunityPopup 
+                setPopup={setPopup} 
+                popup={popup}
+            />
             {hamburger && 
                 <div className="fixed overflow-y-scroll inset-0 h-full backdrop-brightness-50 backdrop-blur-[1px] flex flex-col items-start z-40 xl:hidden">
                     <div className="bg-dark-background h-full w-[400px] flex flex-col mt-[5rem]" ref={hamburgerPopupRef}>

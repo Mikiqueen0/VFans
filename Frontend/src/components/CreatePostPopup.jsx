@@ -238,56 +238,51 @@ export default function CreatePostPopup({ setPopup, popup }) {
 
     return ( 
         <form onSubmit={handleSubmitPost} onKeyDown={handleKeyPress} className={`fixed overflow-y-scroll inset-0 h-full flex flex-col justify-center items-center max-lg:px-[2rem] px-[10rem] xl:px-[4rem] z-50 overflow-x-hidden duration-[200ms] ${popup ? "scale-100 opacity-100": "scale-0 opacity-0"}`}>
-            {/* <div className={`fixed inset-0 backdrop-brightness-50 backdrop-blur-[1px]`}></div> */}
-            <div className={`bg-primary rounded-[10px] flex flex-col max-md:w-full w-[700px] transform border-[2px] border-emerald-green`} ref={createPostPopupRef}>
-                <div className="grid grid-cols-[1/3_1/3_1/3] items-center px-6 py-4 border-b border-white border-opacity-10">
-                    <p className="col-start-2 text-white text-opacity-90 flex justify-center">Create Post</p>
-                    <div className="col-start-3 flex justify-end">
-                        {/* <img src="./assets/images/cross.png" alt="cross" className="w-5 h-5" /> */}
-                        <XMarkIcon className="size-8 text-white hover:cursor-pointer" onClick={() => setPopup(false)} />
-                    </div>
+            <div className={`bg-primary rounded-[10px] flex flex-col max-md:w-full w-[700px] transform`} ref={createPostPopupRef}>
+                <div className="flex items-center justify-end px-6 py-4 border-b border-white border-opacity-10">
+                    <p className="absolute left-1/2 transform -translate-x-1/2 text-white text-opacity-90 flex justify-center">Create Post</p>
+                    <XMarkIcon className="size-8 text-white hover:cursor-pointer" onClick={() => setPopup(false)} />
                 </div>
                 <div className="mx-6 mt-2">
+                    {/* select community before posting */}
+                    <div className={`h-12 w-[50%] relative my-2`}>
+                        <div value="Select Community" className={`appearance-none bg-transparent text-base text-white text-opacity-80 h-full w-full inline-flex items-center py-2 px-4 focus:outline-none border justify-between border-emerald-green border-opacity-70 ${communityDropdown ? "rounded-b-[0px] rounded-t-[20px]" : "rounded-[20px]"}`}>
+                            {communityDropdown ? 
+                                <input type="text" onChange={(e) => setCommunitySearch(e.target.value)} onKeyDown={handleCommunitySearch} value={communitySearch} className="bg-primary caret-[#8c8c8c] h-full w-full font-light focus:outline-none" placeholder="Search Community..."></input>
+                                : 
+                                <p className="flex items-center">
+                                    {communitySelect.communityName && (
+                                        <>
+                                        <img src={communitySelect.communityImage} alt="" className="bg-emerald-green rounded-full size-6 mr-2" />
+                                        {communitySelect.communityName}
+                                        </>
+                                    )}
+                                    {!communitySelect.communityName && "Select Community"}
+                                </p>
+                            }
+                            <div onClick={() => setCommunityDropdown(!communityDropdown)} className="cursor-pointer">
+                                <ChevronDownIcon className="h-8 text-white right-3 top-0 bottom-0 my-auto pointer-events-none opacity-90" />
+                            </div>
+                        </div>
+                        {communityDropdown && 
+                            <div className="bg-dark-background absolute w-full border border-t-0 border-emerald-green overflow-y-scroll max-h-[200px]">
+                                {communityList.map((community, index) => {
+                                    return (
+                                        <div key={index} className="flex items-center px-4 py-3 gap-3 group cursor-pointer hover:bg-darkest-black" onClick={() => {setCommunitySelect(community); setCommunityDropdown(false)}}>
+                                            <img src="" alt="" className="rounded-full size-8 bg-emerald-green object-cover"/>
+                                            <p className="text-white opacity-80 group-hover:text-emerald-green duration-100 flex-grow">{community.communityName}</p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        }
+                    </div>
                     <div className="mb-4 grid grid-cols-[5rem_5rem]">
                         <div onClick={() => toggleTab(1)} className={`p-2 px-4 text-opacity-80 cursor-pointer text-white text-center transition-colors duration-100 hover:bg-dark-background active:bg-darkest-black ${toggleTabState === 1 ? "bg-transparent border-b-[3px] border-emerald-green" : "border-transparent bg-transparent"}`}>Text</div>
                         <div onClick={() => toggleTab(2)} className={`p-2 px-4 text-opacity-80 cursor-pointer text-white text-center transition-colors duration-100 hover:bg-dark-background active:bg-darkest-black ${toggleTabState === 2 ? "bg-transparent border-b-[3px] border-emerald-green" : "border-transparent bg-transparent"}`}>Image</div>
                     </div>
                     <div className={`transition-all duration-[400ms] ${toggleTabState === 1 ? "opacity-100" : "opacity-0"}`}>
                         {toggleTabState === 1 && <div>
-                            {/* select community before posting */}
-                            <div className={`h-12 w-[50%] relative`}>
-                                <div value="Select Community" className={`appearance-none bg-transparent text-base text-white text-opacity-80 h-full w-full inline-flex items-center py-2 px-4 focus:outline-none border justify-between border-emerald-green border-opacity-70 ${communityDropdown ? "rounded-b-[0px] rounded-t-[20px]" : "rounded-[20px]"}`}>
-                                    {communityDropdown ? 
-                                        <input type="text" onChange={(e) => setCommunitySearch(e.target.value)} onKeyDown={handleCommunitySearch} value={communitySearch} className="bg-primary caret-[#8c8c8c] h-full w-full font-light focus:outline-none" placeholder="Search Community..."></input>
-                                        : 
-                                        <p className="flex items-center">
-                                            {communitySelect.communityName && (
-                                                <>
-                                                <img src={communitySelect.communityImage} alt="" className="bg-red-500 rounded-full size-6 mr-2" />
-                                                {communitySelect.communityName}
-                                                </>
-                                            )}
-                                            {!communitySelect.communityName && "Select Community"}
-                                        </p>
-                                        
-                                    }
-                                    <div onClick={() => setCommunityDropdown(!communityDropdown)} className="cursor-pointer">
-                                        <ChevronDownIcon className="h-8 text-white right-3 top-0 bottom-0 my-auto pointer-events-none opacity-90" />
-                                    </div>
-                                </div>
-                                {communityDropdown && 
-                                    <div className="bg-dark-background absolute w-full border border-t-0 border-emerald-green overflow-y-scroll max-h-[200px]">
-                                        {communityList.map((community, index) => {
-                                            return (
-                                                <div key={index} className="flex items-center px-4 py-3 gap-3 group cursor-pointer hover:bg-darkest-black" onClick={() => {setCommunitySelect(community); setCommunityDropdown(false)}}>
-                                                    <img src="" alt="" className="rounded-full size-8 bg-emerald-green object-cover"/>
-                                                    <p className="text-white opacity-80 group-hover:text-emerald-green duration-100 flex-grow">{community.communityName}</p>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                }
-                            </div>
                             <div className="mt-2 flex gap-2">
                                 <img src={profileTestIcon} alt="profile" className="rounded-full h-[2rem]" />
                                 <textarea className="bg-dark-background p-3 font-light text-white text-base text-opacity-80 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="5" placeholder="Write Something..." onChange={e => setCreatePostContent(e.target.value)} value={createPostContent} required></textarea>
