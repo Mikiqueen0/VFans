@@ -9,16 +9,19 @@ import profileIcon from "../assets/images/profile.png";
 import settingIcon from "../assets/images/setting.png";
 import logoutIcon from "../assets/images/logout.png";
 import useAuth from "../hooks/useAuth";
+import useUser from "../hooks/useUser";
 
 export default function NavBar({
   setHamburger,
   hamburger,
   hamburgerPopupRef,
   username,
+  profilepic,
 }) {
   const navigate = useNavigate();
   const hamburgerButtonRef = useRef(null);
   const genericHamburgerLine = `h-[0.14rem] w-8 my-1 rounded-full bg-white transition ease transform duration-300`;
+
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
@@ -49,6 +52,7 @@ export default function NavBar({
     };
   }, [hamburgerPopupRef, setHamburger]);
 
+  const { user } = useUser();
   const { logout } = useAuth();
 
   return (
@@ -107,16 +111,16 @@ export default function NavBar({
       <div className="flex flex-row-reverse mr-[5rem] max-xl:mr-[1.5rem]">
         <div className="flex flex-row items-center justify-end">
           <img
-            src={profileTestIcon}
+            src={user.profilePicture}
             alt="profile"
             className="rounded-full h-[2.5rem] max-lg:hidden"
           />
           <div
             id="username"
             className="font-medium text-opacity-90 text-[14px] text-white ml-2 flex-1 max-sm:hidden hover:underline hover:cursor-pointer"
-            onClick={() => navigate(`/profile/${username}`)}
+            onClick={() => navigate(`/profile/${user.user}`)}
           >
-            {username}
+            {user.user}
           </div>
           <Menu as="div" className="relative inline-block text-left">
             <div className="flex justify-center ml-2">
