@@ -3,23 +3,23 @@ import postTestImage from "../assets/images/postImage.png";
 import useUser from "../hooks/useUser";
 
 export default function Post({ username }) {
-  const { user } = useUser();
+  const { user, setUser } = useUser();
 
   return (
     <div className="bg-primary rounded-[10px] px-5 py-4">
       <div className="flex justify-between">
         <div className="flex flex-row flex-1 items-center gap-2">
           <img
-            src={user.profilePicture}
+            src={user.image}
             alt="profile"
-            className="rounded-full h-7"
+            className="rounded-full object-cover size-[1.75rem]"
           />
           <div className="flex flex-row gap-2 max-sm:flex-col max-sm:gap-0 ">
             <p className="font-normal text-[13px]  text-opacity-90 text-white">
               English/Hololive/Myth/Gawr_Gura
             </p>
             <p className="font-normal text-[12px] text-opacity-60 text-white">
-              Posted by {user.user} - 1 hour ago
+              Posted by {user.username} - 1 hour ago
             </p>
           </div>
         </div>

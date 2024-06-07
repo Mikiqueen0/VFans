@@ -2,10 +2,16 @@ import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useCookies } from "react-cookie";
+import dummyProfile from "../assets/images/dummyProfile.png";
+import dummyBackground from "../assets/images/profileBackground.png";
+
 const UserContext = createContext({});
 export function UserContextProvider({ children }) {
-  const [user, setUser, updateUser] = useState({
-    user: "johny",
+  const [user, setUser] = useState({
+    username: "johny",
+    image: dummyProfile,
+    background: dummyBackground,
+    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint aperiam neque minima autem et deserunt alias voluptates earum, ullam corporis temporibus repudiandae"
   });
   const [cookies, removeCookie] = useCookies([]);
 
@@ -57,7 +63,7 @@ export function UserContextProvider({ children }) {
   //     localStorage.removeItem("user");
   //   };
   return (
-    <UserContext.Provider value={{ user, setUser, updateUser }}>
+    <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   );

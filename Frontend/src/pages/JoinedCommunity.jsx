@@ -4,7 +4,6 @@ import { StatusContext } from '../context/StatusContext';
 import { useParams } from 'react-router-dom';
 
 export default function JoinedCommunity() {
-    const username = "Mikiqueen";
     const { hamburger, setHamburger } = useContext(StatusContext);
     const hamburgerPopupRef = useRef(null);
     const { profileUsername } = useParams();

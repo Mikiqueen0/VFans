@@ -9,35 +9,25 @@ import {
 	Filter
 } from "../components/index";
 import { StatusContext } from "../context/StatusContext";
-import profileTestIcon from "../assets/images/test-profile.jpg";
+import profileTestIcon from "../assets/images/dummyProfile.png";
 import { useCookies } from "react-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import useUser from "../hooks/useUser";
 
 export default function Home() {
-	const userData = {
-		status: "",
-		user: "",
-		profilePicture: "",
-	};
-	// const username = "Mikiqueen";
+	const { user, setUser } = useUser();
 	const [popup, setPopup] = useState(false); //popup create post in detail when click create post at home page
 	const [cookies, removeCookie] = useCookies([]);
-	const [userdata, setUserData] = useState(userData);
-	const [username, setUsername] = useState("");
 	const hamburgerPopupRef = useRef(null);
 	const { hamburger, setHamburger } = useContext(StatusContext);
 	const navigate = useNavigate();
 
-	const user = useUser();
-	// const api = "http://localhost:3000/auth";
-
 	useEffect(() => {
 		const verifyCookie = async () => {
-		if (!cookies.token) {
-			navigate("/login");
-		}
+			if (!cookies.token) {
+				navigate("/login");
+			}
 		};
 		verifyCookie();
 	}, [cookies, navigate, removeCookie]);
@@ -58,7 +48,6 @@ export default function Home() {
 			setHamburger={setHamburger}
 			hamburger={hamburger}
 			hamburgerPopupRef={hamburgerPopupRef}
-			username={username}
 		/>
 		<div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem] pb-[1.25rem] z-40">
 			<LeftSideBar name="large" />
@@ -70,9 +59,9 @@ export default function Home() {
 			<div className="bg-primary rounded-[10px] px-5 py-2">
 				<div className="flex items-center">
 				<img
-					src={user.profilePicture}
+					src={user.image}
 					alt="profile"
-					className="rounded-full h-[2.5rem] max-lg:h-[2.5rem]"
+					className="rounded-full object-cover h-[2.5rem] max-lg:h-[2.5rem]"
 				/>
 				<textarea
 					readOnly
@@ -83,9 +72,9 @@ export default function Home() {
 				</div>
 			</div>
 			{/* display post */}
-			<Post username={username} />
-			<Post username={username} />
-			<Post username={username} />
+			<Post username={user.username} />
+			<Post username={user.username} />
+			<Post username={user.username} />
 			</section>
 			<RightSideBar />
 		</div>

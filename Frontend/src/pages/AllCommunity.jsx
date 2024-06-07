@@ -5,7 +5,6 @@ import { StatusContext } from '../context/StatusContext';
 
 export default function AllCommunity() {
     const navigate = useNavigate();
-    const username = "Mikiqueen";
     const { hamburger, setHamburger } = useContext(StatusContext);
     const hamburgerPopupRef = useRef(null);
     const [popup, setPopup] = useState(false);
@@ -76,7 +75,7 @@ export default function AllCommunity() {
 
     return (
         <div className="bg-dark-background scrollbar-thin">
-            <NavBar setHamburger={setHamburger} hamburger={hamburger} hamburgerPopupRef={hamburgerPopupRef} username={username} />
+            <NavBar setHamburger={setHamburger} hamburger={hamburger} hamburgerPopupRef={hamburgerPopupRef}/>
             <div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem] pb-[1.25rem] z-40">
                 <LeftSideBar name="large" />
                 {/* middle section */}

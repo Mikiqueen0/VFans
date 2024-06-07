@@ -10,7 +10,6 @@ export default function Community() {
     const navigate = useNavigate();
     const location = useLocation();
     // const communityId = location.state.communityId;
-    const username = "Mikiqueen";
     const { communityName } = useParams();
     // Replace underscores with spaces
     const formattedCommunityName = communityName.replace(/_/g, ' ');
@@ -48,7 +47,7 @@ export default function Community() {
 
     return (
         <div className="bg-dark-background scrollbar-thin">
-            <NavBar setHamburger={setHamburger} hamburger={hamburger} hamburgerPopupRef={hamburgerPopupRef} username={username} />
+            <NavBar setHamburger={setHamburger} hamburger={hamburger} hamburgerPopupRef={hamburgerPopupRef}/>
             <div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem] pb-[1.25rem] z-40">
                 <LeftSideBar name="large" />
                 {/* middle section */}

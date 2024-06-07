@@ -3,7 +3,6 @@ import { NavBar, LeftSideBar, RightSideBar, CreatePostPopup } from '../component
 import { StatusContext } from '../context/StatusContext';
 
 export default function CreateCommunity() {
-    const username = "Mikiqueen";
     const { hamburger, setHamburger } = useContext(StatusContext);
     const hamburgerPopupRef = useRef(null);
 
@@ -16,7 +15,7 @@ export default function CreateCommunity() {
 
     return (
         <div className="bg-dark-background scrollbar-thin">
-            <NavBar setHamburger={setHamburger} hamburger={hamburger} hamburgerPopupRef={hamburgerPopupRef} username={username} />
+            <NavBar setHamburger={setHamburger} hamburger={hamburger} hamburgerPopupRef={hamburgerPopupRef}/>
             <div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem] pb-[1.25rem] z-40">
                 <LeftSideBar name="large" />
                 {/* middle section */}

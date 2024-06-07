@@ -14,8 +14,7 @@ import useUser from "../hooks/useUser";
 export default function NavBar({
 	setHamburger,
 	hamburger,
-	hamburgerPopupRef,
-	username,
+	hamburgerPopupRef
 	}) {
 	const navigate = useNavigate();
 	const hamburgerButtonRef = useRef(null);
@@ -50,7 +49,7 @@ export default function NavBar({
 		};
 	}, [hamburgerPopupRef, setHamburger]);
 
-	const { user } = useUser();
+	const { user, setUser } = useUser();
 	const { logout } = useAuth();
 
 	return (
@@ -82,7 +81,7 @@ export default function NavBar({
 				/>
 				</button>
 				<Link to={`/home`}>
-				<img src={logo} alt="vfans" className="h-[1.8rem]" />
+					<img src={logo} alt="vfans" className="h-[1.8rem]" />
 				</Link>
 			</div>
 			<div className="bg-white h-[2.8rem] rounded-[20px] flex items-center p-2">
@@ -109,16 +108,16 @@ export default function NavBar({
 			<div className="flex flex-row-reverse mr-[5rem] max-xl:mr-[1.5rem]">
 				<div className="flex flex-row items-center justify-end">
 					<img
-						src={user.profilePicture}
+						src={user.image}
 						alt="profile"
-						className="rounded-full h-[2.5rem] max-lg:hidden"
+						className="rounded-full object-cover size-[2.5rem] max-lg:hidden"
 					/>
 					<div
 						id="username"
 						className="font-medium text-opacity-90 text-[14px] text-white ml-2 flex-1 max-sm:hidden hover:underline hover:cursor-pointer"
-						onClick={() => navigate(`/profile/${user.user}`)}
+						onClick={() => navigate(`/profile/${user.username}`)}
 					>
-						{user.user}
+						{user.username}
 					</div>
 					<Menu as="div" className="relative inline-block text-left">
 						<div className="flex justify-center ml-2">
@@ -144,7 +143,7 @@ export default function NavBar({
 								<Menu.Item>
 									{({ active }) => (
 									<Link
-										to={`/profile/${username}`}
+										to={`/profile/${user.username}`}
 										className={classNames(
 										active
 											? "bg-dark-background text-opacity-90"
