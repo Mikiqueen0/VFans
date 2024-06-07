@@ -5,6 +5,7 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
     "./**/@material-tailwind/**/*.{html,js,ts,jsx,tsx,mdx}"
   ],
+  mode: "jit",
   theme: {
     fontSize: {
       xs: ['12px', '16px'],
@@ -38,29 +39,59 @@ export default {
     },
   },
   plugins: [
-    function ({addUtilities}) {
+    // function ({addUtilities}) {
+    //   const newUtilities = {
+    //     ".scrollbar-thin" : {
+    //       scrollbarWidth: "thin",
+    //       scrollbarColor: "rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1)"
+    //     },
+    //     ".scrollbar-webkit": {
+    //       "&::-webkit-scrollbar": {
+    //         width: "8px"
+    //         // height: "6px"
+    //       },
+    //       "&::-webkit-scrollbar-track": {
+    //         background: "rgba(0, 0, 0, 0)"
+    //       },
+    //       "&::-webkit-scrollbar-thumb": {
+    //         backgroundColor: "rgba(0, 0, 0, 0.2)"
+    //         // borderRadius: "20px",
+    //         // border: "1px solid white"
+    //       }
+    //     }
+    //   }
+
+    //   addUtilities(newUtilities, ['responsive', 'hover'])
+    // }
+    function ({ addUtilities }) {
       const newUtilities = {
-        ".scrollbar-thin" : {
-          scrollbarWidth: "thin",
-          scrollbarColor: "rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1)"
-        },
-        ".scrollbar-webkit": {
+        // Thin scrollbar
+        ".scrollbar-thin": {
+          scrollbarWidth: "thin", // Firefox
+          scrollbarColor: "rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1)", // Firefox
           "&::-webkit-scrollbar": {
-            width: "8px"
-            // height: "6px"
+            width: "8px", // WebKit-based browsers
+            height: "8px"
           },
           "&::-webkit-scrollbar-track": {
-            background: "rgba(0, 0, 0, 0)"
+            background: "rgba(0, 0, 0, 0)" // WebKit-based browsers
           },
           "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "rgba(0, 0, 0, 0.2)"
-            // borderRadius: "20px",
-            // border: "1px solid white"
+            backgroundColor: "rgba(0, 0, 0, 0.2)", // WebKit-based browsers
+            borderRadius: "4px"
+          }
+        },
+        // Hidden scrollbar
+        ".scrollbar-none": {
+          scrollbarWidth: "none", // Firefox
+          "-ms-overflow-style": "none", // Internet Explorer 10+
+          "&::-webkit-scrollbar": {
+            display: "none" // WebKit-based browsers
           }
         }
-      }
+      };
 
-      addUtilities(newUtilities, ['responsive', 'hover'])
+      addUtilities(newUtilities, ['responsive', 'hover']);
     }
   ]
 }
