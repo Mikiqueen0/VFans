@@ -338,7 +338,7 @@
 //   );
 // }
 
-import { useEffect, useState, useRef, useContext } from "react";
+import { useEffect, useState, useRef } from "react";
 import { NavBar, LeftSideBar, RightSideBar, Post } from "../components/index";
 import useStatus from "../hooks/useStatus";
 import { useParams, useNavigate } from "react-router-dom";
@@ -389,14 +389,32 @@ export default function Profile() {
   }, [user, userId]);
 
   const [changeProfile, setChangeProfile] = useState(false);
-  const handleProfileChange = (e) => {
-    console.log(e.target.files[0]);
-    setProfileDataCopy({
-      ...profileDataCopy,
-      profileImage: URL.createObjectURL(e.target.files[0]),
-    });
-    setChangeProfile(true);
-    e.target.value = null;
+  const handleProfileChange = async (e) => {
+    console.log(e.target.files[0], "This is e.target.files[0]");
+    const file = e.target.files[0];
+    try {
+      const { data } = await supabase.storage
+        .from("VFans")
+        .upload("/" + uuidv4(), file);
+      const profile = await supabase.storage
+        .from("VFans")
+        .getPublicUrl(data.path);
+      console.log(profile.data.publicUrl, "This is profile");
+      const updateProfile = await axios.put(`/user/profile/${user._id}`, {
+        profileImage: profile.data.publicUrl,
+      });
+      console.log(updateProfile, "This is updateProfile");
+      const getProfile = await axios.get(`/user/profile/${user._id}`);
+      console.log(getProfile, "This is getProfile");
+      setProfileDataCopy({
+        ...profileDataCopy,
+        profileImage: getProfile.data.user.profileImage,
+      });
+      console.log(profileDataCopy, "This is profileDataCopy");
+      e.target.value = null;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleBannerChange = async (e) => {
@@ -410,10 +428,10 @@ export default function Profile() {
         .from("VFans")
         .getPublicUrl(data.path);
       console.log(banner.data.publicUrl, "This is banner");
-      const proBanner = await axios.put(`/user/profile/${user._id}`, {
+      const updateBanner = await axios.put(`/user/profile/${user._id}`, {
         profileBanner: banner.data.publicUrl,
       });
-      console.log(proBanner, "This is proBanner");
+      console.log(updateBanner, "This is updateBanner");
       const getBanner = await axios.get(`/user/profile/${user._id}`);
       console.log(getBanner, "This is getBanner");
       setProfileDataCopy({
@@ -421,6 +439,7 @@ export default function Profile() {
         profileBanner: getBanner.data.user.profileBanner,
       });
       console.log(profileDataCopy, "This is profileDataCopy");
+      e.target.value = null;
     } catch (error) {
       console.log("Error uploading banner image:", error);
     }
