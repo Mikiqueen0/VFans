@@ -1,12 +1,19 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import { NavBar, LeftSideBar, RightSideBar, CreatePostPopup } from '../components/index';
 import useStatus from "../hooks/useStatus";
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 
 export default function JoinedCommunity() {
     const { hamburger, setHamburger } = useStatus();
     const hamburgerPopupRef = useRef(null);
-    const { profileUsername } = useParams();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const communityId = location.state.communityId;
+    const { communityName } = useParams();
+    const formattedCommunityName = communityName.replace(/_/g, ' ');
+    const [members, setMembers] = useState([]);
 
     useEffect(() => {
         document.body.style.overflow = hamburger ? "hidden" : "auto";
@@ -14,20 +21,41 @@ export default function JoinedCommunity() {
         
     }, [hamburger]);
 
-    // useEffect(() => {
-    //     console.log(profileUsername);
-    // });
-
+    useEffect(() => {
+        const fetchCommunity = async () => {
+            try {
+                const { data: fetchCommunityData } = await axios.get(`/community/member/${communityId}`);
+                if(fetchCommunityData.success){
+                    setMembers(fetchCommunityData.community.members);
+                }
+            } catch (err) {
+                console.error("Error fetching community data", err);
+            }
+        };
+        fetchCommunity();
+    }, []);
 
     return (
         <div className="bg-dark-background scrollbar-thin">
-            <NavBar setHamburger={setHamburger} hamburger={hamburger} hamburgerPopupRef={hamburgerPopupRef} username={username} />
+            <NavBar setHamburger={setHamburger} hamburger={hamburger} hamburgerPopupRef={hamburgerPopupRef}/>
             <div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem] pb-[1.25rem] z-40">
                 <LeftSideBar name="large" />
                 {/* middle section */}
                 <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[4rem] w-[800px]">
                     <div className="flex justify-between items-center py-[1rem] max-md:px-[1.5rem] px-[1rem] text-white">
-                        Joined Community of {profileUsername}
+                        <p className="text-[20px] font-medium py-2 ">Members</p>
+                    </div>
+                    <div className="grid grid-cols-3 max-md:grid-cols-2 max-md:px-6 justify-items-center gap-4">
+                        {members.map((mem, key) => {
+                            return (
+                                <div onClick={() => {
+                                    navigate(`/profile/${mem.username}`);
+                                    }} key={key} className="w-[12rem] h-[3.2rem] px-[1.2rem] text-white text-[14px] text-opacity-90 font-normal flex items-center justify-start gap-2 bg-primary rounded-[8px] hover:cursor-pointer py-7">
+                                    <img src={mem.profileImage} alt="" className="rounded-full size-8 bg-emerald-green" />
+                                    <p>{mem.username}</p>
+                                </div>
+                            );
+                        })}
                     </div>
                 </section>
                 <RightSideBar />

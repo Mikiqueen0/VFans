@@ -13,52 +13,12 @@ export default function SignUp() {
     confirmPassword: "",
   });
 
-  // const api = "http://localhost:3000/auth";
-
-  // const callApi = async () => {
-  //     const res = await axios.get("https://jsonplaceholder.typicode.com/todos")
-  //     const data_format = await res.data
-
-  //     data_format.map((item) => {
-  //         setData((prev) => [...prev, item.title])
-  //     })
-
-  //     console.log(data)
-  // }
-
-  // useEffect(() => {
-  //     const fetch = async () => {
-  //         const response = await axios({
-  //             method: 'get',
-  //             baseURL: 'http://localhost:5173',
-  //             url: '/api/signup',
-  //         });
-  //         console.log(response);
-  //     }
-  //     fetch();
-  // }, []);
-
-  // const handleSubmit = () => {
-  //     const postData = async () => {
-  //         try {
-  //             const response = await axios({
-  //                 method: 'post',
-  //                 baseURL: 'http://localhost:5173',
-  //                 url: '/api/signup',
-  //                 data: {
-  //                     username: data.username,
-  //                     email: data.email,
-  //                     password: data.password,
-  //                 },
-  //             });
-  //             console.log(response);
-  //         } catch (error) {
-  //             console.error('Error:', error);
-  //         }
-  //     };
-  //     postData();
-
   const navigate = useNavigate();
+  const [message, setMessage] = useState({
+    msg: "",
+    success: false,
+  });
+  const [shake, setShake] = useState(false);
 
   const handleError = (err) =>
     toast.error(err, {
@@ -78,15 +38,19 @@ export default function SignUp() {
 
       const { success, message } = data;
       if (success) {
-        console.log(formData, "This is data");
-        console.log(formData.email, formData.password);
+        setMessage({ msg: "Signed up successfully!", success: true });
         handleSuccess(message);
         setTimeout(() => {
           navigate("/home");
           window.location.reload();
         }, 2000);
       } else {
+        setMessage({ msg: data.message, success: false });
         handleError(message);
+        if (message) {
+          setShake(true);
+          setTimeout(() => setShake(false), 300);
+        }
       }
     } catch (error) {
       console.error("Error registering user", error);
@@ -136,6 +100,15 @@ export default function SignUp() {
             <div className="font-poppins text-emerald-green text-sm">or</div>
             <div className="flex-grow bg-emerald-green h-[1.35px]"></div>
           </div>
+          <p
+            className={`text-start mb-3 font-normal ${
+              message.success
+                ? "text-green-400"
+                : `text-rose-500 ${shake ? "animate-shake" : ""}`
+            }`}
+          >
+            {message.msg}
+          </p>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-4 h-auto">
               <input
