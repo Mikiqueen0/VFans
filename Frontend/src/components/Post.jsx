@@ -1,6 +1,7 @@
 import profileTestIcon from "../assets/images/test-profile.jpg";
 import postTestImage from "../assets/images/postImage.png";
 import useUser from "../hooks/useUser";
+import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 
 export default function Post({ username }) {
   const { user, setUser } = useUser();
@@ -23,9 +24,7 @@ export default function Post({ username }) {
             </p>
           </div>
         </div>
-        <p className="text-base font-extrabold text-opacity-90 text-white">
-          . . .
-        </p>
+        <EllipsisHorizontalIcon className="text-white size-6"/>
       </div>
       <div className="flex gap-2 pt-3">
         <button className="text-[12px] font-medium text-opacity-90 text-emerald-green rounded-[10px] border border-emerald-green px-3 py-2">
