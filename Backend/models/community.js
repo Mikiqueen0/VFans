@@ -22,10 +22,10 @@ const communitySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  members: {
-    type: Array,
-    default: [],
-  }
+  members: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
 }, { timestamps: true } );
 
 const Community = mongoose.model("Community", communitySchema);

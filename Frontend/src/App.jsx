@@ -41,7 +41,7 @@ const App = () => {
             <Route path="/createCommunity" element={<CreateCommunity />} />
             <Route path="/profile/:profileUsername" element={<Profile />} />
             <Route
-              path="/:profileUsername/joinedCommunity"
+              path="/joinedCommunity/:communityName"
               element={<JoinedCommunity />}
             />
           </Routes>

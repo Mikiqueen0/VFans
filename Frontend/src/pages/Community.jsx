@@ -99,7 +99,7 @@ export default function Community() {
                                         className="absolute inset-0 w-full h-full object-cover z-0 rounded-full"
                                     />
                                 </div>
-                                <p className="ml-[8.5rem] mt-1 mb-4 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/${communityName}/joinedCommunity`)}>
+                                <p className="ml-[8.5rem] mt-1 mb-4 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/joinedCommunity/${formattedCommunityName}`, { state: { communityId: communityData._id } })}>
                                     <span className="font-semibold opacity-100 mr-1">{communityData.members?.length}</span>
                                     <span className="font-normal opacity-80 tracking-wide group-hover:underline">Members</span>
                                 </p>

@@ -56,6 +56,22 @@ module.exports.GetCommunity = async (req, res, next) => {
   }
 };
 
+// Get Community Member
+module.exports.GetCommunityMember = async (req, res, next) => {
+  try {
+    const community = await Community.findById(req.params.id).populate("members");
+    if (!community) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Community not found" });
+    }
+    res.status(200).json({ success: true, community });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 // Update
 module.exports.UpdateCommunity = async (req, res, next) => {
   try {
