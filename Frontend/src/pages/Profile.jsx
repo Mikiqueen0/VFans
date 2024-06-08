@@ -2,8 +2,6 @@ import { useEffect, useState, useRef, useContext } from "react";
 import { NavBar, LeftSideBar, RightSideBar, Post } from "../components/index";
 import useStatus from "../hooks/useStatus";
 import { useParams, useNavigate } from "react-router-dom";
-import profileBackground from "../assets/images/profileBackground.png";
-import profileTestIcon from "../assets/images/test-profile.jpg";
 import { PencilIcon, PencilSquareIcon } from "@heroicons/react/20/solid";
 import { FaSpinner } from "react-icons/fa";
 import useUser from "../hooks/useUser";

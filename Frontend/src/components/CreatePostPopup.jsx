@@ -268,7 +268,7 @@ export default function CreatePostPopup({ setPopup, popup }) {
                     <div className={`transition-all duration-[400ms] ${toggleTabState === 1 ? "opacity-100" : "opacity-0"}`}>
                         {toggleTabState === 1 && <div>
                             <div className="mt-2 flex gap-2">
-                                <img src={user.profileImage} alt="profile" className="rounded-full size-[2rem] object-cover" />
+                                <img src={user?.profileImage} alt="profile" className="rounded-full size-[2rem] object-cover" />
                                 <textarea className="bg-dark-background p-3 font-light text-white text-base text-opacity-80 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="5" placeholder="Write Something..." onChange={e => setCreatePostContent(e.target.value)} value={createPostContent} required></textarea>
                             </div>
                             <div className="mt-2">

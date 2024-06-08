@@ -1,68 +1,16 @@
 import React from "react";
 import { PageButton } from "./index";
-import { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
-// import { StatusContext } from "../context/StatusContext";
 import useStatus from "../hooks/useStatus";
-
+import useCommunity from '../hooks/useCommunity';
+import axios from "axios";
 
 export default function LeftSideBar({ name }) {
-    // const { sidebarCommunity, setSidebarCommunity } = useContext(StatusContext);
-    const { sidebarCommunity, setSidebarCommunity } = useStatus();
     const navigate = useNavigate();
-    const [communityList, setCommunityList] = useState([
-        {
-            communityId: 1,
-            communityName: "Hahahehehe",
-            communityImage: ""
-        },
-        {
-            communityId: 2,
-            communityName: "Community 2",
-            communityImage: ""
-        },
-        {
-            communityId: 3,
-            communityName: "Community 3",
-            communityImage: ""
-        },
-        {
-            communityId: 4,
-            communityName: "Community 4",
-            communityImage: ""
-        },
-        {
-            communityId: 5,
-            communityName: "Community 5",
-            communityImage: ""
-        },
-        {
-            communityId: 6,
-            communityName: "Community 6",
-            communityImage: ""
-        },
-        {
-            communityId: 7,
-            communityName: "Community 7",
-            communityImage: ""
-        },
-        {
-            communityId: 8,
-            communityName: "Community 8",
-            communityImage: ""
-        },
-        {
-            communityId: 9,
-            communityName: "Community 9",
-            communityImage: ""
-        },
-        {
-            communityId: 10,
-            communityName: "Community 10",
-            communityImage: ""
-        }
-    ]);
+    const { sidebarCommunity, setSidebarCommunity } = useStatus();
+    const { communityList, setCommunityList } = useCommunity();
 
     return (
         <section className={`${name === "large" ? "px-[2.5rem] border-r border-primary bg-dark-background max-xl:hidden w-[310px] h-[750px] overflow-scroll scrollbar-none sticky top-[6.25rem] z-40" : "px-[2.5rem] bg-dark-background pt-[1.25rem]"} `}>
@@ -118,13 +66,11 @@ export default function LeftSideBar({ name }) {
                         {communityList.map((community, key) => {
                             return (
                                 <div key={key} onClick={() => {
-                                    const formattedCommunityName = community.communityName.replace(/\s+/g, '_'); // Replace spaces with underscores
-                                    navigate(`/community/${encodeURIComponent(formattedCommunityName)}`, { state: { communityId: community.communityId } });
+                                    const formattedCommunityName = community.name.replace(/\s+/g, '_'); // Replace spaces with underscores
+                                    navigate(`/community/${encodeURIComponent(formattedCommunityName)}`, { state: { communityId: community._id } });
                                     }}  className="w-full h-[3.2rem] px-[1.2rem] text-white text-[13px] flex items-center justify-start gap-2 hover:underline hover:cursor-pointer">
-                                    <img src="" alt="" className="rounded-full size-6 bg-emerald-green" />
-                                    {/* <p onClick={() => navigate.push(`/community/${community.communityId}?showCommunityList=${sidebarCommunity}`)} className="hover:underline">{community.communityName}</p> */}
-                                    {/* <p onClick={() => navigate(`/community/${community.communityName}`, { state: { communityId: community.communityId } })} className="hover:underline hover:cursor-pointer">{community.communityName}</p> */}
-                                    <p>{community.communityName}</p>
+                                    <img src={community.image} alt="" className="rounded-full size-6 bg-emerald-green" />
+                                    <p>{community.name}</p>
                                 </div>
                             );
                         })}

@@ -1,39 +1,41 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import { NavBar, LeftSideBar, CommunitySideBar, Post, CreatePostPopup, Filter, CommunitySetting } from '../components/index';
-// import { StatusContext } from '../context/StatusContext';
 import useStatus from "../hooks/useStatus";
+// import useCommunity from "../hooks/useCommunity";
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import communityBackground from '../assets/images/profileBackground.png';
-import communityTestIcon from '../assets/images/test-profile.jpg';
 import { EllipsisHorizontalCircleIcon } from '@heroicons/react/24/outline';
+import { FaSpinner } from "react-icons/fa";
+import axios from 'axios';
 
 export default function Community() {
     const navigate = useNavigate();
     const location = useLocation();
-    // const communityId = location.state.communityId;
+    const communityId = location.state.communityId;
     const { communityName } = useParams();
-    // Replace underscores with spaces
     const formattedCommunityName = communityName.replace(/_/g, ' ');
-    // const { hamburger, setHamburger } = useContext(StatusContext);
     const { hamburger, setHamburger } = useStatus();
     const hamburgerPopupRef = useRef(null);
     const [popup, setPopup] = useState(false);
     const [openSetting, setOpenSetting] = useState(false);
     const [communityData, setCommunityData] = useState({});
-
-    // useEffect(() => {
-    //     console.log("State: ", state.communityId, "Params: ", communityName);
-    // }, []);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setCommunityData({
-            name: formattedCommunityName,
-            id: location.state.communityId,
-            background: communityBackground,
-            image: communityTestIcon,
-            description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint aperiam neque minima autem et deserunt alias voluptates earum, ullam corporis temporibus repudiandae"
-        });
-    }, [communityName]);
+        const fetchCommunity = async () => {
+            setLoading(true);
+            try {
+                const { data: fetchCommunityData } = await axios.get(`/community/${communityId}`);
+                if(fetchCommunityData.success){
+                    setCommunityData(fetchCommunityData.community);
+                }
+            } catch (err) {
+                console.error("Error fetching community data", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCommunity();
+    }, [communityName, openSetting]);
 
     useEffect(() => {
         document.body.style.overflow = hamburger ? "hidden" : "auto";
@@ -53,11 +55,16 @@ export default function Community() {
             <div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem] pb-[1.25rem] z-40">
                 <LeftSideBar name="large" />
                 {/* middle section */}
-                <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[1rem] w-[800px] text-white">
+                {loading && 
+                    <div className="flex h-[calc(100vh-6.25rem)] items-center justify-center gap-3 max-sm:px-[1rem] px-[1rem] w-[800px] text-white">
+                        <FaSpinner className="animate-spin text-4xl text-emerald-green" />
+                    </div>
+                }
+                {!loading && <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[1rem] w-[800px] text-white">
                     {/* community info */}
                     <div className={`w-full h-[20rem] min-h-[20rem] rounded-[10px] flex flex-col justify-end relative`}>
                         <img
-                            src={communityData.background}
+                            src={communityData.banner}
                             alt="Profile Background"
                             className="absolute inset-0 w-full h-full object-cover pb-20 z-0 rounded-[10px]"
                         />
@@ -89,10 +96,10 @@ export default function Community() {
                     <div className="flex flex-col gap-3 max-md:px-[1.5rem] px-[4rem] text-white">
                         {/* filter */}
                         <Filter />
-                        <Post username={username}/>
-                        <Post username={username}/>
+                        <Post username={"test"}/>
+                        <Post username={"test"}/>
                     </div>
-                </section>
+                </section>}
                 <CommunitySideBar communityData={communityData}/>
             </div>
             {popup && <div className={`fixed inset-0 backdrop-brightness-50 backdrop-blur-[1px] z-50`}></div>}
@@ -102,7 +109,6 @@ export default function Community() {
             />
             {openSetting && <div className={`fixed inset-0 backdrop-brightness-50 backdrop-blur-[1px] z-50`}></div>}
             <CommunitySetting 
-                setCommunityData={setCommunityData}
                 communityData={communityData}
                 setPopup={setOpenSetting} 
                 popup={openSetting}
