@@ -8,7 +8,7 @@ module.exports.Signup = async (req, res, next) => {
     const { email, password, username } = req.body;
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
-      return res.json({ message: "Email or username already exists", success: false});
+      return res.json({ message: "Email or username already exists" });
     }
     const user = await User.create({ email, password, username });
     const token = createSecretToken(user._id);
@@ -28,17 +28,17 @@ module.exports.Signup = async (req, res, next) => {
 // Login
 module.exports.Login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.json({ message: "All fields are required", success: false });
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.json({ message: "All fields are required" });
     }
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ username });
     if (!user) {
-      return res.json({ message: "Incorrect email or password", success: false });
+      return res.json({ message: "Incorrect password or email" });
     }
     const auth = await bcrypt.compare(password, user.password);
     if (!auth) {
-      return res.json({ message: "Incorrect email or password", success: false });
+      return res.json({ message: "Incorrect password or email" });
     }
     const token = createSecretToken(user._id);
     res.cookie("token", token, {

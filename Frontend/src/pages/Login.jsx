@@ -7,15 +7,13 @@ import googleLogo from "../assets/images/google.png";
 
 export default function Login() {
   const [formData, setFormdata] = useState({
-    email: "",
+    username: "",
     password: "",
   });
+
   const navigate = useNavigate();
-  const [message, setMessage] = useState({
-    msg: "",
-    success: false,
-  });
-  const [shake, setShake] = useState(false);
+
+  // const api = "http://localhost:3000/auth";
 
   const handleError = (err) =>
     toast.error(err, {
@@ -36,18 +34,12 @@ export default function Login() {
       const { success, message } = data;
       if (success) {
         handleSuccess(message);
-        setMessage({ msg: "Logged in successfully!", success: true });
         setTimeout(() => {
           localStorage.setItem("redirectedFromLogin", "true");
           navigate("/home");
         }, 1000);
       } else {
-        setMessage({ msg: data.message, success: false });
         handleError(message);
-        if (message) {
-          setShake(true);
-          setTimeout(() => setShake(false), 300);
-        }
       }
     } catch (error) {
       console.error("Error logging in", error);
@@ -95,13 +87,12 @@ export default function Login() {
             <div className="text-emerald-green text-sm">or</div>
             <div className="flex-grow bg-emerald-green h-[1.35px]"></div>
           </div>
-          <p className={`text-start mb-3 font-normal ${message.success ? 'text-green-400' : `text-rose-500 ${shake ? 'animate-shake' : ''}`}`}>{message.msg}</p>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-4 h-auto">
               <input
                 type="text"
-                name="email"
-                placeholder="Email"
+                name="username"
+                placeholder="Username"
                 className="text-sm font-normal placeholder-[##7B7B7B] text-white bg-dark-field border-[0.5px] border-emerald-green rounded-[10px] py-4 px-4 focus:outline-none"
                 onChange={handleChange}
               />

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import { NavBar, LeftSideBar, CommunitySideBar, Post, CreatePostPopup, Filter, CommunitySetting } from '../components/index';
 import useStatus from "../hooks/useStatus";
-import useUser from "../hooks/useUser";
+// import useCommunity from "../hooks/useCommunity";
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { EllipsisHorizontalCircleIcon } from '@heroicons/react/24/outline';
 import { FaSpinner } from "react-icons/fa";
@@ -14,27 +14,19 @@ export default function Community() {
     const { communityName } = useParams();
     const formattedCommunityName = communityName.replace(/_/g, ' ');
     const { hamburger, setHamburger } = useStatus();
-    const { user } = useUser();
     const hamburgerPopupRef = useRef(null);
     const [popup, setPopup] = useState(false);
     const [openSetting, setOpenSetting] = useState(false);
     const [communityData, setCommunityData] = useState({});
     const [loading, setLoading] = useState(true);
-    const [joined, setJoined] = useState(false);
 
     useEffect(() => {
         const fetchCommunity = async () => {
-            if(openSetting) return;
             setLoading(true);
             try {
                 const { data: fetchCommunityData } = await axios.get(`/community/${communityId}`);
                 if(fetchCommunityData.success){
                     setCommunityData(fetchCommunityData.community);
-                    if (fetchCommunityData.community && user) {
-                        if (fetchCommunityData.community.members.includes(user._id)) {
-                            setJoined(true);
-                        }
-                    }
                 }
             } catch (err) {
                 console.error("Error fetching community data", err);
@@ -56,17 +48,6 @@ export default function Community() {
         document.body.style.paddingRight = popup || openSetting ? "15px" : "0";
     }, [popup, openSetting]);
 
-    const handleJoin = async () => {
-        try {
-            const joinCommunity = await axios.put(`/community/join/${communityId}`, { userID: user._id });
-            if(joinCommunity.data.success){
-                setCommunityData(joinCommunity.data.community);
-                setJoined(!joined);
-            }
-        } catch (err) {
-            console.error("Error joining community", err);
-        }
-    };
 
     return (
         <div className="bg-dark-background scrollbar-thin">
@@ -99,15 +80,16 @@ export default function Community() {
                                         className="absolute inset-0 w-full h-full object-cover z-0 rounded-full"
                                     />
                                 </div>
-                                <p className="ml-[8.5rem] mt-1 mb-4 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/joinedCommunity/${formattedCommunityName}`, { state: { communityId: communityData._id } })}>
-                                    <span className="font-semibold opacity-100 mr-1">{communityData.members?.length}</span>
+                                <p className="ml-[8.5rem] mt-1 mb-4 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/${communityName}/joinedCommunity`)}>
+                                    <span className="font-semibold opacity-100 mr-1">279</span>
                                     <span className="font-normal opacity-80 tracking-wide group-hover:underline">Members</span>
                                 </p>
                             </div>
                             <div className="flex gap-2 items-center text-[14px]">
                                 <button className="w-[3.6rem] h-[2.2rem] border rounded-full hover:text-emerald-green hover:border-emerald-green transition-all duration-100" onClick={() => setPopup(true)}>Post</button>
-                                <button className={`w-[3.6rem] h-[2.2rem] border rounded-full  transition-all duration-100 ${joined ? "hover:border-red-500  hover:text-red-500" : "hover:border-emerald-green hover:text-emerald-green"}`} onClick={handleJoin}>{joined ? "Leave" : "Join"}</button>
-                                {user?._id === communityData.userID && <EllipsisHorizontalCircleIcon className="size-9 hover:text-emerald-green transition-all duration-100 cursor-pointer stroke-1" onClick={() => setOpenSetting(true)}/>}
+                                <button className="w-[3.6rem] h-[2.2rem] border rounded-full hover:text-emerald-green hover:border-emerald-green transition-all duration-100">Join</button>
+                                {/* <button className="w-[4rem] h-[2.5rem] border rounded-full">...</button> */}
+                                <EllipsisHorizontalCircleIcon className="size-9 hover:text-emerald-green transition-all duration-100 cursor-pointer stroke-1" onClick={() => setOpenSetting(true)}/>
                             </div>
                         </div>
                     </div>

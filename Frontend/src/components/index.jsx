@@ -9,7 +9,6 @@ import CommunitySideBar from './CommunitySideBar';
 import Filter from './Filter';
 import CommunitySetting from './CommunitySetting';
 import LoadingScreen from './LoadingScreen';
-import ConfirmModule from './ConfirmModule';
 
 export { 
     PageButton, 
@@ -22,6 +21,5 @@ export {
     CommunitySideBar,
     Filter,
     CommunitySetting,
-    LoadingScreen,
-    ConfirmModule
+    LoadingScreen
 }
