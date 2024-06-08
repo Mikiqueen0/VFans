@@ -4,6 +4,8 @@ import { ConfirmModule } from "./index";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+import supabase from "../utils/supabase";
 
 export default function CommunitySetting({ communityData, setPopup, popup }) {
     const navigate = useNavigate();
@@ -42,10 +44,43 @@ export default function CommunitySetting({ communityData, setPopup, popup }) {
         }
     };
 
+    const [bannerFile, setBannerFile] = useState(null);
+    const [profileFile, setProfileFile] = useState(null);
+
+    const uploadFile = async (file) => {
+        try {
+            const { data } = await supabase.storage
+                .from("VFans")
+                .upload("/" + uuidv4(), file);
+            const image = await supabase.storage
+                .from("VFans")
+                .getPublicUrl(data.path);
+            return image.data.publicUrl;
+        } catch (err) {
+            console.error("Error uploading file:", err);
+        } finally {
+            setBannerFile(null);
+        };
+    };
+
     const handleUpdate = async (e) => {
         e.preventDefault();
         try {
-            const { data: updateCommunity } = await axios.put(`/community/${communityData?._id}`, updateCommunityData);
+            let updatedCommunityFile = { ...updateCommunityData };
+            if (bannerFile) {
+                const updatedBanner = await uploadFile(bannerFile);
+                setBannerFile(null);
+                updatedCommunityFile = { ...updatedCommunityFile, banner: updatedBanner };
+            }
+
+            if(profileFile) {
+                const updatedImage = await uploadFile(profileFile);
+                setProfileFile(null);
+                updatedCommunityFile = { ...updatedCommunityFile, image: updatedImage };
+            }
+
+            const { data: updateCommunity } = await axios.put(`/community/${communityData?._id}`, updatedCommunityFile);
+
             if (updateCommunity.success) {
                 console.log("Updated! ", updateCommunity.community);
             } else {
@@ -60,20 +95,14 @@ export default function CommunitySetting({ communityData, setPopup, popup }) {
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            setUpdateCommunityData({ ...updateCommunityData, image: URL.createObjectURL(file) });
-        } else {
-            console.log("No file selected");
-        }
+        setUpdateCommunityData({ ...updateCommunityData, image: URL.createObjectURL(file) });
+        setProfileFile(file);
     };
 
     const handleBannerChange = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            setUpdateCommunityData({ ...updateCommunityData, banner: URL.createObjectURL(file) });
-        } else {
-            console.log("No file selected");
-        }
+        setUpdateCommunityData({ ...updateCommunityData, banner: URL.createObjectURL(file) });
+        setBannerFile(file);
     };
 
     const handleDelete = async () => {

@@ -105,9 +105,6 @@ export default function Profile() {
                 updatedProfile = { ...updatedProfile, profileImage: updatedProfileImage };
             }
 
-            if (profileDataCopy.bio !== user.bio) {
-                updatedProfile = { ...updatedProfile, bio: profileDataCopy.bio };
-            }
             setUser(updatedProfile);
         } catch (error) {
             console.log("Error saving profile changes:", error);

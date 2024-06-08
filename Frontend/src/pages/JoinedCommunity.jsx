@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import { NavBar, LeftSideBar, RightSideBar, CreatePostPopup } from '../components/index';
+import { FaSpinner } from "react-icons/fa";
 import useStatus from "../hooks/useStatus";
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -11,6 +12,7 @@ export default function JoinedCommunity() {
     const navigate = useNavigate();
     const { communityID } = useParams();
     const [members, setMembers] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         document.body.style.overflow = hamburger ? "hidden" : "auto";
@@ -20,6 +22,7 @@ export default function JoinedCommunity() {
 
     useEffect(() => {
         const fetchCommunity = async () => {
+            setLoading(true);
             try {
                 const { data: fetchCommunityData } = await axios.get(`/community/member/${communityID}`);
                 if(fetchCommunityData.success){
@@ -27,7 +30,9 @@ export default function JoinedCommunity() {
                 }
             } catch (err) {
                 console.error("Error fetching community data", err);
-            }
+            } finally {
+                setLoading(false);
+            };
         };
         fetchCommunity();
     }, []);
@@ -38,11 +43,17 @@ export default function JoinedCommunity() {
             <div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem] pb-[1.25rem] z-40">
                 <LeftSideBar name="large" />
                 {/* middle section */}
-                <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[4rem] w-[800px]">
+                {loading && 
+                    <div className="flex h-[calc(100vh-6.25rem)] items-center justify-center gap-3 max-sm:px-[1rem] px-[1rem] w-[800px] text-white">
+                        <FaSpinner className="animate-spin text-4xl text-emerald-green" />
+                    </div>
+                }
+                {!loading && <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[4rem] w-[800px]">
                     <div className="flex justify-between items-center py-[1rem] max-md:px-[1.5rem] px-[1rem] text-white">
-                        <p className="text-[20px] font-medium py-2 ">Members</p>
+                        <p className="text-[20px] font-medium py-2">Members</p>
                     </div>
                     <div className="grid grid-cols-3 max-md:grid-cols-2 max-md:px-6 justify-items-center gap-4">
+                        {members.length === 0 && <p className="w-[12rem] h-[3.2rem] px-[1rem] text-gray-400 text-[14px] text-opacity-90 font-normal flex items-center justify-start py-7">No members</p>}
                         {members.map((mem, key) => {
                             return (
                                 <div onClick={() => {
@@ -54,7 +65,7 @@ export default function JoinedCommunity() {
                             );
                         })}
                     </div>
-                </section>
+                </section>}
                 <RightSideBar />
             </div>
             {hamburger && 
