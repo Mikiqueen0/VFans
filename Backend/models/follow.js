@@ -6,6 +6,11 @@ const followSchema = new mongoose.Schema({
     ref: "Community",
     required: true,
   },
+  following_userID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   timestamp: { type: Date, default: Date.now },
 });
 
