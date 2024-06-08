@@ -75,8 +75,11 @@ export default function SignUp() {
       const { data } = await axios.post(`/auth/signup`, formData, {
         withCredentials: true,
       });
+
       const { success, message } = data;
       if (success) {
+        console.log(formData, "This is data");
+        console.log(formData.email, formData.password);
         handleSuccess(message);
         setTimeout(() => {
           navigate("/home");
@@ -98,11 +101,7 @@ export default function SignUp() {
     <div className="bg-darkest-black h-full w-full min-h-[100vh] grid grid-rows-4 xl:grid-cols-2 xl:grid-rows-1 gap-0">
       <section className="bg-emerald-green row-span-1 xl:col-span-1 bottom-0 top-0 left-0 right-0 h-auto xl:rounded-bl-[90px] xl:rounded-tl-[90px] xl:ml-[4rem] xl:my-[3.8rem]">
         <a href="/home" className="xl:mt-20 xl:ml-20 mt-8 ml-8 absolute">
-          <img
-            src={logo}
-            alt="vfans"
-            className="xl:h-[3.5rem] h-[2.5rem]"
-          />
+          <img src={logo} alt="vfans" className="xl:h-[3.5rem] h-[2.5rem]" />
         </a>
         <div className="flex flex-col text-center w-auto h-full justify-center mx-[20%]">
           <h1 className="font-poppins font-semibold xl:text-[1.5rem] text-[1.25rem]">
@@ -126,11 +125,7 @@ export default function SignUp() {
             Let’s Become a part of our community!
           </p>
           <button className="bg-white rounded-[10px] w-full h-[52px] flex items-center justify-between mt-8 px-4">
-            <img
-              src={googleLogo}
-              alt="google"
-              className="size-8"
-            />
+            <img src={googleLogo} alt="google" className="size-8" />
             <p className="font-poppins text-[#7B7B7B] text-sm p-6">
               Use Google account
             </p>
