@@ -1,7 +1,8 @@
 import { useRef, useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
+import axios from "axios";
 
-export default function CreateCommunityPopup({ setPopup, popup }) {
+export default function CreateCommunityPopup({ setPopup, popup, userID }) {
     const createPostPopupRef = useRef(null);
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -15,22 +16,27 @@ export default function CreateCommunityPopup({ setPopup, popup }) {
         }
     }, [createPostPopupRef]);
 
-    const [createCommunityName, setCreateCommunityName] = useState("");
-    const [createCommunityDescription, setCreateCommunityDescription] = useState("");
+    // const [createCommunityName, setCreateCommunityName] = useState("");
+    // const [createCommunityDescription, setCreateCommunityDescription] = useState("");
+
+    const [communityData, setCommunityData] = useState({
+        name: "",
+        desc: ""
+    });
     const maxCommunityName = 30;
     const maxCommunityDescription = 250;
 
     const handleNameChange = (e) => {
         const value = e.target.value;
         if (value.length <= maxCommunityName) {
-            setCreateCommunityName(value);
+            setCommunityData({ ...communityData, name: value });
         }
     };
 
     const handleDescriptionChange = (e) => {
         const value = e.target.value;
         if (value.length <= maxCommunityDescription) {
-            setCreateCommunityDescription(value);
+            setCommunityData({ ...communityData, desc: value });
         }
     };
 
@@ -40,13 +46,25 @@ export default function CreateCommunityPopup({ setPopup, popup }) {
         }
     };
 
-    // When submit Post 
-    const handleCreate = (e) => {
+    // When create community
+    const handleCreate = async (e) => {
         e.preventDefault();
-        console.log("Community Name: " + createCommunityName);
-        console.log("Community Description: " + createCommunityDescription);
+        try {
+            const createCommunity = await axios.post("/community/create", { ...communityData, userID});
+            console.log(createCommunity.data);
+        } catch (err) {
+            console.error("Error creating community", err);
+        }
+        
         setPopup(false);
     }
+
+    useEffect(() => {
+        setCommunityData({
+            name: "",
+            desc: ""
+        });
+    }, [popup]);
 
     return (
         <form onSubmit={handleCreate} onKeyDown={handleKeyPress} className={`fixed overflow-y-scroll inset-0 h-full flex flex-col justify-center items-center max-lg:px-[2rem] px-[10rem] xl:px-[4rem] z-50 overflow-x-hidden duration-[200ms] ${popup ? "scale-100 opacity-100": "scale-0 opacity-0"}`}>
@@ -60,15 +78,15 @@ export default function CreateCommunityPopup({ setPopup, popup }) {
                         <label className="mx-1 opacity-80">
                             Community name <span className="text-red-500">*</span>
                         </label>
-                        <input type="text" className="bg-dark-background mt-1 p-3 font-light text-base text-opacity-90 focus:outline-none caret-[#8c8c8c] w-full rounded-[10px]" rows="5" placeholder="Community name..." onChange={e => handleNameChange(e)} value={createCommunityName} required></input>
-                        <p className="text-end font-light opacity-70 text-[14px]">{createCommunityName.length}/{maxCommunityName}</p>
+                        <input type="text" className="bg-dark-background mt-1 p-3 font-light text-base text-opacity-90 focus:outline-none caret-[#8c8c8c] w-full rounded-[10px]" rows="5" placeholder="Community name..." onChange={e => handleNameChange(e)} value={communityData.name} required></input>
+                        <p className="text-end font-light opacity-70 text-[14px]">{communityData.name.length}/{maxCommunityName}</p>
                     </div>
                     <div className="flex flex-col gap-1">
                         <label className="mx-1 opacity-80">
                             Description <span className="text-red-500">*</span>
                         </label>
-                        <textarea type="text" className="bg-dark-background mt-1 p-3 font-light text-white text-base text-opacity-90 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="5" placeholder="Description..." onChange={e => handleDescriptionChange(e)} value={createCommunityDescription} required></textarea>
-                        <p className="text-end font-light opacity-70 text-[14px]">{createCommunityDescription.length}/{maxCommunityDescription}</p>
+                        <textarea type="text" className="bg-dark-background mt-1 p-3 font-light text-white text-base text-opacity-90 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="5" placeholder="Description..." onChange={e => handleDescriptionChange(e)} value={communityData.desc} required></textarea>
+                        <p className="text-end font-light opacity-70 text-[14px]">{communityData.desc.length}/{maxCommunityDescription}</p>
                     </div>
                 </div>
                 <button type="submit" className="bg-emerald-green rounded-[20px] text-[16px] font-medium text-black text-opacity-[78%] text-lg py-4 px-6 mt-4 mx-6 mb-6 flex justify-center self-end max-w-[14rem] w-full">Create Community</button>

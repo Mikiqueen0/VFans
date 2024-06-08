@@ -2,19 +2,25 @@ const Community = require("../models/community");
 
 // Create Community
 module.exports.CreateCommunity = async (req, res, next) => {
+  const { name, desc, userID } = req.body; 
   try {
+    // const newCommunity = new Community({
+    //   userID: req.body.userID,
+    //   community_name: req.body.community_name,
+    //   community_image: req.body.community_image,
+    //   community_banner: req.body.community_banner,
+    //   desc: req.body.desc,
+    // });
     const newCommunity = new Community({
-      userID: req.body.userID,
-      community_name: req.body.community_name,
-      community_image: req.body.community_image,
-      community_banner: req.body.community_banner,
-      desc: req.body.desc,
+      userID,
+      name,
+      desc
     });
     const community = await newCommunity.save();
     res.status(200).json({ success: true, community });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

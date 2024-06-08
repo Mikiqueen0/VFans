@@ -6,15 +6,17 @@ const communitySchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  community_name: {
+  name: {
     type: String,
     required: true,
   },
-  community_image: {
+  image: {
     type: String,
+    default: "https://via.placeholder.com/150/FF5733/FFFFFF?text=Community+Image"
   },
-  community_banner: {
+  banner: {
     type: String,
+    default: "https://via.placeholder.com/800x200/FF5733/FFFFFF?text=Community+Banner"
   },
   desc: {
     type: String,
@@ -23,12 +25,8 @@ const communitySchema = new mongoose.Schema({
   members: {
     type: Array,
     default: [],
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  }
+}, { timestamps: true } );
 
 const Community = mongoose.model("Community", communitySchema);
 module.exports = Community;

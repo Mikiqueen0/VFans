@@ -3,8 +3,9 @@ import { XMarkIcon } from "@heroicons/react/20/solid";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import communityTestIcon from '../assets/images/test-profile.jpg';
 import communityBackground from '../assets/images/profileBackground.png';
+import axios from "axios";
 
-export default function CommunitySetting({ setCommunityData, communityData, setPopup, popup }) {
+export default function CommunitySetting({ communityData, setPopup, popup }) {
     const createPostPopupRef = useRef(null);
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -18,21 +19,17 @@ export default function CommunitySetting({ setCommunityData, communityData, setP
         }
     }, [createPostPopupRef]);
 
-    const [updatedImage, setUpdatedImage] = useState("");
-    const [updatedBackground, setUpdatedBackground] = useState("");
-    const [updatedCommunityDescription, setUpdatedCommunityDescription] = useState("");
+    const [updateCommunityData, setUpdateCommunityData] = useState({});
     const maxCommunityDescription = 250;
 
     useEffect(() => {
-        setUpdatedCommunityDescription(communityData.description);
-        setUpdatedImage(communityData.image);
-        setUpdatedBackground(communityData.background);
+        setUpdateCommunityData(communityData);
     }, [popup]);
 
     const handleDescriptionChange = (e) => {
         const value = e.target.value;
         if (value.length <= maxCommunityDescription) {
-            setUpdatedCommunityDescription(value);
+            setUpdateCommunityData({ ...updateCommunityData, desc: value });
         }
     };
 
@@ -42,32 +39,36 @@ export default function CommunitySetting({ setCommunityData, communityData, setP
         }
     };
 
-    // When update community
-    const handleUpdate = (e) => {
+    const handleUpdate = async (e) => {
         e.preventDefault();
-        setCommunityData({
-            ...communityData,
-            image: updatedImage,
-            background: updatedBackground,
-            description: updatedCommunityDescription
-        })
-        console.log(communityData);
-        setPopup(false);
+
+        try {
+            const { data: updateCommunity} = await axios.put(`/community/${communityData._id}`, updateCommunityData);
+            if(updateCommunity.success){
+                console.log("Updated! ", updateCommunity.community);
+            }else{
+                console.error("Failed to update community");
+            }
+        } catch (err) {
+            console.error("Error updating community", err);
+        } finally {
+            setPopup(false);
+        }
     };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setUpdatedImage(URL.createObjectURL(file));
+            setUpdateCommunityData({ ...updateCommunityData, image: URL.createObjectURL(file) });
         } else {
             console.log("No file selected");
         }
     };
 
-    const handleBackgroundChange = (e) => {
+    const handleBannerChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setUpdatedBackground(URL.createObjectURL(file));
+            setUpdateCommunityData({ ...updateCommunityData, banner: URL.createObjectURL(file) });
         } else {
             console.log("No file selected");
         }
@@ -93,7 +94,7 @@ export default function CommunitySetting({ setCommunityData, communityData, setP
                         <div className="w-full inline-flex justify-center my-2">
                             <div className="w-[7rem] h-[7rem] relative">
                                 <img
-                                    src={updatedImage || communityTestIcon} // Use a default image or the updated image
+                                    src={updateCommunityData.image}
                                     alt="image"
                                     className="w-full h-full object-cover rounded-full"
                                 />
@@ -109,13 +110,13 @@ export default function CommunitySetting({ setCommunityData, communityData, setP
                             id="background-input"
                             type="file"
                             className="hidden"
-                            onChange={handleBackgroundChange}
+                            onChange={handleBannerChange}
                             accept="image/jpeg, image/png, image/jpg"
                         />
                         <div className="w-full inline-flex justify-center my-2">
                             <div className="max-w-[24rem] w-[24rem] h-[10rem] relative">
                                 <img
-                                    src={updatedBackground || communityBackground} // Use a default image or the updated image
+                                    src={updateCommunityData.banner}
                                     alt="background"
                                     className="w-full h-full object-cover rounded-[10px]"
                                 />
@@ -133,15 +134,15 @@ export default function CommunitySetting({ setCommunityData, communityData, setP
                         <label className="mx-1 opacity-80">
                             Community name
                         </label>
-                        <input type="text" className="bg-lighter-primary mt-1 p-3 font-light text-gray-200 text-base text-opacity-60 focus:outline-none w-full rounded-[10px]" value={communityData.name} readOnly></input>
+                        <input type="text" className="bg-lighter-primary mt-1 p-3 font-light text-gray-200 text-base text-opacity-60 focus:outline-none w-full rounded-[10px]" value={updateCommunityData.name} readOnly></input>
                     </div>
                     {/* description */}
                     <div className="flex flex-col gap-1 mt-4">
                         <label className="mx-1 opacity-80">
                             Description <span></span>
                         </label>
-                        <textarea type="text" className="bg-dark-background mt-1 p-3 font-light text-white text-base text-opacity-90 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="5" placeholder="Description..." onChange={e => handleDescriptionChange(e)} value={updatedCommunityDescription} required></textarea>
-                        <p className="text-end font-light opacity-70 text-[14px]">{updatedCommunityDescription?.length || 0}/{maxCommunityDescription}</p>
+                        <textarea type="text" className="bg-dark-background mt-1 p-3 font-light text-white text-base text-opacity-90 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="5" placeholder="Description..." onChange={e => handleDescriptionChange(e)} value={updateCommunityData.desc} required></textarea>
+                        <p className="text-end font-light opacity-70 text-[14px]">{updateCommunityData.desc?.length || 0}/{maxCommunityDescription}</p>
                     </div>
                 </div>
                 <button type="submit" className="bg-emerald-green rounded-[20px] text-[16px] font-medium text-black text-opacity-[78%] text-lg py-4 px-6 mt-4 mx-6 mb-6 flex justify-center self-end max-w-[14rem] w-full">Save</button>
