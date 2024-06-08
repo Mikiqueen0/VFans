@@ -53,7 +53,6 @@ export function UserContextProvider({ children }) {
   
         if(fetchUser.success){
           setUser(fetchUser.user);
-          console.log(fetchUser.user);
         } else {
           console.error('Failed to fetch user profile');
         }

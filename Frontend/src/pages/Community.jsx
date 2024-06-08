@@ -20,14 +20,21 @@ export default function Community() {
     const [openSetting, setOpenSetting] = useState(false);
     const [communityData, setCommunityData] = useState({});
     const [loading, setLoading] = useState(true);
+    const [joined, setJoined] = useState(false);
 
     useEffect(() => {
         const fetchCommunity = async () => {
+            if(openSetting) return;
             setLoading(true);
             try {
                 const { data: fetchCommunityData } = await axios.get(`/community/${communityId}`);
                 if(fetchCommunityData.success){
                     setCommunityData(fetchCommunityData.community);
+                    if (fetchCommunityData.community && user) {
+                        if (fetchCommunityData.community.members.includes(user._id)) {
+                            setJoined(true);
+                        }
+                    }
                 }
             } catch (err) {
                 console.error("Error fetching community data", err);
@@ -48,6 +55,18 @@ export default function Community() {
         document.body.style.overflow = popup || openSetting ? "hidden" : "auto";
         document.body.style.paddingRight = popup || openSetting ? "15px" : "0";
     }, [popup, openSetting]);
+
+    const handleJoin = async () => {
+        try {
+            const joinCommunity = await axios.put(`/community/join/${communityId}`, { userID: user._id });
+            if(joinCommunity.data.success){
+                setCommunityData(joinCommunity.data.community);
+                setJoined(!joined);
+            }
+        } catch (err) {
+            console.error("Error joining community", err);
+        }
+    };
 
     return (
         <div className="bg-dark-background scrollbar-thin">
@@ -81,14 +100,14 @@ export default function Community() {
                                     />
                                 </div>
                                 <p className="ml-[8.5rem] mt-1 mb-4 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/${communityName}/joinedCommunity`)}>
-                                    <span className="font-semibold opacity-100 mr-1">279</span>
+                                    <span className="font-semibold opacity-100 mr-1">{communityData.members?.length}</span>
                                     <span className="font-normal opacity-80 tracking-wide group-hover:underline">Members</span>
                                 </p>
                             </div>
                             <div className="flex gap-2 items-center text-[14px]">
                                 <button className="w-[3.6rem] h-[2.2rem] border rounded-full hover:text-emerald-green hover:border-emerald-green transition-all duration-100" onClick={() => setPopup(true)}>Post</button>
-                                <button className="w-[3.6rem] h-[2.2rem] border rounded-full hover:text-emerald-green hover:border-emerald-green transition-all duration-100">Join</button>
-                                {user._id === communityData.userID && <EllipsisHorizontalCircleIcon className="size-9 hover:text-emerald-green transition-all duration-100 cursor-pointer stroke-1" onClick={() => setOpenSetting(true)}/>}
+                                <button className={`w-[3.6rem] h-[2.2rem] border rounded-full  transition-all duration-100 ${joined ? "hover:border-red-500  hover:text-red-500" : "hover:border-emerald-green hover:text-emerald-green"}`} onClick={handleJoin}>{joined ? "Leave" : "Join"}</button>
+                                {user?._id === communityData.userID && <EllipsisHorizontalCircleIcon className="size-9 hover:text-emerald-green transition-all duration-100 cursor-pointer stroke-1" onClick={() => setOpenSetting(true)}/>}
                             </div>
                         </div>
                     </div>

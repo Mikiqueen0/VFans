@@ -18,7 +18,7 @@ export function CommunityContextProvider({ children }) {
             }
         };
         fetchAllCommunity();
-    }, []);
+    }, [communityList]);
 
     return (
         <CommunityContext.Provider value={{ communityList, setCommunityList }}>

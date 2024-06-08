@@ -4,6 +4,7 @@ const {
   GetCommunity,
   UpdateCommunity,
   DeleteCommunity,
+  JoinCommunity
 } = require("../controllers/CommunityController");
 const router = require("express").Router();
 
@@ -18,6 +19,9 @@ router.get("/:id", GetCommunity);
 
 // Update
 router.put("/:id", UpdateCommunity);
+
+// Join Community
+router.put("/join/:id", JoinCommunity);
 
 // Delete
 router.delete("/:id", DeleteCommunity);

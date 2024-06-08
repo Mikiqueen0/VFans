@@ -3,14 +3,22 @@ import { PageButton } from "./index";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
+import useUser from "../hooks/useUser";
 import useStatus from "../hooks/useStatus";
 import useCommunity from '../hooks/useCommunity';
 import axios from "axios";
 
 export default function LeftSideBar({ name }) {
     const navigate = useNavigate();
+    const { user } = useUser();
     const { sidebarCommunity, setSidebarCommunity } = useStatus();
     const { communityList, setCommunityList } = useCommunity();
+    const [userJoinedCommunity, setUserJoinedCommunity] = useState([]);
+
+    useEffect(() => {
+        const userCommunities = communityList.filter(community => community.members.includes(user._id));
+        setUserJoinedCommunity(userCommunities);
+    }, [user]);
 
     return (
         <section className={`${name === "large" ? "px-[2.5rem] border-r border-primary bg-dark-background max-xl:hidden w-[310px] h-[750px] overflow-scroll scrollbar-none sticky top-[6.25rem] z-40" : "px-[2.5rem] bg-dark-background pt-[1.25rem]"} `}>
@@ -63,7 +71,7 @@ export default function LeftSideBar({ name }) {
                         }
                     </div>
                     {sidebarCommunity && <div className="w-full">
-                        {communityList.map((community, key) => {
+                        {userJoinedCommunity.map((community, key) => {
                             return (
                                 <div key={key} onClick={() => {
                                     const formattedCommunityName = community.name.replace(/\s+/g, '_'); // Replace spaces with underscores

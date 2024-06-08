@@ -78,6 +78,32 @@ module.exports.UpdateCommunity = async (req, res, next) => {
   }
 };
 
+module.exports.JoinCommunity = async (req, res, next) => {
+  try {
+    const community = await Community.findById(req.params.id);
+    if (!community) {
+      return res.status(404).json({ success: false, message: "Community not found" });
+    }
+
+    const userId = req.body.userID;
+
+    if (community.members.includes(userId)) {
+      const index = community.members.indexOf(userId);
+      community.members.splice(index, 1);
+    } else {
+      community.members.push(userId);
+    }
+
+    const updatedCommunity = await community.save();
+
+    res.status(200).json({ success: true, community: updatedCommunity });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
 // Delete
 module.exports.DeleteCommunity = async (req, res, next) => {
   try {
