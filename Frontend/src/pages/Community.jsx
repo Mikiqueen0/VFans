@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import { NavBar, LeftSideBar, CommunitySideBar, Post, CreatePostPopup, Filter, CommunitySetting } from '../components/index';
 import useStatus from "../hooks/useStatus";
-// import useCommunity from "../hooks/useCommunity";
+import useUser from "../hooks/useUser";
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { EllipsisHorizontalCircleIcon } from '@heroicons/react/24/outline';
 import { FaSpinner } from "react-icons/fa";
@@ -14,6 +14,7 @@ export default function Community() {
     const { communityName } = useParams();
     const formattedCommunityName = communityName.replace(/_/g, ' ');
     const { hamburger, setHamburger } = useStatus();
+    const { user } = useUser();
     const hamburgerPopupRef = useRef(null);
     const [popup, setPopup] = useState(false);
     const [openSetting, setOpenSetting] = useState(false);
@@ -47,7 +48,6 @@ export default function Community() {
         document.body.style.overflow = popup || openSetting ? "hidden" : "auto";
         document.body.style.paddingRight = popup || openSetting ? "15px" : "0";
     }, [popup, openSetting]);
-
 
     return (
         <div className="bg-dark-background scrollbar-thin">
@@ -88,8 +88,7 @@ export default function Community() {
                             <div className="flex gap-2 items-center text-[14px]">
                                 <button className="w-[3.6rem] h-[2.2rem] border rounded-full hover:text-emerald-green hover:border-emerald-green transition-all duration-100" onClick={() => setPopup(true)}>Post</button>
                                 <button className="w-[3.6rem] h-[2.2rem] border rounded-full hover:text-emerald-green hover:border-emerald-green transition-all duration-100">Join</button>
-                                {/* <button className="w-[4rem] h-[2.5rem] border rounded-full">...</button> */}
-                                <EllipsisHorizontalCircleIcon className="size-9 hover:text-emerald-green transition-all duration-100 cursor-pointer stroke-1" onClick={() => setOpenSetting(true)}/>
+                                {user._id === communityData.userID && <EllipsisHorizontalCircleIcon className="size-9 hover:text-emerald-green transition-all duration-100 cursor-pointer stroke-1" onClick={() => setOpenSetting(true)}/>}
                             </div>
                         </div>
                     </div>
