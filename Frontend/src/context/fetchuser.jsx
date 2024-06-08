@@ -7,38 +7,8 @@ import dummyBackground from "../assets/images/profileBackground.png";
 
 const UserContext = createContext({});
 export function UserContextProvider({ children }) {
-  // const [user, setUser] = useState({
-  //   username: "johny",
-  //   image: dummyProfile,
-  //   background: dummyBackground,
-  //   description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint aperiam neque minima autem et deserunt alias voluptates earum, ullam corporis temporibus repudiandae"
-  // });
   const [user, setUser] = useState(null);
   const [cookies, removeCookie] = useCookies([]);
-
-  //   useEffect(() => {
-  //     if (!user) {
-  //       axios
-  //         .post(`/auth/verify`, { withCredentials: true })
-  //         .then(({ data }) => {
-  //           console.log("Fetched user profile from cookie:", data);
-  //           setUser(data);
-  //         })
-  //         .catch((error) => {
-  //           console.error("Error fetching user profile from cookie:", error);
-  //         });
-  //     } else if (user) {
-  //       axios
-  //         .post(`/auth/verify`, { withCredentials: true })
-  //         .then((response) => {
-  //           console.log("Fetched user profile from database:", response.data);
-  //           setUser(response.data);
-  //         })
-  //         .catch((error) => {
-  //           console.error("Error fetching user profile from database:", error);
-  //         });
-  //     }
-  //   }, []);
 
   useEffect(() => {
     const verifyCookie = async () => {

@@ -10,9 +10,7 @@ import axios from 'axios';
 export default function Community() {
     const navigate = useNavigate();
     const location = useLocation();
-    const communityId = location.state.communityId;
-    const { communityName } = useParams();
-    const formattedCommunityName = communityName.replace(/_/g, ' ');
+    const { communityID } = useParams();
     const { hamburger, setHamburger } = useStatus();
     const { user } = useUser();
     const hamburgerPopupRef = useRef(null);
@@ -27,7 +25,7 @@ export default function Community() {
             if(openSetting) return;
             setLoading(true);
             try {
-                const { data: fetchCommunityData } = await axios.get(`/community/${communityId}`);
+                const { data: fetchCommunityData } = await axios.get(`/community/${communityID}`);
                 if(fetchCommunityData.success){
                     setCommunityData(fetchCommunityData.community);
                     if (fetchCommunityData.community && user) {
@@ -43,7 +41,7 @@ export default function Community() {
             }
         };
         fetchCommunity();
-    }, [communityName, openSetting, joined]);
+    }, [communityID, openSetting, joined]);
 
     useEffect(() => {
         document.body.style.overflow = hamburger ? "hidden" : "auto";
@@ -58,7 +56,7 @@ export default function Community() {
 
     const handleJoin = async () => {
         try {
-            const joinCommunity = await axios.put(`/community/join/${communityId}`, { userID: user._id });
+            const joinCommunity = await axios.put(`/community/join/${communityID}`, { userID: user._id });
             if(joinCommunity.data.success){
                 setCommunityData(joinCommunity.data.community);
                 setJoined(!joined);
@@ -99,7 +97,7 @@ export default function Community() {
                                         className="absolute inset-0 w-full h-full object-cover z-0 rounded-full"
                                     />
                                 </div>
-                                <p className="ml-[8.5rem] mt-1 mb-4 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/joinedCommunity/${formattedCommunityName}`, { state: { communityId: communityData._id } })}>
+                                <p className="ml-[8.5rem] mt-1 mb-4 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/joinedCommunity/${communityID}`)}>
                                     <span className="font-semibold opacity-100 mr-1">{communityData.members?.length}</span>
                                     <span className="font-normal opacity-80 tracking-wide group-hover:underline">Members</span>
                                 </p>

@@ -19,9 +19,11 @@ export default function LeftSideBar({ name }) {
         if (user && communityList) {
             const userCreateCommunities = communityList.filter(community => community.userID === user._id);
             const userCommunities = communityList.filter(community => community.members.includes(user._id));
-            setUserJoinedCommunity([ ...userCreateCommunities, ...userCommunities ]);
+            const combinedCommunitiesSet = new Set([...userCreateCommunities, ...userCommunities]);
+            const combinedCommunitiesArray = [...combinedCommunitiesSet]; // Convert Set back to Array
+            setUserJoinedCommunity(combinedCommunitiesArray);
         }
-    }, [communityList, user._id]);
+    }, [communityList, user?._id]);
 
     return (
         <section className={`${name === "large" ? "px-[2.5rem] border-r border-primary bg-dark-background max-xl:hidden w-[310px] h-[750px] overflow-scroll scrollbar-none sticky top-[6.25rem] z-40" : "px-[2.5rem] bg-dark-background pt-[1.25rem]"} `}>
@@ -77,8 +79,7 @@ export default function LeftSideBar({ name }) {
                         {userJoinedCommunity.map((community, key) => {
                             return (
                                 <div key={key} onClick={() => {
-                                    const formattedCommunityName = community.name.replace(/\s+/g, '_'); // Replace spaces with underscores
-                                    navigate(`/community/${encodeURIComponent(formattedCommunityName)}`, { state: { communityId: community._id } });
+                                    navigate(`/community/${community._id}`);
                                     }}  className="w-full h-[3.2rem] px-[1.2rem] text-white text-[13px] flex items-center justify-start gap-2 hover:underline hover:cursor-pointer">
                                     <img src={community.image} alt="" className="rounded-full size-6 bg-emerald-green" />
                                     <p>{community.name}</p>

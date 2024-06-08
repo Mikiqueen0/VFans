@@ -41,8 +41,7 @@ export default function AllCommunity() {
                         {communityList.map((community, key) => {
                             return (
                                 <div onClick={() => {
-                                    const formattedCommunityName = community.name.replace(/\s+/g, '_');
-                                    navigate(`/community/${encodeURIComponent(formattedCommunityName)}`, { state: { communityId: community._id } });
+                                    navigate(`/community/${community._id}`);
                                     }} key={key} className="w-[12rem] h-[3.2rem] px-[1.2rem] text-white text-[14px] text-opacity-90 font-normal flex items-center justify-start gap-2 bg-primary rounded-[8px] hover:cursor-pointer py-7">
                                     <img src={community.image} alt="" className="rounded-full size-8 bg-emerald-green" />
                                     <p>{community.name}</p>

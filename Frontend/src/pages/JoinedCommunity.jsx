@@ -9,10 +9,7 @@ export default function JoinedCommunity() {
     const { hamburger, setHamburger } = useStatus();
     const hamburgerPopupRef = useRef(null);
     const navigate = useNavigate();
-    const location = useLocation();
-    const communityId = location.state.communityId;
-    const { communityName } = useParams();
-    const formattedCommunityName = communityName.replace(/_/g, ' ');
+    const { communityID } = useParams();
     const [members, setMembers] = useState([]);
 
     useEffect(() => {
@@ -24,7 +21,7 @@ export default function JoinedCommunity() {
     useEffect(() => {
         const fetchCommunity = async () => {
             try {
-                const { data: fetchCommunityData } = await axios.get(`/community/member/${communityId}`);
+                const { data: fetchCommunityData } = await axios.get(`/community/member/${communityID}`);
                 if(fetchCommunityData.success){
                     setMembers(fetchCommunityData.community.members);
                 }

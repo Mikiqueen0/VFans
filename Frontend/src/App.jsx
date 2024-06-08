@@ -36,12 +36,12 @@ const App = () => {
             <Route path="/save" element={<Save />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/community/:communityName" element={<Community />} />
+            <Route path="/community/:communityID" element={<Community />} />
             <Route path="/community" element={<AllCommunity />} />
             <Route path="/createCommunity" element={<CreateCommunity />} />
             <Route path="/profile/:profileUsername" element={<Profile />} />
             <Route
-              path="/joinedCommunity/:communityName"
+              path="/joinedCommunity/:communityID"
               element={<JoinedCommunity />}
             />
           </Routes>

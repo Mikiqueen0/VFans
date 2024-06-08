@@ -14,7 +14,8 @@ module.exports.CreateCommunity = async (req, res, next) => {
     const newCommunity = new Community({
       userID,
       name,
-      desc
+      desc,
+      members: [userID]
     });
     const community = await newCommunity.save();
     res.status(200).json({ success: true, community });

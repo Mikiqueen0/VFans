@@ -2,10 +2,12 @@ import { useEffect, useState, useRef, useContext } from "react";
 import { NavBar, LeftSideBar, RightSideBar, Post } from "../components/index";
 import useStatus from "../hooks/useStatus";
 import { useParams, useNavigate } from "react-router-dom";
-import { PencilIcon, PencilSquareIcon } from "@heroicons/react/20/solid";
+import { PencilIcon } from "@heroicons/react/20/solid";
 import { FaSpinner } from "react-icons/fa";
 import useUser from "../hooks/useUser";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+import supabase from "../utils/supabase";
 
 export default function Profile() {
     const navigate = useNavigate();
@@ -29,14 +31,14 @@ export default function Profile() {
                     setProfile(fetchProfile.data.user);
                     setProfileDataCopy(fetchProfile.data.user);
                     setCanEdit(user?._id === fetchProfile.data.user._id);
-                    console.log(fetchProfile.data.user);
+                    // console.log(fetchProfile.data.user);
                 }else{
                     console.error('Failed to fetch user profile');
                 }
             } catch (err) {
                 console.error("Error fetching profile", err);
             } finally {
-                setLoading(false); // Set loading state to false after fetching profile data
+                setLoading(false);
             }
         };
         fetchProfile();
@@ -45,16 +47,18 @@ export default function Profile() {
     const[changeProfile, setChangeProfile] = useState(false);
 
     const handleProfileChange = (e) => {
-        console.log(e.target.files[0]);
+        const file = e.target.files[0];
         setProfileDataCopy({ ...profileDataCopy, profileImage: URL.createObjectURL(e.target.files[0])});
         setChangeProfile(true);
+        setProfileFile(file);
         e.target.value = null;
     };
 
     const handleBannerChange = (e) => {
-        console.log(e.target.files[0]);
+        const file = e.target.files[0];
         setProfileDataCopy({ ...profileDataCopy, profileBanner: URL.createObjectURL(e.target.files[0])});
         setChangeProfile(true);
+        setBannerFile(file);
         e.target.value = null;
     };
 
@@ -65,11 +69,54 @@ export default function Profile() {
         }
     };
 
-    const handleSave = () => {
-        setUser(profileDataCopy);
-        setChangeProfile(false);
-        setEditBio(false);
-        console.log("Saved");
+    const [bannerFile, setBannerFile] = useState(null);
+    const [profileFile, setProfileFile] = useState(null);
+
+    const uploadFile = async (file) => {
+        try {
+            const { data } = await supabase.storage
+                .from("VFans")
+                .upload("/" + uuidv4(), file);
+            const image = await supabase.storage
+                .from("VFans")
+                .getPublicUrl(data.path);
+            return image.data.publicUrl;
+        } catch (err) {
+            console.error("Error uploading file:", err);
+        } finally {
+            setBannerFile(null);
+        };
+    };
+
+    
+    const handleSave = async () => {
+        setLoading(true);
+        try {
+            let updatedProfile = { ...profileDataCopy };
+            if (bannerFile) {
+                const updatedProfileBanner = await uploadFile(bannerFile);
+                setBannerFile(null);
+                updatedProfile = { ...updatedProfile, profileBanner: updatedProfileBanner };
+            }
+
+            if(profileFile) {
+                const updatedProfileImage = await uploadFile(profileFile);
+                setProfileFile(null);
+                updatedProfile = { ...updatedProfile, profileImage: updatedProfileImage };
+            }
+
+            if (profileDataCopy.bio !== user.bio) {
+                updatedProfile = { ...updatedProfile, bio: profileDataCopy.bio };
+            }
+            setUser(updatedProfile);
+        } catch (error) {
+            console.log("Error saving profile changes:", error);
+        } finally {
+            setProfileDataCopy(user);
+            setLoading(false);
+            setChangeProfile(false);
+            setEditBio(false);
+        }
     };
 
     const handleCancel = () => {

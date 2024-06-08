@@ -1,8 +1,10 @@
 import { useRef, useState, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateCommunityPopup({ setPopup, popup, userID }) {
+    const navigate = useNavigate();
     const createPostPopupRef = useRef(null);
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -51,6 +53,8 @@ export default function CreateCommunityPopup({ setPopup, popup, userID }) {
         e.preventDefault();
         try {
             const createCommunity = await axios.post("/community/create", { ...communityData, userID});
+            const urlName = createCommunity.data.community.name.replace(/\s+/g, '_');
+            navigate(`/community/${urlName}`);
             console.log(createCommunity.data);
         } catch (err) {
             console.error("Error creating community", err);
