@@ -8,6 +8,7 @@ import CreateCommunityPopup from './CreateCommunityPopup';
 import CommunitySideBar from './CommunitySideBar';
 import Filter from './Filter';
 import CommunitySetting from './CommunitySetting';
+import LoadingScreen from './LoadingScreen';
 
 export { 
     PageButton, 
@@ -19,5 +20,6 @@ export {
     CreateCommunityPopup,
     CommunitySideBar,
     Filter,
-    CommunitySetting
+    CommunitySetting,
+    LoadingScreen
 }

@@ -9,7 +9,9 @@ import profileIcon from "../assets/images/profile.png";
 import settingIcon from "../assets/images/setting.png";
 import logoutIcon from "../assets/images/logout.png";
 import useAuth from "../hooks/useAuth";
-import useUser from "../hooks/useUser";
+import useUser from "../hooks/useUser"; 
+import useStatus from "../hooks/useStatus"; 
+import { LoadingScreen } from "./index";
 
 export default function NavBar({
 	setHamburger,
@@ -22,6 +24,16 @@ export default function NavBar({
 	function classNames(...classes) {
 		return classes.filter(Boolean).join(" ");
 	}
+
+	const { user, setUser } = useUser();
+	const { loading, setLoading } = useStatus();
+	const { logout } = useAuth();
+
+	useEffect(() => {
+		if (user) {
+			setLoading(false);
+		}
+	}, [user]);
 
 	useEffect(() => {
 		const handleClickOutside = (e) => {
@@ -49,10 +61,15 @@ export default function NavBar({
 		};
 	}, [hamburgerPopupRef, setHamburger]);
 
-	const { user, setUser } = useUser();
-	const { logout } = useAuth();
+	const printUser = () => {
+		console.log(user);
+	};
 
-	return (
+	useEffect(() => {
+		document.body.style.overflow = loading ? "hidden" : "auto";
+	}, [loading]);
+
+	return (loading ? <LoadingScreen /> :
 		<nav className="sticky top-0 bg-primary grid grid-cols-[30%_40%_30%] max-sm:grid-cols-[20%_60%_20%] justify-between items-center h-[5rem] z-50">
 			<div className="ml-[5rem] max-xl:ml-[1.5rem] flex items-center gap-10 max-sm:gap-3">
 				<button
@@ -106,9 +123,9 @@ export default function NavBar({
 			</div>
 
 			<div className="flex flex-row-reverse mr-[5rem] max-xl:mr-[1.5rem]">
-				<div className="flex flex-row items-center justify-end">
+				{user ? (<div className="flex flex-row items-center justify-end">
 					<img
-						src={user.image}
+						src={user.profileImage}
 						alt="profile"
 						className="rounded-full object-cover size-[2.5rem] max-lg:hidden"
 					/>
@@ -118,6 +135,7 @@ export default function NavBar({
 						onClick={() => navigate(`/profile/${user.username}`)}
 					>
 						{user.username}
+						{/* {printUser()} */}
 					</div>
 					<Menu as="div" className="relative inline-block text-left">
 						<div className="flex justify-center ml-2">
@@ -288,6 +306,11 @@ export default function NavBar({
 						</Transition>
 					</Menu>
 				</div>
+				)
+				: 
+				(
+					<div className="py-2 px-5 rounded-[10px] bg-emerald-green text-black font-medium text-opacity-90 text-[14px] hover:bg-emerald-600 duration-100 hover:cursor-pointer" onClick={() => navigate('/login')}>Login</div>
+				)}
 			</div>
 		</nav>
 	);

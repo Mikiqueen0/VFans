@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import { NavBar, LeftSideBar, RightSideBar, CreatePostPopup } from '../components/index';
-import { StatusContext } from '../context/StatusContext';
+import useStatus from "../hooks/useStatus";
 
 export default function CreateCommunity() {
-    const { hamburger, setHamburger } = useContext(StatusContext);
+    const { hamburger, setHamburger } = useStatus();
     const hamburgerPopupRef = useRef(null);
 
     useEffect(() => {

@@ -1,66 +1,87 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import { NavBar, LeftSideBar, RightSideBar, Post } from "../components/index";
-import { StatusContext } from "../context/StatusContext";
+import useStatus from "../hooks/useStatus";
 import { useParams, useNavigate } from "react-router-dom";
 import profileBackground from "../assets/images/profileBackground.png";
 import profileTestIcon from "../assets/images/test-profile.jpg";
 import { PencilIcon, PencilSquareIcon } from "@heroicons/react/20/solid";
+import { FaSpinner } from "react-icons/fa";
 import useUser from "../hooks/useUser";
+import axios from "axios";
 
 export default function Profile() {
     const navigate = useNavigate();
     const { user, setUser } = useUser();
     const { profileUsername } = useParams();
-    const { hamburger, setHamburger } = useContext(StatusContext);
+    const [profile, setProfile] = useState({});
+    const [profileDataCopy, setProfileDataCopy] = useState({});
+    const { hamburger, setHamburger } = useStatus();
     const [tab, setTab] = useState("post");
-    const [editDescription, setEditDescription] = useState(false);
+    const [editBio, setEditBio] = useState(false);
     const hamburgerPopupRef = useRef(null);
-    // const [profileData, setProfileData] = useState({
-    //     username: user.username,
-    //     background: profileBackground,
-    //     image: profileTestIcon,
-    //     description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint aperiam neque minima autem et deserunt alias voluptates earum, ullam corporis temporibus repudiandae",
-    // });
+    const [canEdit, setCanEdit] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-    const [profileDataCopy, setProfileDataCopy] = useState(user);
+    useEffect(() => {
+        const fetchProfile = async () => {
+            setLoading(true);
+            try {
+                const fetchProfile = await axios.get(`/user/profile/${profileUsername}`, { withCredentials: true });
+                if(fetchProfile.status){
+                    setProfile(fetchProfile.data.user);
+                    setProfileDataCopy(fetchProfile.data.user);
+                    setCanEdit(user?._id === fetchProfile.data.user._id);
+                    console.log(fetchProfile.data.user);
+                }else{
+                    console.error('Failed to fetch user profile');
+                }
+            } catch (err) {
+                console.error("Error fetching profile", err);
+            } finally {
+                setLoading(false); // Set loading state to false after fetching profile data
+            }
+        };
+        fetchProfile();
+    }, [user]);
+    
     const[changeProfile, setChangeProfile] = useState(false);
 
     const handleProfileChange = (e) => {
         console.log(e.target.files[0]);
-        setProfileDataCopy({ ...profileDataCopy, image: URL.createObjectURL(e.target.files[0])});
+        setProfileDataCopy({ ...profileDataCopy, profileImage: URL.createObjectURL(e.target.files[0])});
         setChangeProfile(true);
         e.target.value = null;
     };
 
-    const handleBackgroundChange = (e) => {
+    const handleBannerChange = (e) => {
         console.log(e.target.files[0]);
-        setProfileDataCopy({ ...profileDataCopy, background: URL.createObjectURL(e.target.files[0])});
+        setProfileDataCopy({ ...profileDataCopy, profileBanner: URL.createObjectURL(e.target.files[0])});
         setChangeProfile(true);
         e.target.value = null;
     };
 
-    const handleDescriptionChange = (e) => {
+    const handleBioChange = (e) => {
         const value = e.target.value;
-        if (value.length <= maxProfileDescription) {
-            setProfileDataCopy({ ...profileDataCopy, description: value});
+        if (value.length <= maxProfileBio) {
+            setProfileDataCopy({ ...profileDataCopy, bio: value});
         }
     };
 
     const handleSave = () => {
         setUser(profileDataCopy);
         setChangeProfile(false);
-        setEditDescription(false);
+        setEditBio(false);
         console.log("Saved");
     };
 
     const handleCancel = () => {
         setProfileDataCopy(user);
         setChangeProfile(false);
-        setEditDescription(false);
+        setEditBio(false);
         console.log("Cancelled");
     };
 
-    const maxProfileDescription = 250;
+    const maxProfileBio = 250;
 
     return (
         <div className="bg-dark-background scrollbar-thin">
@@ -68,20 +89,25 @@ export default function Profile() {
             <div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem] pb-[1.25rem] z-40">
                 <LeftSideBar name="large" />
                 {/* middle section */}
-                <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[1rem] w-[800px] text-white">
+                {loading && 
+                    <div className="flex h-[calc(100vh-6.25rem)] items-center justify-center gap-3 max-sm:px-[1rem] px-[1rem] w-[800px] text-white">
+                        <FaSpinner className="animate-spin text-4xl text-emerald-green" />
+                    </div>
+                }
+                {!loading && <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[1rem] w-[800px] text-white">
                     {/* user info */}
                     <div className={`w-full h-[26rem] min-h-[26rem] rounded-[10px] flex flex-col justify-end relative`}>
-                        <label htmlFor="background-input" className="absolute inset-0 w-full h-[85%] pb-20 cursor-pointer">
+                        <label htmlFor="banner-input" className="absolute inset-0 w-full h-[85%] pb-20 cursor-pointer">
                             <input
-                                id="background-input"
+                                id="banner-input"
                                 type="file"
                                 className="hidden"
-                                onChange={handleBackgroundChange}
+                                onChange={handleBannerChange}
                                 accept="image/jpeg, image/png, image/jpg"
                             />
                             <div className="w-full h-full relative">
                                 <img
-                                    src={profileDataCopy.background} // Use a default image or the updated image
+                                    src={profileDataCopy.profileBanner} // Use a default image or the updated image
                                     alt="background"
                                     className="w-full h-full object-cover rounded-[10px]"
                                 />
@@ -92,18 +118,19 @@ export default function Profile() {
                         </label>
                         <div className="h-12 w-full backdrop-blur-sm flex items-center">
                             <p className="text-[26px] font-bold ml-[10rem] tracking-wide">
-                                {user.username}
+                                {profile.username}
                             </p>
                         </div>
-                        <div className="relative w-full min-h-[25%] rounded-b-[10px] bg-primary flex flex-col justify-center px-6">
+                        <div className="relative w-full min-h-[38%] rounded-b-[10px] bg-primary flex flex-col justify-center px-6">
                             <div className="size-[8rem] rounded-full border-[0.4rem] border-primary absolute -top-[5.5rem] hover:cursor-pointer">
                                 <img
-                                    src={profileDataCopy.image}
+                                    src={profileDataCopy.profileImage}
                                     alt="profile"
                                     className="absolute inset-0 w-full h-full object-cover z-0 rounded-full"
                                 />
                             </div>
                             {/* <PencilIcon className="absolute bg-dark-background ml-[7.2rem] mt-2"/> */}
+                            {canEdit && 
                             <label htmlFor="file-input" className="relative">
                                 <input
                                     id="file-input"
@@ -122,23 +149,25 @@ export default function Profile() {
                                     <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z" />
                                     </svg>
                                 </div>
-                            </label>
-                            <p className="ml-[8.5rem] mt-3 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/${user.username}/joinedCommunity`)}>
+                            </label>}
+                            <p className="ml-[8.5rem] mt-3 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/${profile.username}/joinedCommunity`)}>
                                 <span className="font-semibold opacity-100 mr-1">279</span>
                                 <span className="font-normal opacity-80 tracking-wide group-hover:underline">Communities joined</span>
                             </p>
                             <div className="mx-[1rem] mt-5 flex-grow flex flex-col gap-1">
-                                {editDescription ? 
+                                {editBio ? 
                                     // <textarea value={profileDataCopy.userDescription} placeHolder="Description..."></textarea>
                                     <div className="flex flex-col w-full">
-                                        <textarea type="text" className="bg-dark-background p-3 font-light text-white text-[14px] text-opacity-90 focus:outline-none caret-[#8c8c8c] h-[5.5rem] resize-none overscroll-none w-full rounded-[10px]" placeholder="Description..." onChange={e => handleDescriptionChange(e)} value={profileDataCopy.description}></textarea>
-                                        <p className="text-end font-light opacity-70 text-[13px] mt-1">{profileDataCopy.description.length}/{maxProfileDescription}</p>
+                                        <textarea type="text" className="bg-dark-background p-3 font-light text-white text-[14px] text-opacity-90 focus:outline-none caret-[#8c8c8c] h-[5.5rem] resize-none overscroll-none w-full rounded-[10px]" placeholder="Description..." onChange={e => handleBioChange(e)} value={profileDataCopy.bio}></textarea>
+                                        <p className="text-end font-light opacity-70 text-[13px] mt-1">{profileDataCopy.bio?.length}/{maxProfileBio}</p>
                                     </div>
                                     : <p className="font-normal opacity-80 tracking-wide text-[13px]">
-                                        {user.description || profileDataCopy.description || "No description yet"}
+                                        {profile?.bio || profileDataCopy.bio || "No description yet"}
                                     </p>
                                 }
-                                {!editDescription && <p className="text-emerald-green underline text-[14px] text-end cursor-pointer" onClick={() => {setEditDescription(true); setChangeProfile(true);}}>Edit description</p>}
+                                {!editBio && canEdit && 
+                                    (<p className="text-emerald-green underline text-[14px] text-end cursor-pointer" onClick={() => {setEditBio(true); setChangeProfile(true);}}>Edit Bio</p>)
+                                }
                             </div>
                             {changeProfile && 
                                 <div className="flex gap-2 mt-3 justify-end px-[1.5rem]">
@@ -155,10 +184,10 @@ export default function Profile() {
                         </div>
                     </div>
                     <div className="flex flex-col gap-3 max-md:px-[1.5rem] px-[4rem] text-white">
-                        <Post username={user.username}/>
-                        <Post username={user.username}/>
+                        <Post username={"test"}/>
+                        <Post username={"test"}/>
                     </div>
-                </section>
+                </section>}
                 <RightSideBar />
             </div>
             {hamburger && (

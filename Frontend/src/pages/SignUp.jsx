@@ -80,7 +80,8 @@ export default function SignUp() {
         handleSuccess(message);
         setTimeout(() => {
           navigate("/home");
-        }, 1000);
+          window.location.reload();
+        }, 2000);
       } else {
         handleError(message);
       }

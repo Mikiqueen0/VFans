@@ -3,11 +3,13 @@ import { PageButton } from "./index";
 import { useState, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon, MinusIcon } from "@heroicons/react/20/solid";
-import { StatusContext } from "../context/StatusContext";
+// import { StatusContext } from "../context/StatusContext";
+import useStatus from "../hooks/useStatus";
 
 
 export default function LeftSideBar({ name }) {
-    const { sidebarCommunity, setSidebarCommunity } = useContext(StatusContext);
+    // const { sidebarCommunity, setSidebarCommunity } = useContext(StatusContext);
+    const { sidebarCommunity, setSidebarCommunity } = useStatus();
     const navigate = useNavigate();
     const [communityList, setCommunityList] = useState([
         {

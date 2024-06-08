@@ -19,10 +19,15 @@ const userSchema = new mongoose.Schema({
   bio: {
     type: String,
   },
-  profile_picture: {
+  profileImage: {
     type: String,
     default:
-      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+      "https://www.gravatar.com/avatar/?d=mp&s=200",
+  },
+  profileBanner: {
+    type: String,
+    default:
+      "https://via.placeholder.com/800x200/CCCCCC/808080?text=Banner",
   },
 });
 

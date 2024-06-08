@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import { NavBar, LeftSideBar, RightSideBar, CreateCommunityPopup } from '../components/index';
 import { Link, useNavigate } from 'react-router-dom';
-import { StatusContext } from '../context/StatusContext';
+import useStatus from "../hooks/useStatus";
 
 export default function AllCommunity() {
     const navigate = useNavigate();
-    const { hamburger, setHamburger } = useContext(StatusContext);
+    const { hamburger, setHamburger } = useStatus();
     const hamburgerPopupRef = useRef(null);
     const [popup, setPopup] = useState(false);
     const [communityList, setCommunityList] = useState([

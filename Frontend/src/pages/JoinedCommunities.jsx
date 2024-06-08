@@ -8,19 +8,20 @@ import {
 	CreatePostPopup,
 	Filter
 } from "../components/index";
-import { StatusContext } from "../context/StatusContext";
+// import { StatusContext } from "../context/StatusContext";
 import profileTestIcon from "../assets/images/dummyProfile.png";
 import { useCookies } from "react-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import useUser from "../hooks/useUser";
+import useStatus from "../hooks/useStatus";
 
 export default function JoinedCommunities() {
 	const { user, setUser } = useUser();
 	const [popup, setPopup] = useState(false); //popup create post in detail when click create post at home page
 	const [cookies, removeCookie] = useCookies([]);
 	const hamburgerPopupRef = useRef(null);
-	const { hamburger, setHamburger } = useContext(StatusContext);
+	const { hamburger, setHamburger } = useStatus();
 	const navigate = useNavigate();
 
 	useEffect(() => {

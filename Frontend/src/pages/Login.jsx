@@ -35,6 +35,7 @@ export default function Login() {
       if (success) {
         handleSuccess(message);
         setTimeout(() => {
+          localStorage.setItem("redirectedFromLogin", "true");
           navigate("/home");
         }, 1000);
       } else {

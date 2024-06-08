@@ -1,9 +1,22 @@
 const User = require("../models/user");
+const mongoose = require('mongoose');
 
 // Profile
 module.exports.Profile = async (req, res, next) => {
+  // const user = req.params.id;
+  // res.status(200).json({ success: true, user: req.params.id });
+  const params = req.params.id;
   try {
-    const user = await User.findById(req.params.id);
+    // const user = await User.findById(params);
+    // const user = await User.findOne({ $or: [{ _id: params }, { username: params }] });
+
+    let user;
+    if (mongoose.Types.ObjectId.isValid(params)) {
+      user = await User.findById(params);
+    } else {
+      user = await User.findOne({ username: params });
+    }
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -20,11 +33,7 @@ module.exports.UpdateProfile = async (req, res, next) => {
     const user = await User.findByIdAndUpdate(
       req.params.id,
       {
-        $set: {
-          username: req.body.username,
-          bio: req.body.bio,
-          profile_picture: req.body.profile_picture,
-        },
+        $set: req.body
       },
       { new: true }
     );

@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import { NavBar, LeftSideBar, CommunitySideBar, Post, CreatePostPopup, Filter, CommunitySetting } from '../components/index';
-import { StatusContext } from '../context/StatusContext';
+// import { StatusContext } from '../context/StatusContext';
+import useStatus from "../hooks/useStatus";
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import communityBackground from '../assets/images/profileBackground.png';
 import communityTestIcon from '../assets/images/test-profile.jpg';
@@ -13,7 +14,8 @@ export default function Community() {
     const { communityName } = useParams();
     // Replace underscores with spaces
     const formattedCommunityName = communityName.replace(/_/g, ' ');
-    const { hamburger, setHamburger } = useContext(StatusContext);
+    // const { hamburger, setHamburger } = useContext(StatusContext);
+    const { hamburger, setHamburger } = useStatus();
     const hamburgerPopupRef = useRef(null);
     const [popup, setPopup] = useState(false);
     const [openSetting, setOpenSetting] = useState(false);

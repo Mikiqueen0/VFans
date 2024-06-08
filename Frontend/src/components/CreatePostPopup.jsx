@@ -11,8 +11,10 @@ import {
 } from "@heroicons/react/20/solid";
 import profileTestIcon from "../assets/images/test-profile.jpg";
 import crossIcon from "../assets/images/tagCross.png";
+import useUser from "../hooks/useUser";
 
 export default function CreatePostPopup({ setPopup, popup }) {
+	const { user, setUser } = useUser();
 	const { communityName } = useParams();
 	const formattedCommunityName = communityName?.replace(/_/g, " ");
 	const [communityDropdown, setCommunityDropdown] = useState(false); // community dropdown
@@ -266,7 +268,7 @@ export default function CreatePostPopup({ setPopup, popup }) {
                     <div className={`transition-all duration-[400ms] ${toggleTabState === 1 ? "opacity-100" : "opacity-0"}`}>
                         {toggleTabState === 1 && <div>
                             <div className="mt-2 flex gap-2">
-                                <img src={profileTestIcon} alt="profile" className="rounded-full h-[2rem]" />
+                                <img src={user.profileImage} alt="profile" className="rounded-full size-[2rem] object-cover" />
                                 <textarea className="bg-dark-background p-3 font-light text-white text-base text-opacity-80 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="5" placeholder="Write Something..." onChange={e => setCreatePostContent(e.target.value)} value={createPostContent} required></textarea>
                             </div>
                             <div className="mt-2">

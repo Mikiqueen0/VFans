@@ -10,7 +10,7 @@ export default function Post({ username }) {
       <div className="flex justify-between">
         <div className="flex flex-row flex-1 items-center gap-2">
           <img
-            src={user.image}
+            src={profileTestIcon}
             alt="profile"
             className="rounded-full object-cover size-[1.75rem]"
           />
@@ -19,7 +19,7 @@ export default function Post({ username }) {
               English/Hololive/Myth/Gawr_Gura
             </p>
             <p className="font-normal text-[12px] text-opacity-60 text-white">
-              Posted by {user.username} - 1 hour ago
+              Posted by {username} - 1 hour ago
             </p>
           </div>
         </div>

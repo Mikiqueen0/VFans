@@ -1,10 +1,10 @@
 import { useEffect, useState, useRef, useContext } from 'react';
 import { NavBar, LeftSideBar, RightSideBar, CreatePostPopup } from '../components/index';
-import { StatusContext } from '../context/StatusContext';
+import useStatus from "../hooks/useStatus";
 import { useParams } from 'react-router-dom';
 
 export default function JoinedCommunity() {
-    const { hamburger, setHamburger } = useContext(StatusContext);
+    const { hamburger, setHamburger } = useStatus();
     const hamburgerPopupRef = useRef(null);
     const { profileUsername } = useParams();
 
