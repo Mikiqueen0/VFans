@@ -4,6 +4,7 @@ const {
   GetCommunity,
   UpdateCommunity,
   DeleteCommunity,
+  JoinCommunity,
 } = require("../controllers/CommunityController");
 const router = require("express").Router();
 
