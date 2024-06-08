@@ -43,7 +43,7 @@ export default function Community() {
             }
         };
         fetchCommunity();
-    }, [communityName, openSetting]);
+    }, [communityName, openSetting, joined]);
 
     useEffect(() => {
         document.body.style.overflow = hamburger ? "hidden" : "auto";

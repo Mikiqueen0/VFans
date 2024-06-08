@@ -16,9 +16,12 @@ export default function LeftSideBar({ name }) {
     const [userJoinedCommunity, setUserJoinedCommunity] = useState([]);
 
     useEffect(() => {
-        const userCommunities = communityList.filter(community => community.members.includes(user._id));
-        setUserJoinedCommunity(userCommunities);
-    }, [user]);
+        if (user && communityList) {
+            const userCreateCommunities = communityList.filter(community => community.userID === user._id);
+            const userCommunities = communityList.filter(community => community.members.includes(user._id));
+            setUserJoinedCommunity([ ...userCreateCommunities, ...userCommunities ]);
+        }
+    }, [communityList, user._id]);
 
     return (
         <section className={`${name === "large" ? "px-[2.5rem] border-r border-primary bg-dark-background max-xl:hidden w-[310px] h-[750px] overflow-scroll scrollbar-none sticky top-[6.25rem] z-40" : "px-[2.5rem] bg-dark-background pt-[1.25rem]"} `}>
