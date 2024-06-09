@@ -22,17 +22,38 @@ export default function Post({ post }) {
       return "Just now";
     } else if (diffMinutes < 60) {
       // 1-60 minutes
-      return `${diffMinutes} ${diffMinutes === 1 ? 'minute' : 'minutes'} ago`;
+      return `${diffMinutes} ${diffMinutes === 1 ? "minute" : "minutes"} ago`;
     } else if (diffHours < 24) {
       // 1-24 hours
-      return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
+      return `${diffHours} ${diffHours === 1 ? "hour" : "hours"} ago`;
     } else if (diffDays < 7) {
       // 1-7 days
-      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      return `Posted ${days[postCreatedAt.getDay()]} at ${postCreatedAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+      const days = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+      return `Posted ${
+        days[postCreatedAt.getDay()]
+      } at ${postCreatedAt.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      })}`;
     } else {
       // Longer than 7 days
-      return `Posted on ${postCreatedAt.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}, ${postCreatedAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+      return `Posted on ${postCreatedAt.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+      })}, ${postCreatedAt.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      })}`;
     }
   };
 
@@ -45,28 +66,36 @@ export default function Post({ post }) {
             alt="profile"
             className="rounded-full object-cover size-[1.75rem]"
           />
-          <p className="font-normal text-[15px] text-opacity-90 text-white hover:underline cursor-pointer" onClick={() => navigate(`/community/${postCommunity._id}`)}>
+          <p
+            className="font-normal text-[15px] text-opacity-90 text-white hover:underline cursor-pointer"
+            onClick={() => navigate(`/community/${postCommunity._id}`)}
+          >
             {postCommunity.name}
           </p>
           <p className="font-normal text-[12px] text-opacity-60 text-white">
-            Posted by {' '}
-            <span className="hover:underline cursor-pointer" onClick={() => navigate(`/profile/${postCreator.username}`)}>
+            Posted by{" "}
+            <span
+              className="hover:underline cursor-pointer"
+              onClick={() => navigate(`/profile/${postCreator.username}`)}
+            >
               {postCreator.username}
             </span>
             <span> - </span>
-            <span className="text-opacity-60 text-xs">{formatPostCreationTime(post.createdAt)}</span>
+            <span className="text-opacity-60 text-xs">
+              {formatPostCreationTime(post.createdAt)}
+            </span>
           </p>
         </div>
 
-
-        <EllipsisHorizontalIcon className="text-white size-6"/>
+        <EllipsisHorizontalIcon className="text-white size-6" />
       </div>
       <div className="flex gap-2 pt-3">
         {post.tag.map((tag, key) => {
           return (
             <button
               key={key}
-              className="text-[12px] font-medium text-opacity-90 text-emerald-green rounded-[10px] border border-emerald-green px-3 py-2">
+              className="text-[12px] font-medium text-opacity-90 text-emerald-green rounded-[10px] border border-emerald-green px-3 py-2"
+            >
               {tag}
             </button>
           );
@@ -77,8 +106,19 @@ export default function Post({ post }) {
           {post.desc}
         </p>
       </div>
-      <div className="rounded-[10px] pt-3">
-        <img src={post.image[0]} alt="" />
+      <div
+        className={`gap-4 rounded-[10px] pt-3 grid ${
+          post.image.length > 1 ? "grid-cols-2" : "grid-cols-1"
+        }`}
+      >
+        {post.image.map((imageUrl, index) => (
+          <img
+            key={index}
+            src={imageUrl}
+            alt=""
+            className="rounded-[10px] object-cover w-full h-full"
+          />
+        ))}
       </div>
       <div className="flex gap-8 text-[14px] font-medium text-opacity-90 text-white mt-3">
         <button>Like</button>
