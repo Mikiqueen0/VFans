@@ -9,7 +9,6 @@ import {
 	PlusIcon,
 	XMarkIcon,
 } from "@heroicons/react/20/solid";
-import profileTestIcon from "../assets/images/test-profile.jpg";
 import crossIcon from "../assets/images/tagCross.png";
 import useUser from "../hooks/useUser";
 import useCommunity from "../hooks/useCommunity";
@@ -21,12 +20,10 @@ export default function CreatePostPopup({ setPopup, popup }) {
 	const { user, setUser } = useUser();
 	const { communityList, setCommunityList } = useCommunity();
 	const { communityID } = useParams();
-	// const formattedCommunityName = communityName?.replace(/_/g, " ");
 	const [communityDropdown, setCommunityDropdown] = useState(false); // community dropdown
 	const [communitySelect, setCommunitySelect] = useState({}); // selected community
 	const [communitySearch, setCommunitySearch] = useState(""); //search community field
-	// const [createPostContent, setCreatePostContent] = useState(""); // create post content text field
-	// const [createPostTag, setCreatePostTag] = useState([]); //tag list
+	const [filteredCommunityList, setFilteredCommunityList] = useState(communityList); // filtered community list
 	const [tagVal, setTagVal] = useState(""); //tag in text field
 	const [tagCheckbox, setTagCheckbox] = useState(false); // tag dropdown
 	const [postData, setPostData] = useState({
@@ -167,9 +164,11 @@ export default function CreatePostPopup({ setPopup, popup }) {
 	};
 
 	const handleCommunitySearch = (e) => {
-		if (e.key === "Enter") {
-		console.log(communitySearch);
-		}
+		setCommunitySearch(e.target.value);
+		const filtered = communityList.filter(community => 
+			community.name.toLowerCase().includes(e.target.value.toLowerCase())
+		);
+		setFilteredCommunityList(filtered);
 	};
 
 
@@ -226,16 +225,16 @@ export default function CreatePostPopup({ setPopup, popup }) {
 					<div className={`h-12 w-[50%] relative my-2`}>
 						<div value="Select Community" className={`appearance-none bg-transparent text-base text-white text-opacity-80 h-full w-full inline-flex items-center py-2 px-4 focus:outline-none border justify-between border-emerald-green border-opacity-70 ${communityDropdown ? "rounded-b-[0px] rounded-t-[20px]" : "rounded-[20px]"}`}>
 							{communityDropdown ? 
-								<input type="text" onChange={(e) => setCommunitySearch(e.target.value)} onKeyDown={handleCommunitySearch} value={communitySearch} className="bg-primary caret-[#8c8c8c] h-full w-full font-light focus:outline-none" placeholder="Search Community..."></input>
+								<input type="text" onChange={handleCommunitySearch} value={communitySearch} className="bg-primary caret-[#8c8c8c] h-full w-full font-light focus:outline-none" placeholder="Search Community..."></input>
 								: 
 								<p className="flex items-center">
-									{communitySelect.name && (
+									{communitySelect.name ? (
 										<>
 										<img src={communitySelect.image} alt="" className="bg-emerald-green rounded-full size-6 mr-2" />
 										{communitySelect.name}
 										</>
-									)}
-									{!communitySelect.name && "Select Community"}
+									) : "Select Community"}
+									
 								</p>
 								
 							}
@@ -245,7 +244,7 @@ export default function CreatePostPopup({ setPopup, popup }) {
 						</div>
 						{communityDropdown && 
 							<div className="bg-dark-background absolute w-full border border-t-0 border-emerald-green overflow-y-scroll max-h-[200px]">
-								{communityList.map((community, index) => {
+								{filteredCommunityList.map((community, index) => {
 									return (
 										<div key={index} className="flex items-center px-4 py-3 gap-3 group cursor-pointer hover:bg-darkest-black" onClick={() => handleCommunitySelect(community)}>
 											<img src={community.image} alt="" className="rounded-full size-8 bg-emerald-green object-cover"/>
