@@ -1,5 +1,6 @@
 const Post = require("../models/post");
 const Community = require("../models/community");
+const mongoose = require("mongoose");
 
 // Create
 module.exports.CreatePost = async (req, res, next) => {
