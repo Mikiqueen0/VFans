@@ -96,3 +96,30 @@ module.exports.DeletePost = async (req, res, next) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+// Search
+module.exports.SearchPost = async (req, res, next) => {
+  const { query } = req.query;
+  try {
+    if (!query) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Query parameter is required" });
+    }
+    const post = await Post.find({
+      $or: [
+        { tag: { $regex: query, $options: "i" } },
+        { desc: { $regex: query, $options: "i" } },
+      ],
+    }).sort({ timestamp: -1 });
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found" });
+    }
+    res.status(200).json({ success: true, post });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server ay" });
+  }
+};
