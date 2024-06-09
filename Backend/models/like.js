@@ -11,10 +11,6 @@ const likeSchema = new mongoose.Schema({
     ref: "Post",
     required: true,
   },
-  timestamp: {
-    type: Date,
-    default: Date.now,
-  },
 });
 
 const Like = mongoose.model("Like", likeSchema);

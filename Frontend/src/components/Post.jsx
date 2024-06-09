@@ -72,7 +72,7 @@ export default function Post({ post }) {
               );
             })}
         </div>
-        <div className="pb-5">
+        <div className="py-5">
           <p className="text-[14px] font-normal text-opacity-[78%] text-white">
             {post.desc}
           </p>
@@ -145,7 +145,7 @@ export default function Post({ post }) {
                     src={mediaUrl}
                     alt="image"
                     className={`h-full w-full object-cover ${
-                      post.image.length > 1 ? "max-h-[300px]" : "max-h-[800px]"
+                      post.image.length > 1 ? "max-h-[300px]" : "max-h-[700px]"
                     }`}
                   />
                 ) : mediaUrl.includes("/Video") ? (
