@@ -11,7 +11,7 @@ import {
 import useUser from "../hooks/useUser";
 import useStatus from "../hooks/useStatus";
 import useCommunity from "../hooks/useCommunity";
-import axios from "axios";
+
 
 export default function LeftSideBar({ name }) {
   const navigate = useNavigate();
