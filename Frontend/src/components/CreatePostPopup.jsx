@@ -49,9 +49,9 @@ export default function CreatePostPopup({ setPopup, popup }) {
   const extractUniqueTags = (posts) => {
     const tagsSet = new Set();
     if (Array.isArray(posts)) {
-        posts.forEach(post => {
-            post.tag.forEach(tag => tagsSet.add(tag));
-        });
+      posts.forEach((post) => {
+        post.tag.forEach((tag) => tagsSet.add(tag));
+      });
     }
     return Array.from(tagsSet);
   };
@@ -187,6 +187,12 @@ export default function CreatePostPopup({ setPopup, popup }) {
   // 	setImageFile(filesArray);
   // };
 
+  //   const handleFileChange = (e) => {
+  //     const filesArray = Array.from(e.target.files);
+  //     console.log(filesArray);
+  //     setImageFile(filesArray);
+  //   };
+
   const handleFileChange = (e) => {
     const filesArray = Array.from(e.target.files);
 
@@ -213,13 +219,31 @@ export default function CreatePostPopup({ setPopup, popup }) {
 
   const uploadFile = async (file) => {
     try {
-      const { data } = await supabase.storage
+      // Determine the folder based on the file type
+      const isImage = file.type.startsWith("image/");
+      const folder = isImage ? "Image" : "Video";
+
+      // Generate a unique file name
+      const fileName = uuidv4();
+
+      // Upload the file to the appropriate folder
+      const { data, error } = await supabase.storage
         .from("VFans")
-        .upload("/" + uuidv4(), file);
-      const image = await supabase.storage
+        .upload(`${folder}/${fileName}`, file);
+
+      if (error) {
+        throw error;
+      }
+
+      console.log(data);
+
+      // Get the public URL of the uploaded file
+      const publicUrl = await supabase.storage
         .from("VFans")
         .getPublicUrl(data.path);
-      return image.data.publicUrl;
+
+      console.log(publicUrl.data.publicUrl);
+      return publicUrl.data.publicUrl;
     } catch (err) {
       console.error("Error uploading file:", err);
     }
@@ -229,6 +253,7 @@ export default function CreatePostPopup({ setPopup, popup }) {
   const handleSubmitPost = async (e) => {
     e.preventDefault();
     try {
+      console.log(imageFile);
       const uploadPromises = imageFile.map((file) => uploadFile(file));
       const uploadedFilesUrls = await Promise.all(uploadPromises);
 
@@ -500,14 +525,14 @@ export default function CreatePostPopup({ setPopup, popup }) {
                         id="dropzone-file"
                         type="file"
                         multiple
-                        accept="image/jpeg, image/png, video/mp4, video/mov"
+                        accept="image/*, video/*"
                         className="hidden"
                         onChange={handleFileChange}
                       />
                     </label>
                   </div>
                 </div>
-                <div className="w-full h-full bg-dark-background rounded-[10px]">
+                {/* <div className="w-full h-full bg-dark-background rounded-[10px]">
                   <Carousel
                     transition={{ duration: 0.2 }}
                     className="rounded-xl flex items-center aspect-[2/1]"
@@ -520,6 +545,65 @@ export default function CreatePostPopup({ setPopup, popup }) {
                           key={index}
                           className="h-full w-full object-contain"
                         />
+                      ))
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-white text-opacity-60 text-xl font-normal">
+                        Image Preview
+                      </div>
+                    )}
+                  </Carousel>
+                </div> */}
+                <div className="w-full h-full bg-dark-background rounded-[10px]">
+                  <Carousel
+                    transition={{ duration: 0.2 }}
+                    className="rounded-xl flex items-center aspect-[2/1]"
+                  >
+                    {imageFile.length > 0 ? (
+                      imageFile.map((media, index) => (
+                        <div key={index}>
+                          {media.type.startsWith("image/") ? (
+                            <img
+                              src={URL.createObjectURL(media)}
+                              alt="image"
+                              className="h-full w-full object-contain"
+                            />
+                          ) : media.type.startsWith("video/") ? (
+                            <video
+                              src={URL.createObjectURL(media)}
+                              controls
+                              className="h-full w-full"
+                            />
+                          ) : (
+                            <div className="h-full w-full flex items-center justify-center text-white text-opacity-60 text-xl font-normal">
+                              Unsupported Media
+                            </div>
+                          )}
+                        </div>
+                        // <div key={index}>
+                        //   {media.src ? (
+                        //     media.src.includes("/Image") ? (
+                        //       <img
+                        //         src={media.src}
+                        //         alt="image"
+                        //         className="h-full w-full object-contain"
+                        //       />
+                        //     ) : media.src.includes("/Video") ? (
+                        //       <video
+                        //         src={media.src}
+                        //         controls
+                        //         className="h-full w-full"
+                        //       />
+                        //     ) : (
+                        //       <div className="h-full w-full flex items-center justify-center text-white text-opacity-60 text-xl font-normal">
+                        //         Unsupported Media
+                        //       </div>
+                        //     )
+                        //   ) : (
+                        //     <div className="h-full w-full flex items-center justify-center text-white text-opacity-60 text-xl font-normal">
+                        //       No Media Source
+                        //     </div>
+                        //   )}
+                        // </div>
                       ))
                     ) : (
                       <div className="h-full w-full flex items-center justify-center text-white text-opacity-60 text-xl font-normal">
