@@ -115,12 +115,12 @@ export default function Post({ post }) {
               );
             })}
         </div>
-        <div className="py-3">
+        <div className="py-5">
           <p className="text-[14px] font-normal text-opacity-[78%] text-white">
             {post?.desc}
           </p>
         </div>
-        <div
+        {/* <div
           className={`grid grid-rows-1 ${
             post?.image.length > 1 ? "grid-cols-2" : "grid-cols-1"
           } grid-flow-row`}
@@ -141,8 +141,76 @@ export default function Post({ post }) {
               />
             </div>
           ))}
+        </div> */}
+        <div
+          className={`grid grid-rows-1 ${
+            post.image.length > 1 ? "grid-cols-2" : "grid-cols-1"
+          } grid-flow-row`}
+        >
+          {/* {post.image.map((mediaUrl, index) => (
+            <div
+              key={index}
+              className={`${
+                index === 2 && post.image.length !== 4 ? "col-span-2" : ""
+              }`}
+            >
+              {mediaUrl ? (
+                mediaUrl.includes("/Image") ? (
+                  <img
+                    src={mediaUrl}
+                    alt="image"
+                    className="h-full w-full object-contain"
+                  />
+                ) : mediaUrl.includes("/Video") ? (
+                  <video src={mediaUrl} controls className="h-full w-full" />
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center text-white text-opacity-60 text-xl font-normal">
+                    Unsupported Media
+                  </div>
+                )
+              ) : (
+                <div className="h-full w-full flex items-center justify-center text-white text-opacity-60 text-xl font-normal">
+                  No Media Source
+                </div>
+              )}
+            </div>
+          ))} */}
+          {post.image.map((mediaUrl, index) => (
+            <div
+              key={index}
+              className={`${
+                index === 2 && post.image.length !== 4 ? "col-span-2" : ""
+              }`}
+            >
+              {typeof mediaUrl === "string" ? (
+                mediaUrl.includes("/Image") ? (
+                  <img
+                    src={mediaUrl}
+                    alt="image"
+                    className={`h-full w-full object-cover ${
+                      post.image.length > 1 ? "max-h-[300px]" : "max-h-[700px]"
+                    }`}
+                  />
+                ) : mediaUrl.includes("/Video") ? (
+                  <video
+                    src={mediaUrl}
+                    controls
+                    className="h-full w-full object-contain max-h-[500px]"
+                  />
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center text-white text-opacity-60 text-xl font-normal">
+                    Unsupported Media
+                  </div>
+                )
+              ) : (
+                <div className="h-full w-full flex items-center justify-center text-white text-opacity-60 text-xl font-normal">
+                  No Media Source
+                </div>
+              )}
+            </div>
+          ))}
         </div>
-        <div className="flex flex-row items-center justify-around gap-8 text-[14px] font-medium text-opacity-90 text-white mt-3 hover:emerald-green">
+        <div className="flex flex-row items-center justify-around gap-8 text-[14px] font-medium text-opacity-90 text-white mt-5">
           <button>Like</button>
           <button
             onClick={(e) => {
