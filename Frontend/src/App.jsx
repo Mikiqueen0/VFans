@@ -10,15 +10,16 @@ import {
   SignUp,
   Login,
   Home,
-  JoinedCommunities,
+  UserJoinedCommunity,
   Like,
   Save,
   Community,
   AllCommunity,
   CreateCommunity,
   Profile,
-  JoinedCommunity,
-  FullPost
+  CommunityMember,
+  FullPost,
+  JoinedCommunities
 } from "./pages/index";
 import axios from "axios";
 import ScrollToTop from "./utils/ScrollToTop";
@@ -36,7 +37,8 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="/home" element={<Home />} />
-            <Route path="/:username/joinedCommunities" element={<JoinedCommunities />} />
+            <Route path="/joinedCommunities/:userID" element={<JoinedCommunities />} />
+            <Route path="/:username/joinedCommunities" element={<UserJoinedCommunity />} />
             <Route path="/like" element={<Like />} />
             <Route path="/save" element={<Save />} />
             <Route path="/login" element={<Login />} />
@@ -45,7 +47,7 @@ const App = () => {
             <Route path="/community" element={<AllCommunity />} />
             <Route path="/createCommunity" element={<CreateCommunity />} />
             <Route path="/profile/:profileUsername" element={<Profile />} />
-            <Route path="/joinedCommunity/:communityID" element={<JoinedCommunity />} />
+            <Route path="/joinedCommunity/:communityID" element={<CommunityMember />} />
             <Route path="/post/:postID" element={<FullPost />} />
             <Route path="/post/:postID/:section" element={<FullPost />} />
           </Routes>

@@ -33,7 +33,7 @@ export default function Post({ post }) {
           />
           <p
             className="font-normal text-[15px] text-opacity-90 text-white hover:underline cursor-pointer"
-            onClick={() => navigate(`/community/${postCommunity?._id}`)}
+            onClick={(e) => {e.stopPropagation(); navigate(`/community/${postCommunity?._id}`)}}
           >
             {postCommunity?.name}
           </p>
@@ -41,7 +41,7 @@ export default function Post({ post }) {
             Posted by{" "}
             <span
               className="hover:underline cursor-pointer"
-              onClick={() => navigate(`/profile/${postCreator?.username}`)}
+              onClick={(e) => {e.stopPropagation(); navigate(`/profile/${postCreator?.username}`)}}
             >
               {postCreator?.username}
             </span>

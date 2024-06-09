@@ -20,49 +20,59 @@ export const useFetchUserPosts = (username) => {
 
 export const useFetchAllPosts = () => {
     const { setPosts } = usePost();
+
+    const fetchAllPosts = async () => {
+        try {
+            const response = await axios.get('/post/all');
+            setPosts(response.data.posts);
+        } catch (error) {
+            console.error('Error fetching all posts', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchAllPosts = async () => {
-            try {
-                const response = await axios.get('/post/all');
-                setPosts(response.data.posts);
-            } catch (error) {
-                console.error('Error fetching all posts', error);
-            }
-        };
         fetchAllPosts();
     }, [setPosts]);
+
+    return { fetchAllPosts };
 };
 
 export const useFetchJoinedCommunityPosts = (userID) => {
     const { setPosts } = usePost();
 
+    const fetchJoinedCommunityPosts = async () => {
+        try {
+            const response = await axios.get(`/post/user/community/${userID}`);
+            setPosts(response.data.posts);
+        } catch (error) {
+            console.error('Error fetching joined community posts', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchJoinedCommunityPosts = async () => {
-            try {
-                const response = await axios.get(`/post/user/${userID}`);
-                setPosts(response.data.posts);
-            } catch (error) {
-                console.error('Error fetching joined community posts', error);
-            }
-        };
         fetchJoinedCommunityPosts();
     }, [userID, setPosts]);
+
+    return { fetchJoinedCommunityPosts };
 };
 
 export const useFetchCommunityPosts = (communityID) => {
     const { setPosts } = usePost();
 
+    const fetchCommunityPosts = async () => {
+        try {
+            const response = await axios.get(`/post/community/${communityID}`);
+            setPosts(response.data.posts);
+        } catch (error) {
+            console.error('Error fetching community posts', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchCommunityPosts = async () => {
-            try {
-                const response = await axios.get(`/post/community/${communityID}`);
-                setPosts(response.data.posts);
-            } catch (error) {
-                console.error('Error fetching community posts', error);
-            }
-        };
         fetchCommunityPosts();
     }, [communityID, setPosts]);
+
+    return { fetchCommunityPosts };
 };
 
 export const useFetchPostByID = (postID) => {

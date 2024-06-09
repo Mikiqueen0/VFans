@@ -171,13 +171,42 @@ module.exports.SearchPost = async (req, res, next) => {
   }
 };
 
-// Get All Post from joined community
+// // Get All Post from joined community
+// module.exports.GetAllJoinedCommunity = async (req, res, next) => {
+//   try {
+//     const { userID } = req.params;
+
+//     // Find communities that the user has joined
+//     const communities = await Community.find({ members: userID }).select("_id");
+//     const communityIds = communities.map((community) => community._id);
+
+//     // Find posts from these communities
+//     const posts = await Post.find({ communityID: { $in: communityIds } })
+//       .populate("userID", "username email")
+//       .populate("communityID", "name");
+
+//     res.status(200).json(posts);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server Error" });
+//   }
+// };
+
 module.exports.GetAllJoinedCommunity = async (req, res, next) => {
   try {
     const { userID } = req.params;
 
+    // Validate userID
+    if (!mongoose.Types.ObjectId.isValid(userID)) {
+      return res.status(400).json({ message: 'Invalid user ID format' });
+    }
+
     // Find communities that the user has joined
     const communities = await Community.find({ members: userID }).select("_id");
+    if (!communities.length) {
+      return res.status(200).json({ posts: [] });
+    }
+
     const communityIds = communities.map((community) => community._id);
 
     // Find posts from these communities
@@ -185,13 +214,12 @@ module.exports.GetAllJoinedCommunity = async (req, res, next) => {
       .populate("userID", "username email")
       .populate("communityID", "name");
 
-    res.status(200).json(posts);
+    res.status(200).json({ posts });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: error.message });
   }
 };
-
 
 // Post Comment
 module.exports.PostComment = async (req, res, next) => {

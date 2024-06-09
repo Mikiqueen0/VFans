@@ -28,7 +28,10 @@ export default function Community() {
     const [joined, setJoined] = useState(false);
     const [post, setPost] = useState([]);
     const { filteredPosts } = usePost();
-    useFetchCommunityPosts(communityID);
+    const [refresh, setRefresh] = useState(false);
+    useFetchCommunityPosts(communityID, refresh);
+    const { fetchCommunityPosts } = useFetchCommunityPosts(communityID);
+    
 
     useEffect(() => {
         const fetchCommunity = async () => {
@@ -53,6 +56,11 @@ export default function Community() {
 
         fetchCommunity();
     }, [communityID, openSetting, joined, popup]);
+
+    useEffect(() => {
+		// setRefresh((prev) => !prev);
+        fetchCommunityPosts();
+	}, [popup, communityID]);
 
     useEffect(() => {
         document.body.style.overflow = hamburger ? "hidden" : "auto";

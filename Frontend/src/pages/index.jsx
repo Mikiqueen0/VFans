@@ -1,27 +1,29 @@
 import SignUp from "./SignUp";
 import Login from "./Login";
 import Home from "./Home";
-import JoinedCommunities from "./JoinedCommunities";
+import UserJoinedCommunity from "./UserJoinedCommunity";
 import Like from "./Like";
 import Save from "./Save";
 import Community from "./Community";
 import AllCommunity from "./AllCommunity";
 import CreateCommunity from "./CreateCommunity";
 import Profile from "./Profile";
-import JoinedCommunity from "./JoinedCommunity";
+import CommunityMember from "./CommunityMember";
 import FullPost from "./FullPost";
+import JoinedCommunities from "./JoinedCommunities";
 
 export { 
     SignUp, 
     Login, 
     Home, 
-    JoinedCommunities, 
+    UserJoinedCommunity, 
     Like, 
     Save,
     Community,
     AllCommunity,
     CreateCommunity,
     Profile,
-    JoinedCommunity,
-    FullPost
+    CommunityMember,
+    FullPost,
+    JoinedCommunities
 }

@@ -98,7 +98,7 @@ export default function LeftSideBar({ name }) {
       <div className="flex flex-col items-start divide-solid divide-y-[1px] divide-primary">
         <div className="flex flex-col items-center w-full">
           <PageButton name="Home" pathName="/home" />
-          <PageButton name="Joined Communities" pathName="/joinedCommunities" />
+          <PageButton name="Joined Communities" pathName={`/joinedCommunities/${user?._id}`} />
         </div>
         <div className="my-5">
           <h1 className="font-poppins font-medium text-base text-white text-opacity-90 mt-[1.25rem] px-[1.2rem] pb-[0.75rem]">

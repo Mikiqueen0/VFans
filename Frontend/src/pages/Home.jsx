@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
 	NavBar,
 	LeftSideBar,
@@ -31,8 +31,10 @@ export default function Home() {
 	const [smallLoading, setSmallLoading] = useState(true);
 	const hamburgerPopupRef = useRef(null);
 	const navigate = useNavigate();
+	const location = useLocation();
 	const { filteredPosts } = usePost();
-	useFetchAllPosts();
+	const [refresh, setRefresh] = useState(false);
+	const { fetchAllPosts } = useFetchAllPosts();
 
 	useEffect(() => {
 		setSmallLoading(false);
@@ -43,6 +45,14 @@ export default function Home() {
 			}, 1000);
 		};
 	}, []);
+
+	useEffect(() => {
+		fetchAllPosts();
+	}, [popup, location.pathname]);
+
+	// useEffect(() => {
+	// 	setRefresh((prev) => !prev);
+	// }, [popup, location.pathname]);
 
 	useEffect(() => {
 		const verifyCookie = async () => {

@@ -32,7 +32,7 @@ router.get("/user/:username", GetUserPost);
 router.get("/community/:communityID", GetCommunityPost);
 
 // Get All Post from joined community
-router.get("/user/:userID", GetAllJoinedCommunity);
+router.get("/user/community/:userID", GetAllJoinedCommunity);
 
 // Update Post
 router.put("/:id", UpdatePost);
