@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import { NavBar, LeftSideBar, RightSideBar, Post } from "../components/index";
-import useStatus from "../hooks/useStatus";
 import { useParams, useNavigate } from "react-router-dom";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { FaSpinner } from "react-icons/fa";
-import useUser from "../hooks/useUser";
+import useUser from "../hooks/useUser"; 
+import useStatus from "../hooks/useStatus";
+import useCommunity from "../hooks/useCommunity"; 
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import supabase from "../utils/supabase";
@@ -12,6 +13,7 @@ import supabase from "../utils/supabase";
 export default function Profile() {
     const navigate = useNavigate();
     const { user, setUser } = useUser();
+    const { communityList } = useCommunity();
     const { profileUsername } = useParams();
     const [profile, setProfile] = useState({});
     const [profileDataCopy, setProfileDataCopy] = useState({});
@@ -22,6 +24,13 @@ export default function Profile() {
     const [canEdit, setCanEdit] = useState(false);
     const [loading, setLoading] = useState(true);
     const [post, setPost] = useState([]);
+    const [communityJoined, setCommunityJoined] = useState([]);
+
+    useEffect(() => {
+        document.body.style.overflow = hamburger ? "hidden" : "auto";
+        document.body.style.paddingRight = hamburger ? "15px" : "0";
+        
+    }, [hamburger]);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -32,7 +41,10 @@ export default function Profile() {
                     setProfile(fetchProfile.data.user);
                     setProfileDataCopy(fetchProfile.data.user);
                     setCanEdit(user?._id === fetchProfile.data.user._id);
-                    // console.log(fetchProfile.data.user);
+                    const userCommunities = communityList.filter(community => {
+						return community.members.includes(fetchProfile.data.user._id);
+					});
+					setCommunityJoined(userCommunities);
                 }else{
                     console.error('Failed to fetch user profile');
                 }
@@ -51,10 +63,17 @@ export default function Profile() {
 				console.log("Error fetching posts: ", error);
 			}
 		};
-		fetchAllPost();
 
+		fetchAllPost();
         fetchProfile();
     }, [user, profileUsername]);
+
+    useEffect(() => {
+        const userCommunities = communityList.filter(community => {
+            return community.members.some(member => member._id === user._id);
+        });
+        setCommunityJoined(userCommunities);
+    }, []);
     
     const[changeProfile, setChangeProfile] = useState(false);
 
@@ -207,8 +226,8 @@ export default function Profile() {
                                     </div>
                                 </div>
                             </label>}
-                            <p className="ml-[8.5rem] mt-1 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/${profile.username}/joinedCommunity`)}>
-                                <span className="font-semibold opacity-100 mr-1">279</span>
+                            <p className="ml-[8.5rem] mt-1 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/${profile.username}/joinedCommunities`)}>
+                                <span className="font-semibold opacity-100 mr-1">{communityJoined.length || 0}</span>
                                 <span className="font-normal opacity-80 tracking-wide group-hover:underline">Communities joined</span>
                             </p>
                             <div className="mx-[1rem] mt-4 flex-grow flex flex-col gap-1">

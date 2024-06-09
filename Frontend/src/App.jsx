@@ -31,7 +31,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="/home" element={<Home />} />
-            <Route path="/joinedCommunities" element={<JoinedCommunities />} />
+            <Route path="/:username/joinedCommunities" element={<JoinedCommunities />} />
             <Route path="/like" element={<Like />} />
             <Route path="/save" element={<Save />} />
             <Route path="/login" element={<Login />} />
