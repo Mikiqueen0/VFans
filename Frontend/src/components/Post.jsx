@@ -58,8 +58,8 @@ export default function Post({ post }) {
   };
 
   return (
-    <div className="bg-primary rounded-[10px] px-5 py-4">
-      <div className="flex justify-between">
+    <div className="bg-primary rounded-[10px] px-5 py-4 max-h-[800px]">
+      <div className="flex justify-between max-h-[500px]">
         <div className="flex flex-row items-center gap-2">
           <img
             src={postCommunity.image}
@@ -116,7 +116,7 @@ export default function Post({ post }) {
             key={index}
             src={imageUrl}
             alt=""
-            className="rounded-[10px] object-cover w-full h-full"
+            className="rounded-[10px] object-cover w-full h-full cursor-pointer] max-h-[500px]"
           />
         ))}
       </div>
