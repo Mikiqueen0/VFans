@@ -45,7 +45,6 @@ export default function Community() {
         const fetchAllPost = async () => {
 			try {
 				const res = await axios.get(`/post/community/${communityID}`);
-                console.log(res.data.posts);
 				setPost(res.data.posts);
 			} catch (error) {
 				console.log("Error fetching posts: ", error);
@@ -53,7 +52,7 @@ export default function Community() {
 		};
 		fetchAllPost();
         fetchCommunity();
-    }, [communityID, openSetting, joined]);
+    }, [communityID, openSetting, joined, popup]);
 
     useEffect(() => {
         document.body.style.overflow = hamburger ? "hidden" : "auto";

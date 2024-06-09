@@ -6,7 +6,8 @@ const {
   DeletePost,
   SearchPost,
   GetUserPost,
-  GetCommunityPost
+  GetCommunityPost,
+  GetAllJoinedCommunity,
 } = require("../controllers/PostController");
 const router = require("express").Router();
 
@@ -27,6 +28,9 @@ router.get("/profile/:username", GetUserPost);
 
 // Get All Post in Community
 router.get("/community/:communityID", GetCommunityPost);
+
+// Get All Post from joined community
+router.get("/user/:userID", GetAllJoinedCommunity);
 
 // Update Post
 router.put("/:id", UpdatePost);

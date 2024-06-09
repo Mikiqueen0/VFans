@@ -5,29 +5,60 @@ import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import { useNavigate } from "react-router-dom";
 
 export default function Post({ post }) {
-  // const { user, setUser } = useUser();
   const navigate = useNavigate();
   const postCreator = post.userID;
   const postCommunity = post.communityID;
 
+  const formatPostCreationTime = (createdAt) => {
+    const postCreatedAt = new Date(createdAt);
+    const now = new Date();
+    const diffMs = now - postCreatedAt;
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffMinutes < 1) {
+      // Less than a minute
+      return "Just now";
+    } else if (diffMinutes < 60) {
+      // 1-60 minutes
+      return `${diffMinutes} ${diffMinutes === 1 ? 'minute' : 'minutes'} ago`;
+    } else if (diffHours < 24) {
+      // 1-24 hours
+      return `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
+    } else if (diffDays < 7) {
+      // 1-7 days
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      return `Posted ${days[postCreatedAt.getDay()]} at ${postCreatedAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+    } else {
+      // Longer than 7 days
+      return `Posted on ${postCreatedAt.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}, ${postCreatedAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`;
+    }
+  };
+
   return (
     <div className="bg-primary rounded-[10px] px-5 py-4">
       <div className="flex justify-between">
-        <div className="flex flex-row flex-1 items-center gap-2">
+        <div className="flex flex-row items-center gap-2">
           <img
-            src={postCreator.profileImage}
+            src={postCommunity.image}
             alt="profile"
             className="rounded-full object-cover size-[1.75rem]"
           />
-          <div className="flex flex-row gap-2 max-sm:flex-col max-sm:gap-0 ">
-            <p className="font-normal text-[13px]  text-opacity-90 text-white">
-              {postCommunity.name}
-            </p>
-            <p className="font-normal text-[12px] text-opacity-60 text-white">
-              Posted by <span className="hover:underline cursor-pointer" onClick={() => navigate(`/profile/${postCreator.username}`)}>{postCreator.username}</span> - {post.createAt}
-            </p>
-          </div>
+          <p className="font-normal text-[15px] text-opacity-90 text-white hover:underline cursor-pointer" onClick={() => navigate(`/community/${postCommunity._id}`)}>
+            {postCommunity.name}
+          </p>
+          <p className="font-normal text-[12px] text-opacity-60 text-white">
+            Posted by {' '}
+            <span className="hover:underline cursor-pointer" onClick={() => navigate(`/profile/${postCreator.username}`)}>
+              {postCreator.username}
+            </span>
+            <span> - </span>
+            <span className="text-opacity-60 text-xs">{formatPostCreationTime(post.createdAt)}</span>
+          </p>
         </div>
+
+
         <EllipsisHorizontalIcon className="text-white size-6"/>
       </div>
       <div className="flex gap-2 pt-3">
@@ -40,12 +71,6 @@ export default function Post({ post }) {
             </button>
           );
         })}
-        {/* <button className="text-[12px] font-medium text-opacity-90 text-emerald-green rounded-[10px] border border-emerald-green px-3 py-2">
-          Meme
-        </button>
-        <button className="text-[12px] font-medium text-opacity-90 text-emerald-green rounded-[10px] border border-emerald-green px-3 py-2">
-          Image
-        </button> */}
       </div>
       <div className="pt-3">
         <p className="text-[14px] font-normal text-opacity-[78%] text-white">

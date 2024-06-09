@@ -11,6 +11,7 @@ import {
 import profileTestIcon from "../assets/images/dummyProfile.png";
 import { useCookies } from "react-cookie";
 import { ToastContainer, toast } from "react-toastify";
+import { FaSpinner } from "react-icons/fa";
 import axios from "axios";
 import useUser from "../hooks/useUser";
 import useStatus from "../hooks/useStatus";
@@ -18,8 +19,9 @@ import useStatus from "../hooks/useStatus";
 export default function Home() {
 	const { user, setUser } = useUser();
 	const { loading, setLoading, hamburger, setHamburger } = useStatus();
-	const [popup, setPopup] = useState(false); //popup create post in detail when click create post at home page
+	const [popup, setPopup] = useState(false);
 	const [cookies, removeCookie] = useCookies([]);
+	const [smallLoading, setSmallLoading] = useState(true);
 	const hamburgerPopupRef = useRef(null);
 	const navigate = useNavigate();
 
@@ -49,7 +51,7 @@ export default function Home() {
 			window.location.reload();
             setTimeout(() => {
                 setLoading(false);
-            }, 1000); // Adjust the delay time as needed
+            }, 1000);
         }
     }, []);
 
@@ -67,16 +69,18 @@ export default function Home() {
 
 	useEffect(() => {
 		const fetchAllPost = async () => {
+			// setSmallLoading(true);
 			try {
 				const res = await axios.get("/post/all");
 				setPost(res.data.post);
-				console.log(res.data.post);
 			} catch (error) {
-				toast.error(error.response.data.message);
-			}
+				console.log("Error fetching posts: ", error);
+			} finally {
+				setSmallLoading(false);
+			};
 		};
 		fetchAllPost();
-	}, []);
+	}, [popup]);
 
 	return (
 		<div className="bg-dark-background scrollbar-thin">
@@ -88,7 +92,12 @@ export default function Home() {
 		<div className="flex flex-row justify-center min-h-[100vh] pt-[1.25rem] pb-[1.25rem] z-40">
 			<LeftSideBar name="large" />
 			{/* middle section */}
-			<section className="flex flex-col gap-3 max-sm:px-[1rem] px-[4rem] w-[800px]">
+			{smallLoading && 
+				<div className="flex h-[calc(100vh-6.25rem)] items-center justify-center gap-3 max-sm:px-[1rem] px-[1rem] w-[800px] text-white">
+					<FaSpinner className="animate-spin text-4xl text-emerald-green" />
+				</div>
+			}
+			{!smallLoading && <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[4rem] w-[800px]">
 			{/* filter */}
 			<Filter />
 			{/* Create Post */}
@@ -113,10 +122,7 @@ export default function Home() {
 			{post.map((post, key) => {
 				return <Post key={key} post={post}/>;
 			})}
-			{/* <Post username={"test"} />
-			<Post username={"test"} />
-			<Post username={"test"} /> */}
-			</section>
+			</section>}
 			<RightSideBar />
 		</div>
 		{/* popup when click create post */}

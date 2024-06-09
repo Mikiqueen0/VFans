@@ -58,14 +58,14 @@ export default function CreatePostPopup({ setPopup, popup }) {
 
 	useEffect(() => {
 		if (communityID) {
-			const communityFilter = communityList.filter(community => community._id === communityID);
+			const communityFilter = communityList.filter(community => community?._id === communityID);
 			handleCommunitySelect(communityFilter[0]);
 		}
 	}, [popup]);
 
 	const handleCommunitySelect = (selectedCommunity) => {
 		setCommunitySelect(selectedCommunity);
-		setPostData({ ...postData, communityID: selectedCommunity._id});
+		setPostData({ ...postData, communityID: selectedCommunity?._id});
 		setCommunityDropdown(false);
 	};
 
