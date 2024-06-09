@@ -24,7 +24,7 @@ router.get("/search", SearchPost);
 router.get("/:id", GetPost);
 
 // Get All Post By User
-router.get("/profile/:username", GetUserPost);
+router.get("/user/:username", GetUserPost);
 
 // Get All Post in Community
 router.get("/community/:communityID", GetCommunityPost);

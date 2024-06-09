@@ -9,11 +9,19 @@ import useCommunity from "../hooks/useCommunity";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import supabase from "../utils/supabase";
+import usePost from "../hooks/usePost";
+import { 
+	useFetchUserPosts, 
+	useFetchAllPosts, 
+	useFetchJoinedCommunityPosts, 
+	useFetchCommunityPosts 
+} from '../hooks/useFetchPost';
 
 export default function Profile() {
     const navigate = useNavigate();
     const { user, setUser } = useUser();
     const { communityList } = useCommunity();
+    const { filteredPosts } = usePost();
     const { profileUsername } = useParams();
     const [profile, setProfile] = useState({});
     const [profileDataCopy, setProfileDataCopy] = useState({});
@@ -23,8 +31,9 @@ export default function Profile() {
     const hamburgerPopupRef = useRef(null);
     const [canEdit, setCanEdit] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [post, setPost] = useState([]);
+    // const [post, setPost] = useState([]);
     const [communityJoined, setCommunityJoined] = useState([]);
+    useFetchUserPosts(profileUsername);
 
     useEffect(() => {
         document.body.style.overflow = hamburger ? "hidden" : "auto";
@@ -55,25 +64,8 @@ export default function Profile() {
             }
         };
 
-        const fetchAllPost = async () => {
-			try {
-				const res = await axios.get(`/post/profile/${profileUsername}`);
-				setPost(res.data.posts);
-			} catch (error) {
-				console.log("Error fetching posts: ", error);
-			}
-		};
-
-		fetchAllPost();
         fetchProfile();
     }, [user, profileUsername]);
-
-    useEffect(() => {
-        const userCommunities = communityList.filter(community => {
-            return community.members.some(member => member._id === user._id);
-        });
-        setCommunityJoined(userCommunities);
-    }, []);
     
     const[changeProfile, setChangeProfile] = useState(false);
 
@@ -260,9 +252,13 @@ export default function Profile() {
                         </div>
                     </div>
                     <div className="flex flex-col gap-3 max-md:px-[1.5rem] px-[4rem] text-white">
-                        {post.map((post, key) => {
-                            return <Post key={key} post={post} />;
-                        })}
+                        {filteredPosts?.length === 0 ? 
+                            (<div className="text-white text-center opacity-70 mt-4">No post found . . .</div>)
+                            : 
+                            (filteredPosts?.map((post, key) => {
+                                return <Post key={key} post={post}/>;
+                            }))
+                        }
                     </div>
                 </section>}
                 <RightSideBar />

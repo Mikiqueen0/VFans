@@ -6,6 +6,13 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { EllipsisHorizontalCircleIcon } from '@heroicons/react/24/outline';
 import { FaSpinner } from "react-icons/fa";
 import axios from 'axios';
+import usePost from "../hooks/usePost";
+import { 
+	useFetchUserPosts, 
+	useFetchAllPosts, 
+	useFetchJoinedCommunityPosts, 
+	useFetchCommunityPosts 
+} from '../hooks/useFetchPost';
 
 export default function Community() {
     const navigate = useNavigate();
@@ -20,6 +27,8 @@ export default function Community() {
     const [loading, setLoading] = useState(true);
     const [joined, setJoined] = useState(false);
     const [post, setPost] = useState([]);
+    const { filteredPosts } = usePost();
+    useFetchCommunityPosts(communityID);
 
     useEffect(() => {
         const fetchCommunity = async () => {
@@ -42,15 +51,6 @@ export default function Community() {
             }
         };
 
-        const fetchAllPost = async () => {
-			try {
-				const res = await axios.get(`/post/community/${communityID}`);
-				setPost(res.data.posts);
-			} catch (error) {
-				console.log("Error fetching posts: ", error);
-			}
-		};
-		fetchAllPost();
         fetchCommunity();
     }, [communityID, openSetting, joined, popup]);
 
@@ -123,9 +123,13 @@ export default function Community() {
                     <div className="flex flex-col gap-3 max-md:px-[1.5rem] px-[4rem] text-white">
                         {/* filter */}
                         <Filter />
-                        {post.map((post, key) => {
-                            return <Post key={key} post={post} />;
-                        })}
+                        {filteredPosts?.length === 0 ? 
+                            (<div className="text-white text-center opacity-70 mt-4">No post found . . .</div>)
+                            : 
+                            (filteredPosts?.map((post, key) => {
+                                return <Post key={key} post={post}/>;
+                            }))
+                        }
                     </div>
                 </section>}
                 <CommunitySideBar communityData={communityData}/>

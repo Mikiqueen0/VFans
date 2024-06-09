@@ -15,8 +15,8 @@ module.exports.CreatePost = async (req, res, next) => {
       video,
       tag,
     });
-    const post = await newPost.save();
-    res.status(200).json({ success: true, post });
+    const posts = await newPost.save();
+    res.status(200).json({ success: true, posts });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: error.message });
@@ -26,13 +26,13 @@ module.exports.CreatePost = async (req, res, next) => {
 // Get A Post
 module.exports.GetPost = async (req, res, next) => {
   try {
-    const post = await Post.findById(req.params.id);
-    if (!post) {
+    const posts = await Post.findById(req.params.id);
+    if (!posts) {
       return res
         .status(404)
         .json({ success: false, message: "Post not found" });
     }
-    res.status(200).json({ success: true, post });
+    res.status(200).json({ success: true, posts });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -87,16 +87,16 @@ module.exports.GetCommunityPost = async (req, res, next) => {
 // Get All Post
 module.exports.GetAllPost = async (req, res, next) => {
   try {
-    const post = await Post.find()
+    const posts = await Post.find()
       .populate("userID")
       .populate("communityID")
       .sort({ createdAt: -1 });
-    if (!post) {
+    if (!posts) {
       return res
         .status(404)
         .json({ success: false, message: "Post not found" });
     }
-    res.status(200).json({ success: true, post });
+    res.status(200).json({ success: true, posts });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -106,19 +106,19 @@ module.exports.GetAllPost = async (req, res, next) => {
 // Update
 module.exports.UpdatePost = async (req, res, next) => {
   try {
-    const post = await Post.findByIdAndUpdate(
+    const posts = await Post.findByIdAndUpdate(
       req.params.id,
       {
         $set: req.body,
       },
       { new: true }
     );
-    if (!post) {
+    if (!posts) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
-    res.status(200).json({ success: true, post });
+    res.status(200).json({ success: true, posts });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server error" });
@@ -128,8 +128,8 @@ module.exports.UpdatePost = async (req, res, next) => {
 // Delete
 module.exports.DeletePost = async (req, res, next) => {
   try {
-    const post = await Post.findByIdAndDelete(req.params.id);
-    if (!post) {
+    const posts = await Post.findByIdAndDelete(req.params.id);
+    if (!posts) {
       return res
         .status(404)
         .json({ success: false, message: "Post not found" });
@@ -150,18 +150,18 @@ module.exports.SearchPost = async (req, res, next) => {
         .status(400)
         .json({ success: false, message: "Query parameter is required" });
     }
-    const post = await Post.find({
+    const posts = await Post.find({
       $or: [
         { tag: { $regex: query, $options: "i" } },
         { desc: { $regex: query, $options: "i" } },
       ],
     }).sort({ timestamp: -1 });
-    if (!post) {
+    if (!posts) {
       return res
         .status(404)
         .json({ success: false, message: "Post not found" });
     }
-    res.status(200).json({ success: true, post });
+    res.status(200).json({ success: true, posts });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Server ay" });

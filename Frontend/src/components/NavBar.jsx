@@ -1,5 +1,5 @@
-import { useRef, useEffect, Fragment } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useRef, useState, useEffect, Fragment } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import logo from "../assets/images/white-vfans.png";
@@ -11,6 +11,7 @@ import logoutIcon from "../assets/images/logout.png";
 import useAuth from "../hooks/useAuth";
 import useUser from "../hooks/useUser"; 
 import useStatus from "../hooks/useStatus"; 
+import usePost from "../hooks/usePost"; 
 import { LoadingScreen } from "./index";
 
 export default function NavBar({
@@ -19,6 +20,7 @@ export default function NavBar({
 	hamburgerPopupRef
 	}) {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const hamburgerButtonRef = useRef(null);
 	const genericHamburgerLine = `h-[0.14rem] w-8 my-1 rounded-full bg-white transition ease transform duration-300`;
 	function classNames(...classes) {
@@ -28,6 +30,19 @@ export default function NavBar({
 	const { user, setUser } = useUser();
 	const { loading, setLoading } = useStatus();
 	const { logout } = useAuth();
+	const [searchField, setSearchField] = useState("");
+	const { searchKeyword, setSearchKeyword } = usePost();
+
+	const handleSearch = (e) => {
+        if(e.key === 'Enter') {
+			setSearchKeyword(searchField);
+			setSearchField('');
+		}
+    };
+
+	useEffect(() => {
+		setSearchKeyword('');
+	}, [location.pathname]);
 
 	useEffect(() => {
 		if (user) {
@@ -118,6 +133,9 @@ export default function NavBar({
 				<input
 				type="text"
 				placeholder="Search"
+				value={searchField}
+				onChange={(e) => setSearchField(e.target.value)}
+				onKeyDown={handleSearch}
 				className="font-normal text-[14px] text-black text-opacity-[78%] bg-white ml-[0.4rem] mr-[1rem] h-full flex-1 focus:outline-none min-w-[6rem]"
 				/>
 			</div>

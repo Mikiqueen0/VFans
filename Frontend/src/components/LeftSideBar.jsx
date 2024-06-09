@@ -11,15 +11,17 @@ import {
 import useUser from "../hooks/useUser";
 import useStatus from "../hooks/useStatus";
 import useCommunity from "../hooks/useCommunity";
+import usePost from "../hooks/usePost";
 
 
 export default function LeftSideBar({ name }) {
   const navigate = useNavigate();
   const { user } = useUser();
   const { sidebarCommunity, setSidebarCommunity } = useStatus();
+	const { selectedTags, setSelectedTags } = usePost();
   const { communityList, setCommunityList } = useCommunity();
   const [userJoinedCommunity, setUserJoinedCommunity] = useState([]);
-  const [createPostTag, setCreatePostTag] = useState([]); //tag list
+  const [tagFilter, setTagFilter] = useState([]); //tag list
   const [showtagAll, setShowtagAll] = useState(false);
 
   const [tagData, setTagData] = useState([
@@ -38,6 +40,10 @@ export default function LeftSideBar({ name }) {
     "Guide",
     "Review",
   ]);
+
+	useEffect(() => {
+		setSelectedTags(tagFilter);
+	}, [tagFilter]);
 
   const displayedTags = showtagAll ? tagData : tagData.slice(0, 4);
 
@@ -63,15 +69,15 @@ export default function LeftSideBar({ name }) {
   }, [communityList, user?._id]);
 
   const addTag = (tag) => {
-    setCreatePostTag([...createPostTag, tag]);
+    setTagFilter([...tagFilter, tag]);
   };
 
   const removeTag = (tag) => {
-    let temp = [...createPostTag];
+    let temp = [...tagFilter];
     let index = temp.indexOf(tag);
     if (index !== -1) {
       temp.splice(index, 1);
-      setCreatePostTag(temp);
+      setTagFilter(temp);
     }
   };
 
@@ -99,17 +105,17 @@ export default function LeftSideBar({ name }) {
                   type="button"
                   key={index}
                   className={`text-sm font-medium text-${
-                    createPostTag.includes(tag) ? "black" : "white"
+                    tagFilter.includes(tag) ? "black" : "white"
                   } text-opacity-80 bg-${
-                    createPostTag.includes(tag)
+                    tagFilter.includes(tag)
                       ? "emerald-green"
                       : "dark-background"
                   } rounded-[20px] py-[0.6rem] px-[0.8rem] flex items-center`}
                   onClick={() =>
-                    createPostTag.includes(tag) ? removeTag(tag) : addTag(tag)
+                    tagFilter.includes(tag) ? removeTag(tag) : addTag(tag)
                   }
                 >
-                  {createPostTag.includes(tag) ? (
+                  {tagFilter.includes(tag) ? (
                     <MinusIcon className="size-6" />
                   ) : (
                     <PlusIcon className="size-6" />

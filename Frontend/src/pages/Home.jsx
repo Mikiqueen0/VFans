@@ -15,6 +15,13 @@ import { FaSpinner } from "react-icons/fa";
 import axios from "axios";
 import useUser from "../hooks/useUser";
 import useStatus from "../hooks/useStatus";
+import usePost from "../hooks/usePost";
+import { 
+	useFetchUserPosts, 
+	useFetchAllPosts, 
+	useFetchJoinedCommunityPosts, 
+	useFetchCommunityPosts 
+} from '../hooks/useFetchPost';
 
 export default function Home() {
 	const { user, setUser } = useUser();
@@ -24,11 +31,15 @@ export default function Home() {
 	const [smallLoading, setSmallLoading] = useState(true);
 	const hamburgerPopupRef = useRef(null);
 	const navigate = useNavigate();
+	const { filteredPosts } = usePost();
+	useFetchAllPosts();
 
 	useEffect(() => {
+		setSmallLoading(false);
 		window.onload = () => {
 			setTimeout(() => {
 				setLoading(false);
+				console.log(smallLoading);
 			}, 1000);
 		};
 	}, []);
@@ -65,22 +76,22 @@ export default function Home() {
 		document.body.style.paddingRight = hamburger ? "15px" : "0";
 	}, [hamburger]);
 
-	const [post, setPost] = useState([]);
+	// const [post, setPost] = useState([]);
 
-	useEffect(() => {
-		const fetchAllPost = async () => {
-			// setSmallLoading(true);
-			try {
-				const res = await axios.get("/post/all");
-				setPost(res.data.post);
-			} catch (error) {
-				console.log("Error fetching posts: ", error);
-			} finally {
-				setSmallLoading(false);
-			};
-		};
-		fetchAllPost();
-	}, [popup]);
+	// useEffect(() => {
+	// 	const fetchAllPost = async () => {
+	// 		// setSmallLoading(true);
+	// 		try {
+	// 			const res = await axios.get("/post/all");
+	// 			setPost(res.data.post);
+	// 		} catch (error) {
+	// 			console.log("Error fetching posts: ", error);
+	// 		} finally {
+	// 			setSmallLoading(false);
+	// 		};
+	// 	};
+	// 	fetchAllPost();
+	// }, [popup]);
 
 	return (
 		<div className="bg-dark-background scrollbar-thin">
@@ -119,9 +130,13 @@ export default function Home() {
 				</div>
 			}
 			{/* display post */}
-			{post.map((post, key) => {
-				return <Post key={key} post={post}/>;
-			})}
+			{filteredPosts?.length === 0 ? 
+				(<div className="text-white text-center opacity-70 mt-4">No post found . . .</div>)
+				: 
+				(filteredPosts?.map((post, key) => {
+					return <Post key={key} post={post}/>;
+				}))
+			}
 			</section>}
 			<RightSideBar />
 		</div>

@@ -5,6 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { UserContextProvider } from "./context/fetchuser";
 import { StatusContextProvider } from "./context/StatusContext";
 import { CommunityContextProvider } from "./context/FetchCommunity";
+import { PostProvider } from './context/PostContext';
 import {
   SignUp,
   Login,
@@ -28,6 +29,7 @@ const App = () => {
         <AuthProvider>
         <UserContextProvider>
         <CommunityContextProvider>
+        <PostProvider>
           <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="/home" element={<Home />} />
@@ -45,6 +47,7 @@ const App = () => {
               element={<JoinedCommunity />}
             />
           </Routes>
+        </PostProvider>
         </CommunityContextProvider>
         </UserContextProvider>
         </AuthProvider>
