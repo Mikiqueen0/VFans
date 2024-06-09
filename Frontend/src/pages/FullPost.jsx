@@ -7,6 +7,7 @@ import {
 	Post,
 	CreatePostPopup,
 	Filter,
+    CommentSection
 } from "../components/index";
 import { useCookies } from "react-cookie";
 import { ToastContainer, toast } from "react-toastify";
@@ -27,6 +28,7 @@ export default function FullPost() {
 	const navigate = useNavigate();
     const { postID } = useParams();
 	const [post, setPost] = useState({});
+    
 
 	useEffect(() => {
 		window.onload = () => {
@@ -87,8 +89,7 @@ export default function FullPost() {
                 </div>
                 {/* display post */}
                 <Post post={post}/>
-                </section>
-            )}
+            </section>)}
 			<RightSideBar />
 		</div>
 		{hamburger && (

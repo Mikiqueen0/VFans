@@ -3,6 +3,7 @@ import postTestImage from "../assets/images/postImage.png";
 import useUser from "../hooks/useUser";
 import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
 import { useNavigate, useParams } from "react-router-dom";
+import { CommentSection } from "./index";
 
 export default function Post({ post }) {
   const navigate = useNavigate();
@@ -58,13 +59,23 @@ export default function Post({ post }) {
     }
   };
 
-  const handleClickPost = () => {
-    if (postID) return;
-    navigate(`/post/${post._id}`);
+  // const handleClickPost = () => {
+  //   if (postID) return;
+  //   navigate(`/post/${post._id}`);
+  // };
+  
+  const handleClickPost = (navigateToPostDetail) => {
+    if (navigateToPostDetail) {
+      navigate(`/post/${post._id}`);
+    } else {
+      // Navigate to post detail page with comments focused
+      navigate(`/post/${post._id}/comments`);
+    }
   };
 
   return (
-    <div className={`bg-primary rounded-[10px] px-5 py-4 max-h-[800px] ${postID ? "cursor-default" : "cursor-pointer"}`} onClick={handleClickPost}>
+    <div>
+    <div className={`bg-primary rounded-[10px] px-5 py-4 max-h-[800px] ${postID ? "cursor-default" : "cursor-pointer"}`} onClick={() => handleClickPost(true)}>
       <div className="flex justify-between max-h-[500px]">
         <div className="flex flex-row items-center gap-2">
           <img
@@ -114,7 +125,7 @@ export default function Post({ post }) {
       </div>
       <div
         className={`gap-4 rounded-[10px] pt-3 grid ${
-          post?.image.length > 1 ? "grid-cols-2" : "grid-cols-1"
+          post.image?.length > 1 ? "grid-cols-2" : "grid-cols-1"
         }`}
       >
         {post.image?.map((imageUrl, index) => (
@@ -128,9 +139,11 @@ export default function Post({ post }) {
       </div>
       <div className="flex gap-8 text-[14px] font-medium text-opacity-90 text-white mt-3">
         <button>Like</button>
-        <button>Comment</button>
+        <button onClick={(e) => {e.stopPropagation(); handleClickPost(false);}}>Comment</button>
         <button>Save</button>
       </div>
+    </div>
+    {postID && <CommentSection postID={post._id}/>}
     </div>
   );
 }

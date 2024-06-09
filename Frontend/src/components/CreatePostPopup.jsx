@@ -286,7 +286,7 @@ export default function CreatePostPopup({ setPopup, popup }) {
                   type="text"
                   onChange={handleCommunitySearch}
                   value={communitySearch}
-                  className="bg-primary caret-[#8c8c8c] h-full w-full font-light focus:outline-none"
+                  className="bg-primary caret-[#8c8c8c] placeholder-[#8c8c8c] h-full w-full font-light focus:outline-none"
                   placeholder="Search Community..."
                 ></input>
               ) : (
@@ -371,7 +371,7 @@ export default function CreatePostPopup({ setPopup, popup }) {
                     className="rounded-full size-[2rem] object-cover"
                   />
                   <textarea
-                    className="bg-dark-background p-3 font-light text-white text-base text-opacity-80 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]"
+                    className="bg-dark-background p-3 font-light text-white text-base text-opacity-80 focus:outline-none caret-[#8c8c8c] placeholder-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]"
                     rows="5"
                     placeholder="Write Something..."
                     onChange={(e) =>
@@ -426,7 +426,7 @@ export default function CreatePostPopup({ setPopup, popup }) {
                         <input
                           type="text"
                           placeholder="Add Tag..."
-                          className="block bg-transparent resize-none font-normal text-sm text-white placeholder-white text-opacity-80 placeholder-opacity-60 focus:outline-none caret-[#8c8c8c] h-full min-w-[4rem] flex-1"
+                          className="block bg-transparent resize-none font-normal text-sm text-white placeholder-[#8c8c8c] text-opacity-80 placeholder-opacity-60 focus:outline-none caret-[#8c8c8c] h-full min-w-[4rem] flex-1 mx-2"
                           value={tagVal}
                           onKeyDown={handleTagEnter}
                           onChange={(e) => setTagVal(e.target.value)}

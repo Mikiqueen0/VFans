@@ -47,6 +47,7 @@ const App = () => {
             <Route path="/profile/:profileUsername" element={<Profile />} />
             <Route path="/joinedCommunity/:communityID" element={<JoinedCommunity />} />
             <Route path="/post/:postID" element={<FullPost />} />
+            <Route path="/post/:postID/:section" element={<FullPost />} />
           </Routes>
         {/* </ScrollToTop> */}
         </PostProvider>

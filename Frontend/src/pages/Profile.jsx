@@ -240,7 +240,7 @@ export default function Profile() {
                             <div className="mx-[1rem] mt-4 flex-grow flex flex-col gap-1">
                                 {editBio ? 
                                     <div className="flex flex-col w-full">
-                                        <textarea type="text" className="bg-dark-background p-3 font-light text-white text-[14px] text-opacity-90 focus:outline-none caret-[#8c8c8c] h-[5.5rem] resize-none overscroll-none w-full rounded-[10px]" placeholder="Description..." onChange={e => handleBioChange(e)} value={profileDataCopy.bio}></textarea>
+                                        <textarea type="text" className="bg-dark-background p-3 font-light text-white text-[14px] text-opacity-90 focus:outline-none caret-[#8c8c8c] placeholder-[#8c8c8c] h-[5.5rem] resize-none overscroll-none w-full rounded-[10px]" placeholder="Description..." onChange={e => handleBioChange(e)} value={profileDataCopy.bio}></textarea>
                                         <p className="text-end font-light opacity-70 text-[13px] mt-1">{profileDataCopy.bio?.length}/{maxProfileBio}</p>
                                     </div>
                                     : <p className="font-normal opacity-80 tracking-wide text-[13px]">

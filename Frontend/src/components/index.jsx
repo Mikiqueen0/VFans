@@ -10,6 +10,7 @@ import Filter from './Filter';
 import CommunitySetting from './CommunitySetting';
 import LoadingScreen from './LoadingScreen';
 import ConfirmModule from './ConfirmModule';
+import CommentSection from './CommentSection';
 
 export { 
     PageButton, 
@@ -23,5 +24,6 @@ export {
     Filter,
     CommunitySetting,
     LoadingScreen,
-    ConfirmModule
+    ConfirmModule,
+    CommentSection
 }
