@@ -12,21 +12,31 @@ import {
 import profileTestIcon from "../assets/images/test-profile.jpg";
 import crossIcon from "../assets/images/tagCross.png";
 import useUser from "../hooks/useUser";
+import useCommunity from "../hooks/useCommunity";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+import supabase from "../utils/supabase";
 
 export default function CreatePostPopup({ setPopup, popup }) {
 	const { user, setUser } = useUser();
-	const { communityName } = useParams();
-	const formattedCommunityName = communityName?.replace(/_/g, " ");
+	const { communityList, setCommunityList } = useCommunity();
+	const { communityID } = useParams();
+	// const formattedCommunityName = communityName?.replace(/_/g, " ");
 	const [communityDropdown, setCommunityDropdown] = useState(false); // community dropdown
 	const [communitySelect, setCommunitySelect] = useState({}); // selected community
 	const [communitySearch, setCommunitySearch] = useState(""); //search community field
-	const [createPostContent, setCreatePostContent] = useState(""); // create post content text field
-	const [createPostTag, setCreatePostTag] = useState([]); //tag list
+	// const [createPostContent, setCreatePostContent] = useState(""); // create post content text field
+	// const [createPostTag, setCreatePostTag] = useState([]); //tag list
 	const [tagVal, setTagVal] = useState(""); //tag in text field
 	const [tagCheckbox, setTagCheckbox] = useState(false); // tag dropdown
-
-	// fetch community function and auto set select community for user
-	// fetchedCommunity setCommunitySelect(fetchedCommunity)
+	const [postData, setPostData] = useState({
+		userID: "",
+		communityID: "",
+		desc: "",
+		image: [],
+		video: [],
+		tag: []
+	});
 
 	//tag user can choose
 	const [tagData, setTagData] = useState([
@@ -47,14 +57,17 @@ export default function CreatePostPopup({ setPopup, popup }) {
 	]);
 
 	useEffect(() => {
-		if (formattedCommunityName) {
-		setCommunitySelect({
-			communityId: 99,
-			communityName: formattedCommunityName,
-			communityImage: "",
-		});
+		if (communityID) {
+			const communityFilter = communityList.filter(community => community._id === communityID);
+			handleCommunitySelect(communityFilter[0]);
 		}
 	}, [popup]);
+
+	const handleCommunitySelect = (selectedCommunity) => {
+		setCommunitySelect(selectedCommunity);
+		setPostData({ ...postData, communityID: selectedCommunity._id});
+		setCommunityDropdown(false);
+	};
 
 	const createPostPopupRef = useRef(null);
 	useEffect(() => {
@@ -73,35 +86,38 @@ export default function CreatePostPopup({ setPopup, popup }) {
 	}, [createPostPopupRef]);
 
 	const addTag = (tag) => {
-		setCreatePostTag([...createPostTag, tag]);
+		// setCreatePostTag([...createPostTag, tag]);
+		setPostData({ ...postData, tag: [...postData.tag, tag] });
 	};
 
 	// prevent tag duplicate (but not working with upper/lower case)
 	const onEnterTag = (e) => {
 		let tagName = e.target.value;
-		let temp = [...createPostTag];
+		// let temp = [ ...createPostTag ];
+		let temp = [ ...postData.tag ];
 		let index = temp.indexOf(tagName);
 		if (index !== -1) {
-		setTagVal("");
+			setTagVal("");
 		} else {
-		addTag(tagName);
+			addTag(tagName);
 		}
 	};
 
 	const removeTag = (tag) => {
-		let temp = [...createPostTag];
+		let temp = [ ...postData.tag ];
 		let index = temp.indexOf(tag);
 		if (index !== -1) {
-		temp.splice(index, 1);
-		setCreatePostTag(temp);
+			temp.splice(index, 1);
+			setPostData({ ...postData, tag: temp });
+			// setCreatePostTag(temp);
 		}
 	};
 
 	const handleTagEnter = (e) => {
 		if (e.key === "Enter") {
-		e.preventDefault();
-		onEnterTag(e);
-		setTagVal("");
+			e.preventDefault();
+			onEnterTag(e);
+			setTagVal("");
 		}
 	};
 
@@ -126,69 +142,23 @@ export default function CreatePostPopup({ setPopup, popup }) {
 
 	useEffect(() => {
 		if (!popup) {
-		setCreatePostContent("");
-		setCreatePostTag([]);
-		setTagVal("");
-		setImageFile([]);
-		setToggleTabState(1);
-		setCommunityDropdown(false);
-		setCommunitySelect({});
-		setCommunitySearch("");
+			setPostData({
+				userID: "",
+				communityID: "",
+				desc: "",
+				image: [],
+				video: [],
+				tag: []
+			});
+			setTagVal("");
+			setImageFile([]);
+			setTagCheckbox(false);
+			setToggleTabState(1);
+			setCommunityDropdown(false);
+			setCommunitySelect({});
+			setCommunitySearch("");
 		}
 	}, [popup]);
-
-	const [communityList, setCommunityList] = useState([
-		{
-			communityId: 1,
-			communityName: "Community 1",
-			communityImage: "",
-		},
-		{
-			communityId: 2,
-			communityName: "Community 2",
-			communityImage: "",
-		},
-		{
-			communityId: 3,
-			communityName: "Community 3",
-			communityImage: "",
-		},
-		{
-			communityId: 4,
-			communityName: "Community 4",
-			communityImage: "",
-		},
-		{
-			communityId: 5,
-			communityName: "Community 5",
-			communityImage: "",
-		},
-		{
-			communityId: 6,
-			communityName: "Community 6",
-			communityImage: "",
-		},
-		{
-			communityId: 7,
-			communityName: "Community 7",
-			communityImage: "",
-		},
-		{
-			communityId: 8,
-			communityName: "Community 8",
-			communityImage: "",
-		},
-		{
-			communityId: 9,
-			communityName: "Community 9",
-			communityImage: "",
-		},
-		{
-			communityId: 10,
-			communityName: "Community 10",
-			communityImage: "",
-		},
-	]);
 
 	const handleKeyPress = (e) => {
 		if (e.key === "Enter") {
@@ -202,18 +172,43 @@ export default function CreatePostPopup({ setPopup, popup }) {
 		}
 	};
 
-	// When submit Post
-	const handleSubmitPost = (e) => {
-		e.preventDefault();
-		console.log("Community Select: " + communitySelect.communityName);
-		console.log("Post Content: " + createPostContent);
-		console.log("Post Tag: " + createPostTag);
-		console.log("Post Image: " + imageFile);
-		console.log("Post time: " + new Date().toLocaleString());
-		setPopup(false);
-	};
 
 	const [imageFile, setImageFile] = useState([]);
+
+	const handleFileChange = (e) => {
+		const filesArray = Array.from(e.target.files);
+		setImageFile(filesArray);
+	};
+
+	const uploadFile = async (file) => {
+        try {
+            const { data } = await supabase.storage
+                .from("VFans")
+                .upload("/" + uuidv4(), file);
+            const image = await supabase.storage
+                .from("VFans")
+                .getPublicUrl(data.path);
+            return image.data.publicUrl;
+        } catch (err) {
+            console.error("Error uploading file:", err);
+        };
+    };
+
+	// When submit Post
+	const handleSubmitPost = async (e) => {
+		e.preventDefault();
+		try {
+			const uploadPromises = imageFile.map(file => uploadFile(file));
+			const uploadedFilesUrls = await Promise.all(uploadPromises);
+
+			const createPost = await axios.post("/post/create", { ...postData, image: uploadedFilesUrls, userID: user._id });
+			createPost.data.success && console.log("Post created successfully");
+			// console.log(createPost.data.post);
+		} catch (err) {
+			console.error("Error creating post", err);
+		}
+		setPopup(false);
+	};
 
     return ( 
         <form onSubmit={handleSubmitPost} onKeyDown={handleKeyPress} className={`fixed overflow-y-scroll inset-0 h-full flex flex-col justify-center items-center max-lg:px-[2rem] px-[10rem] xl:px-[4rem] z-50 overflow-x-hidden duration-[200ms] ${popup ? "scale-100 opacity-100": "scale-0 opacity-0"}`}>
@@ -234,13 +229,13 @@ export default function CreatePostPopup({ setPopup, popup }) {
 								<input type="text" onChange={(e) => setCommunitySearch(e.target.value)} onKeyDown={handleCommunitySearch} value={communitySearch} className="bg-primary caret-[#8c8c8c] h-full w-full font-light focus:outline-none" placeholder="Search Community..."></input>
 								: 
 								<p className="flex items-center">
-									{communitySelect.communityName && (
+									{communitySelect.name && (
 										<>
-										<img src={communitySelect.communityImage} alt="" className="bg-emerald-green rounded-full size-6 mr-2" />
-										{communitySelect.communityName}
+										<img src={communitySelect.image} alt="" className="bg-emerald-green rounded-full size-6 mr-2" />
+										{communitySelect.name}
 										</>
 									)}
-									{!communitySelect.communityName && "Select Community"}
+									{!communitySelect.name && "Select Community"}
 								</p>
 								
 							}
@@ -252,9 +247,9 @@ export default function CreatePostPopup({ setPopup, popup }) {
 							<div className="bg-dark-background absolute w-full border border-t-0 border-emerald-green overflow-y-scroll max-h-[200px]">
 								{communityList.map((community, index) => {
 									return (
-										<div key={index} className="flex items-center px-4 py-3 gap-3 group cursor-pointer hover:bg-darkest-black" onClick={() => {setCommunitySelect(community); setCommunityDropdown(false)}}>
-											<img src="" alt="" className="rounded-full size-8 bg-emerald-green object-cover"/>
-											<p className="text-white opacity-80 group-hover:text-emerald-green duration-100 flex-grow">{community.communityName}</p>
+										<div key={index} className="flex items-center px-4 py-3 gap-3 group cursor-pointer hover:bg-darkest-black" onClick={() => handleCommunitySelect(community)}>
+											<img src={community.image} alt="" className="rounded-full size-8 bg-emerald-green object-cover"/>
+											<p className="text-white opacity-80 group-hover:text-emerald-green duration-100 flex-grow">{community.name}</p>
 										</div>
 									);
 								})}
@@ -269,7 +264,7 @@ export default function CreatePostPopup({ setPopup, popup }) {
                         {toggleTabState === 1 && <div>
                             <div className="mt-2 flex gap-2">
                                 <img src={user?.profileImage} alt="profile" className="rounded-full size-[2rem] object-cover" />
-                                <textarea className="bg-dark-background p-3 font-light text-white text-base text-opacity-80 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="5" placeholder="Write Something..." onChange={e => setCreatePostContent(e.target.value)} value={createPostContent} required></textarea>
+                                <textarea className="bg-dark-background p-3 font-light text-white text-base text-opacity-80 focus:outline-none caret-[#8c8c8c] resize-none overscroll-none w-full rounded-[10px]" rows="5" placeholder="Write Something..." onChange={(e) => setPostData((prev) => ({ ...prev, desc: e.target.value }))} value={postData.desc} required></textarea>
                             </div>
                             <div className="mt-2">
                                 <section className="bg-primary rounded-[10px] shadow-md shadow-darkest-black">
@@ -281,7 +276,7 @@ export default function CreatePostPopup({ setPopup, popup }) {
                                     <div className={`block overflow-hidden py-0 transition-all duration-500 ${tagCheckbox ? "max-h-80" : "max-h-0"}`}>
                                         <div className="bg-dark-background min-h-[2.8rem] rounded-[10px] mt-1 flex flex-wrap gap-2 items-center p-2">
                                             {/* added tag */}
-                                            {createPostTag.map((tag, index) => 
+                                            {postData.tag.map((tag, index) => 
 												<div key={index} className="bg-emerald-green rounded-[4px] flex px-[0.3rem] py-1">
 													<p className="text-black opacity-80 text-sm font-medium">{tag}</p>
 													<button type="button" onClick={() => removeTag(tag)} className="ml-1">
@@ -292,9 +287,9 @@ export default function CreatePostPopup({ setPopup, popup }) {
                                         </div>
                                         <div className="bg-[#202020] h-auto rounded-[10px] max-h-[9rem] mt-1 flex flex-wrap gap-2 p-2 overflow-y-scroll">
                                             {tagData.map((tag, index) => 
-                                                <button type="button" key={index} className={`text-sm font-medium text-${createPostTag.includes(tag) ? 'black' : 'white'} text-opacity-80 bg-${createPostTag.includes(tag) ? 'emerald-green' : 'dark-background'} rounded-[20px] py-[0.6rem] px-[0.8rem] flex items-center`} onClick={() => createPostTag.includes(tag) ? removeTag(tag) : addTag(tag)}>
+                                                <button type="button" key={index} className={`text-sm font-medium text-${postData.tag.includes(tag) ? 'black' : 'white'} text-opacity-80 bg-${postData.tag.includes(tag) ? 'emerald-green' : 'dark-background'} rounded-[20px] py-[0.6rem] px-[0.8rem] flex items-center`} onClick={() => postData.tag.includes(tag) ? removeTag(tag) : addTag(tag)}>
                                                     {/* <img src={createPostTag.includes(tag) ? './assets/images/minus.png' : './assets/images/plus.png'} alt="" className="w-[0.9rem] mr-2 opacity-80" /> */}
-                                                    {createPostTag.includes(tag) ? <MinusIcon className="size-6" /> : <PlusIcon className="size-6" />}
+                                                    {postData.tag.includes(tag) ? <MinusIcon className="size-6" /> : <PlusIcon className="size-6" />}
                                                     {tag}
                                                 </button>
                                             )}
@@ -314,13 +309,13 @@ export default function CreatePostPopup({ setPopup, popup }) {
                                             <p className="mb-2 text-sm text-white text-opacity-60"><span className="font-semibold">Click to upload</span> or drag and drop</p>
                                             <p className="text-xs text-white text-opacity-60">SVG, PNG, JPG or JPEG (MAX. 800x400px)</p>
                                         </div>
-                                        <input id="dropzone-file" type="file" multiple accept="image/jpeg, image/png" className="hidden" onChange={e => handleFileSelect(e.target.files)} />
+                                        <input id="dropzone-file" type="file" multiple accept="image/jpeg, image/png, video/mp4, video/mov" className="hidden" onChange={handleFileChange} />
                                     </label>
                                 </div> 
                             </div>
                             <div className="w-full h-full bg-dark-background rounded-[10px]">
                                 <Carousel transition={{ duration: 0.2 }} className="rounded-xl flex items-center aspect-[2/1]">
-                                    {imageFile.length > 0 ? imageFile.map((img, index) => <img src={img} alt="image" key={index} className="h-full w-full object-contain" />) : <div className="h-full w-full flex items-center justify-center text-white text-opacity-60 text-xl font-normal">
+                                    {imageFile.length > 0 ? imageFile.map((img, index) => <img src={URL.createObjectURL(img)} alt="image" key={index} className="h-full w-full object-contain" />) : <div className="h-full w-full flex items-center justify-center text-white text-opacity-60 text-xl font-normal">
                                             Image Preview
                                         </div>}
                                 </Carousel>

@@ -2,19 +2,28 @@ const Post = require("../models/post");
 
 // Create
 module.exports.CreatePost = async (req, res, next) => {
+  const { userID, communityID, desc, image, video, tag } = req.body;
   try {
+    // const newPost = new Post({
+    //   userID: req.body.userID,
+    //   desc: req.body.desc,
+    //   image: req.body.image,
+    //   video: req.body.video,
+    //   tag: req.body.tag,
+    // });
     const newPost = new Post({
-      userID: req.body.userID,
-      desc: req.body.desc,
-      image: req.body.image,
-      video: req.body.video,
-      tag: req.body.tag,
+      userID,
+      communityID,
+      desc,
+      image,
+      video,
+      tag,
     });
     const post = await newPost.save();
     res.status(200).json({ success: true, post });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

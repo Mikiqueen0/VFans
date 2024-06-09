@@ -6,25 +6,28 @@ const postSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  communityID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Community",
+    required: true,
+  },
   desc: {
     type: String,
     required: true,
   },
   image: {
-    type: String,
+    type: Array,
+    default: [],
   },
   video: {
-    type: String,
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now,
+    type: Array,
+    default: [],
   },
   tag: {
     type: Array,
     default: [],
   },
-});
+}, { timestamps: true });
 
 const Post = mongoose.model("Post", postSchema);
 module.exports = Post;
