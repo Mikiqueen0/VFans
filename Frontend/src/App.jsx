@@ -20,6 +20,7 @@ import {
   JoinedCommunity,
 } from "./pages/index";
 import axios from "axios";
+import ScrollToTop from "./utils/ScrollToTop";
 axios.defaults.baseURL = "http://localhost:3000";
 
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
         <UserContextProvider>
         <CommunityContextProvider>
         <PostProvider>
+        <ScrollToTop />
           <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
             <Route path="/home" element={<Home />} />
@@ -47,6 +49,7 @@ const App = () => {
               element={<JoinedCommunity />}
             />
           </Routes>
+        {/* </ScrollToTop> */}
         </PostProvider>
         </CommunityContextProvider>
         </UserContextProvider>

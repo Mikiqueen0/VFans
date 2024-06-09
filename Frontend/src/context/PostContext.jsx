@@ -14,7 +14,6 @@ export function PostProvider({ children }) {
 
             if (searchKeyword) {
                 filtered = filtered.filter(post => post.desc.includes(searchKeyword)); // or tag or community name too
-                
             }
 
             if (selectedTags.length > 0) {
