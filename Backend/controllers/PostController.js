@@ -26,7 +26,9 @@ module.exports.CreatePost = async (req, res, next) => {
 // Get A Post
 module.exports.GetPost = async (req, res, next) => {
   try {
-    const posts = await Post.findById(req.params.id);
+    const posts = await Post.findById(req.params.id)
+      .populate("userID")
+      .populate("communityID");
     if (!posts) {
       return res
         .status(404)

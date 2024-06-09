@@ -49,7 +49,7 @@ export default function Profile() {
                 if(fetchProfile.status){
                     setProfile(fetchProfile.data.user);
                     setProfileDataCopy(fetchProfile.data.user);
-                    setCanEdit(user?._id === fetchProfile.data.user._id);
+                    setCanEdit(user._id === fetchProfile.data.user._id);
                     const userCommunities = communityList.filter(community => {
 						return community.members.includes(fetchProfile.data.user._id);
 					});
@@ -161,26 +161,38 @@ export default function Profile() {
                 }
                 {!loading && <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[1rem] w-[800px] text-white">
                     {/* user info */}
-                    <div className={`w-full h-[26rem] rounded-[10px] flex flex-col justify-end relative`}>
-                        <label htmlFor="banner-input" className="absolute inset-0 w-full h-[85%] pb-20 cursor-pointer">
-                            <input
-                                id="banner-input"
-                                type="file"
-                                className="hidden"
-                                onChange={handleBannerChange}
-                                accept="image/jpeg, image/png, image/jpg"
-                            />
-                            <div className="w-full h-full relative">
+                    <div className={`w-full h-[24rem] rounded-[10px] flex flex-col justify-end relative cursor-pointer`}>
+                        {!canEdit ? (
+                            <div className="w-full h-full relative border border-red-500">
                                 <img
                                     src={profileDataCopy.profileBanner}
                                     alt="background"
                                     className="w-full h-full object-cover rounded-[10px]"
                                 />
-                                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-[10px]">
-                                    <PencilIcon className="w-8 h-8 text-white" />
-                                </div>
                             </div>
-                        </label>
+                        ) 
+                        : 
+                        (
+                            <label htmlFor="banner-input" className="absolute inset-0 w-full h-[85%] pb-20 cursor-pointer">
+                                <input
+                                    id="banner-input"
+                                    type="file"
+                                    className="hidden"
+                                    onChange={handleBannerChange}
+                                    accept="image/jpeg, image/png, image/jpg"
+                                />
+                                <div className="w-full h-full relative">
+                                    <img
+                                        src={profileDataCopy.profileBanner}
+                                        alt="background"
+                                        className="w-full h-full object-cover rounded-[10px]"
+                                    />
+                                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-[10px]">
+                                        <PencilIcon className="w-8 h-8 text-white" />
+                                    </div>
+                                </div>
+                            </label>
+                        )}
                         {/* <div className="h-12 w-full backdrop-blur-sm flex items-center">
                             <p className="text-[26px] font-bold ml-[10rem] tracking-wide">
                                 {profile.username}
@@ -190,41 +202,43 @@ export default function Profile() {
                             <p className="text-[26px] font-bold ml-[8.5rem] mt-2 tracking-wide">
                                 {profile.username}
                             </p>
-                            {!canEdit && <div className="size-[8rem] rounded-full border-[0.4rem] border-primary absolute -top-[3.5rem] hover:cursor-pointer">
-                                <img
-                                    src={profileDataCopy.profileImage}
-                                    alt="profile"
-                                    className="absolute inset-0 w-full h-full object-cover z-0 rounded-full"
-                                />
-                            </div>}
-                            {/* <PencilIcon className="absolute bg-dark-background ml-[7.2rem] mt-2"/> */}
-                            {canEdit && 
-                            <label htmlFor="file-input" className="relative -top-[6rem]">
-                                <input
-                                    id="file-input"
-                                    type="file"
-                                    className="hidden"
-                                    onChange={handleProfileChange}
-                                    accept="image/jpeg, image/png, image/jpg"
-                                />
-                                <div className="size-[8rem] rounded-full border-[0.4rem] border-primary absolute hover:cursor-pointer">
+                            {!canEdit ? (
+                                <div className="size-[8rem] rounded-full border-[0.4rem] border-primary absolute -top-[3.5rem] hover:cursor-pointer">
                                     <img
                                         src={profileDataCopy.profileImage}
                                         alt="profile"
                                         className="absolute inset-0 w-full h-full object-cover z-0 rounded-full"
                                     />
-                                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-full">
-                                        <PencilIcon className="w-8 h-8 text-white" />
-                                    </div>
                                 </div>
-                            </label>}
+                            )
+                            :
+                            (
+                                <label htmlFor="file-input" className="relative -top-[6rem]">
+                                    <input
+                                        id="file-input"
+                                        type="file"
+                                        className="hidden"
+                                        onChange={handleProfileChange}
+                                        accept="image/jpeg, image/png, image/jpg"
+                                    />
+                                    <div className="size-[8rem] rounded-full border-[0.4rem] border-primary absolute hover:cursor-pointer">
+                                        <img
+                                            src={profileDataCopy.profileImage}
+                                            alt="profile"
+                                            className="absolute inset-0 w-full h-full object-cover z-0 rounded-full"
+                                        />
+                                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-full">
+                                            <PencilIcon className="w-8 h-8 text-white" />
+                                        </div>
+                                    </div>
+                                </label>
+                            )}
                             <p className="ml-[8.5rem] mt-1 font-light text-[13px] group cursor-pointer" onClick={() => navigate(`/${profile.username}/joinedCommunities`)}>
                                 <span className="font-semibold opacity-100 mr-1">{communityJoined.length || 0}</span>
                                 <span className="font-normal opacity-80 tracking-wide group-hover:underline">Communities joined</span>
                             </p>
                             <div className="mx-[1rem] mt-4 flex-grow flex flex-col gap-1">
                                 {editBio ? 
-                                    // <textarea value={profileDataCopy.userDescription} placeHolder="Description..."></textarea>
                                     <div className="flex flex-col w-full">
                                         <textarea type="text" className="bg-dark-background p-3 font-light text-white text-[14px] text-opacity-90 focus:outline-none caret-[#8c8c8c] h-[5.5rem] resize-none overscroll-none w-full rounded-[10px]" placeholder="Description..." onChange={e => handleBioChange(e)} value={profileDataCopy.bio}></textarea>
                                         <p className="text-end font-light opacity-70 text-[13px] mt-1">{profileDataCopy.bio?.length}/{maxProfileBio}</p>

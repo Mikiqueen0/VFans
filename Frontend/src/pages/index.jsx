@@ -9,6 +9,7 @@ import AllCommunity from "./AllCommunity";
 import CreateCommunity from "./CreateCommunity";
 import Profile from "./Profile";
 import JoinedCommunity from "./JoinedCommunity";
+import FullPost from "./FullPost";
 
 export { 
     SignUp, 
@@ -21,5 +22,6 @@ export {
     AllCommunity,
     CreateCommunity,
     Profile,
-    JoinedCommunity
+    JoinedCommunity,
+    FullPost
 }

@@ -64,3 +64,19 @@ export const useFetchCommunityPosts = (communityID) => {
         fetchCommunityPosts();
     }, [communityID, setPosts]);
 };
+
+export const useFetchPostByID = (postID) => {
+    const { setPosts } = usePost();
+
+    useEffect(() => {
+        const fetchPostByID = async () => {
+            try {
+                const response = await axios.get(`/post/${postID}`);
+                setPosts(response.data.posts);
+            } catch (error) {
+                console.error('Error fetching post by ID', error);
+            }
+        };
+        fetchPostByID();
+    }, [postID, setPosts]);
+};

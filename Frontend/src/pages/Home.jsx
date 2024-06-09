@@ -133,7 +133,7 @@ export default function Home() {
 			{filteredPosts?.length === 0 ? 
 				(<div className="text-white text-center opacity-70 mt-4">No post found . . .</div>)
 				: 
-				(filteredPosts?.map((post, key) => {
+				(Array.isArray(filteredPosts) && filteredPosts.map((post, key) => {
 					return <Post key={key} post={post}/>;
 				}))
 			}

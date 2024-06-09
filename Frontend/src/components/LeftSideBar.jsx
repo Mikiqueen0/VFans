@@ -38,12 +38,14 @@ export default function LeftSideBar({ name }) {
 	}, [tagFilter]);
 
   const extractUniqueTags = (posts) => {
-		const tagsSet = new Set();
-		posts.forEach(post => {
-			post.tag.forEach(tag => tagsSet.add(tag));
-		});
-		return Array.from(tagsSet);
-	};
+    const tagsSet = new Set();
+    if (Array.isArray(posts)) {
+        posts.forEach(post => {
+            post.tag.forEach(tag => tagsSet.add(tag));
+        });
+    }
+    return Array.from(tagsSet);
+  };
 
   useEffect(() => {
 		setTagData(extractUniqueTags(posts));

@@ -48,9 +48,11 @@ export default function CreatePostPopup({ setPopup, popup }) {
 
   const extractUniqueTags = (posts) => {
     const tagsSet = new Set();
-    posts.forEach((post) => {
-      post.tag.forEach((tag) => tagsSet.add(tag));
-    });
+    if (Array.isArray(posts)) {
+        posts.forEach(post => {
+            post.tag.forEach(tag => tagsSet.add(tag));
+        });
+    }
     return Array.from(tagsSet);
   };
 

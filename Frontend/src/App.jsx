@@ -18,6 +18,7 @@ import {
   CreateCommunity,
   Profile,
   JoinedCommunity,
+  FullPost
 } from "./pages/index";
 import axios from "axios";
 import ScrollToTop from "./utils/ScrollToTop";
@@ -44,10 +45,8 @@ const App = () => {
             <Route path="/community" element={<AllCommunity />} />
             <Route path="/createCommunity" element={<CreateCommunity />} />
             <Route path="/profile/:profileUsername" element={<Profile />} />
-            <Route
-              path="/joinedCommunity/:communityID"
-              element={<JoinedCommunity />}
-            />
+            <Route path="/joinedCommunity/:communityID" element={<JoinedCommunity />} />
+            <Route path="/post/:postID" element={<FullPost />} />
           </Routes>
         {/* </ScrollToTop> */}
         </PostProvider>

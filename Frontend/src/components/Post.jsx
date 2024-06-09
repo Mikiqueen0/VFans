@@ -2,12 +2,13 @@ import profileTestIcon from "../assets/images/test-profile.jpg";
 import postTestImage from "../assets/images/postImage.png";
 import useUser from "../hooks/useUser";
 import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Post({ post }) {
   const navigate = useNavigate();
   const postCreator = post.userID;
   const postCommunity = post.communityID;
+  const { postID } = useParams();
 
   const formatPostCreationTime = (createdAt) => {
     const postCreatedAt = new Date(createdAt);
@@ -57,32 +58,37 @@ export default function Post({ post }) {
     }
   };
 
+  const handleClickPost = () => {
+    if (postID) return;
+    navigate(`/post/${post._id}`);
+  };
+
   return (
-    <div className="bg-primary rounded-[10px] px-5 py-4 max-h-[800px]">
+    <div className={`bg-primary rounded-[10px] px-5 py-4 max-h-[800px] ${postID ? "cursor-default" : "cursor-pointer"}`} onClick={handleClickPost}>
       <div className="flex justify-between max-h-[500px]">
         <div className="flex flex-row items-center gap-2">
           <img
-            src={postCommunity.image}
+            src={postCommunity?.image}
             alt="profile"
             className="rounded-full object-cover size-[1.75rem]"
           />
           <p
             className="font-normal text-[15px] text-opacity-90 text-white hover:underline cursor-pointer"
-            onClick={() => navigate(`/community/${postCommunity._id}`)}
+            onClick={() => navigate(`/community/${postCommunity?._id}`)}
           >
-            {postCommunity.name}
+            {postCommunity?.name}
           </p>
           <p className="font-normal text-[12px] text-opacity-60 text-white">
             Posted by{" "}
             <span
               className="hover:underline cursor-pointer"
-              onClick={() => navigate(`/profile/${postCreator.username}`)}
+              onClick={() => navigate(`/profile/${postCreator?.username}`)}
             >
-              {postCreator.username}
+              {postCreator?.username}
             </span>
             <span> - </span>
             <span className="text-opacity-60 text-xs">
-              {formatPostCreationTime(post.createdAt)}
+              {formatPostCreationTime(post?.createdAt)}
             </span>
           </p>
         </div>
@@ -90,7 +96,7 @@ export default function Post({ post }) {
         <EllipsisHorizontalIcon className="text-white size-6" />
       </div>
       <div className="flex gap-2 pt-3">
-        {post.tag.map((tag, key) => {
+        {Array.isArray(post.tag) && post.tag.map((tag, key) => {
           return (
             <button
               key={key}
@@ -103,15 +109,15 @@ export default function Post({ post }) {
       </div>
       <div className="pt-3">
         <p className="text-[14px] font-normal text-opacity-[78%] text-white">
-          {post.desc}
+          {post?.desc}
         </p>
       </div>
       <div
         className={`gap-4 rounded-[10px] pt-3 grid ${
-          post.image.length > 1 ? "grid-cols-2" : "grid-cols-1"
+          post?.image.length > 1 ? "grid-cols-2" : "grid-cols-1"
         }`}
       >
-        {post.image.map((imageUrl, index) => (
+        {post.image?.map((imageUrl, index) => (
           <img
             key={index}
             src={imageUrl}
