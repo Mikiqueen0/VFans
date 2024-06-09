@@ -12,38 +12,42 @@ import useUser from "../hooks/useUser";
 import useStatus from "../hooks/useStatus";
 import useCommunity from "../hooks/useCommunity";
 import usePost from "../hooks/usePost";
+import { 
+	useFetchUserPosts, 
+	useFetchAllPosts, 
+	useFetchJoinedCommunityPosts, 
+	useFetchCommunityPosts 
+} from '../hooks/useFetchPost';
 
 
 export default function LeftSideBar({ name }) {
   const navigate = useNavigate();
   const { user } = useUser();
   const { sidebarCommunity, setSidebarCommunity } = useStatus();
-	const { selectedTags, setSelectedTags } = usePost();
+	const { posts, selectedTags, setSelectedTags } = usePost();
   const { communityList, setCommunityList } = useCommunity();
   const [userJoinedCommunity, setUserJoinedCommunity] = useState([]);
   const [tagFilter, setTagFilter] = useState([]); //tag list
   const [showtagAll, setShowtagAll] = useState(false);
+  useFetchAllPosts();
 
-  const [tagData, setTagData] = useState([
-    "News",
-    "Debut",
-    "Meme",
-    "Image",
-    "Video",
-    "Fanart",
-    "Fanfiction",
-    "Discussion",
-    "Question",
-    "Poll",
-    "Announcement",
-    "Event",
-    "Guide",
-    "Review",
-  ]);
+  const [tagData, setTagData] = useState([]);
 
 	useEffect(() => {
 		setSelectedTags(tagFilter);
 	}, [tagFilter]);
+
+  const extractUniqueTags = (posts) => {
+		const tagsSet = new Set();
+		posts.forEach(post => {
+			post.tag.forEach(tag => tagsSet.add(tag));
+		});
+		return Array.from(tagsSet);
+	};
+
+  useEffect(() => {
+		setTagData(extractUniqueTags(posts));
+	}, [user]);
 
   const displayedTags = showtagAll ? tagData : tagData.slice(0, 4);
 

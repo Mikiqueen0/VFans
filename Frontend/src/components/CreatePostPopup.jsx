@@ -15,6 +15,14 @@ import useCommunity from "../hooks/useCommunity";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import supabase from "../utils/supabase";
+import usePost from "../hooks/usePost";
+import { 
+	useFetchUserPosts, 
+	useFetchAllPosts, 
+	useFetchJoinedCommunityPosts, 
+	useFetchCommunityPosts 
+} from '../hooks/useFetchPost';
+
 
 export default function CreatePostPopup({ setPopup, popup }) {
 	const { user, setUser } = useUser();
@@ -34,24 +42,21 @@ export default function CreatePostPopup({ setPopup, popup }) {
 		video: [],
 		tag: []
 	});
+	const [tagData, setTagData] = useState([]);
+	const { posts } = usePost();
+	useFetchAllPosts();
 
-	//tag user can choose
-	const [tagData, setTagData] = useState([
-		"News",
-		"Debut",
-		"Meme",
-		"Image",
-		"Video",
-		"Fanart",
-		"Fanfiction",
-		"Discussion",
-		"Question",
-		"Poll",
-		"Announcement",
-		"Event",
-		"Guide",
-		"Review",
-	]);
+	const extractUniqueTags = (posts) => {
+		const tagsSet = new Set();
+		posts.forEach(post => {
+			post.tag.forEach(tag => tagsSet.add(tag));
+		});
+		return Array.from(tagsSet);
+	};
+	
+	useEffect(() => {
+		setTagData(extractUniqueTags(posts));
+	}, []);
 
 	useEffect(() => {
 		if (communityID) {
