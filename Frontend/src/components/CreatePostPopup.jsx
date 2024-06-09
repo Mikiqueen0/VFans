@@ -163,6 +163,7 @@ export default function CreatePostPopup({ setPopup, popup }) {
       setCommunityDropdown(false);
       setCommunitySelect({});
       setCommunitySearch("");
+			setDisplayContent("");
     }
   }, [popup]);
 
@@ -225,9 +226,18 @@ export default function CreatePostPopup({ setPopup, popup }) {
     }
   };
 
+	const [displayContent, setDisplayContent] = useState("");
+
   // When submit Post
   const handleSubmitPost = async (e) => {
     e.preventDefault();
+		if(postData.communityID === ""){
+			setDisplayContent(<p className="text-red-500">Please select community</p>);
+			return;
+		} else if(postData.desc === ""){
+			setDisplayContent(<p className="text-red-500">Please enter post description</p>)
+			return;
+		}
     try {
       const uploadPromises = imageFile.map((file) => uploadFile(file));
       const uploadedFilesUrls = await Promise.all(uploadPromises);
@@ -238,11 +248,12 @@ export default function CreatePostPopup({ setPopup, popup }) {
         userID: user._id,
       });
       createPost.data.success && console.log("Post created successfully");
-      // console.log(createPost.data.post);
     } catch (err) {
       console.error("Error creating post", err);
-    }
-    setPopup(false);
+    } finally {
+			setDisplayContent("");
+			setPopup(false);
+		};
   };
 
   return (
@@ -271,6 +282,7 @@ export default function CreatePostPopup({ setPopup, popup }) {
           </div>
         </div>
         <div className="mx-6 mt-2">
+					{displayContent}
           {/* select community before posting */}
           <div className={`h-12 w-[50%] relative my-2`}>
             <div

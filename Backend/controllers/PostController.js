@@ -2,6 +2,7 @@ const Post = require("../models/post");
 const User = require("../models/user");
 const Comment = require("../models/comment");
 const Community = require("../models/community");
+const Save = require("../models/save");
 const mongoose = require("mongoose");
 
 // Create
@@ -238,7 +239,6 @@ module.exports.PostComment = async (req, res, next) => {
   }
 };
 
-
 // Get Post Comment
 module.exports.GetPostComment = async (req, res, next) => {
   const { postID } = req.params;
@@ -252,3 +252,75 @@ module.exports.GetPostComment = async (req, res, next) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+module.exports.SavePost = async (req, res, next) => {
+  const { userID, postID } = req.body;
+  try {
+    const existingSave = await Save.findOne({ userID, postID });
+
+    if (existingSave) {
+      const populatedSave = await Save.findOne({ userID, postID }).populate("userID");
+      await Save.deleteOne({ userID, postID });
+      res.status(200).json({ success: true, message: "Post unsaved successfully", save: populatedSave });
+    } else {
+      const newSave = new Save({ userID, postID });
+      const save = await newSave.save();
+      const populatedSave = await Save.findById(save._id).populate("userID");
+      res.status(200).json({ success: true, message: "Post saved successfully", save: populatedSave });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Get saved post
+module.exports.GetPostSaved = async (req, res, next) => {
+  const { username } = req.params;
+  try {
+    const getUser = await User.findOne({ username });
+    if (!getUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const savedPosts = await Save.find({ userID: getUser._id })
+      .populate({
+        path: "postID",
+        populate: [
+          { path: "userID", select: "_id username email profileImage" }, // Add fields you need from User model
+          { path: "communityID", select: "_id name image banner desc createdAt updatedAt members" } // Add fields you need from Community model
+        ]
+      })
+      .sort({ createdAt: -1 });
+
+    // Transform savedPosts to the desired format
+    const transformedPosts = savedPosts.map(savedPost => ({
+      _id: savedPost._id,
+      userID: savedPost.postID.userID,
+      communityID: savedPost.postID.communityID,
+      desc: savedPost.postID.desc,
+      image: savedPost.postID.image,
+      // Add other properties if needed
+    }));
+
+    res.status(200).json({ success: true, savedPosts: transformedPosts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+// Get saved post
+module.exports.GetSaveOnPost = async (req, res, next) => {
+  const { postID } = req.params;
+  try {
+    const savedPosts = await Save.find({ postID })
+      .populate("postID")
+      .sort({ createdAt: -1 });
+    res.status(200).json({ success: true, savedPosts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+

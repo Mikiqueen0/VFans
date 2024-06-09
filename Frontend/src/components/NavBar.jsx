@@ -259,7 +259,7 @@ export default function NavBar({
 								<Menu.Item>
 									{({ active }) => (
 									<Link
-										to={`/save`}
+										to={`/save/${user.username}`}
 										className={classNames(
 										active
 											? "bg-dark-background text-opacity-90"

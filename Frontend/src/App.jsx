@@ -6,6 +6,7 @@ import { UserContextProvider } from "./context/fetchuser";
 import { StatusContextProvider } from "./context/StatusContext";
 import { CommunityContextProvider } from "./context/FetchCommunity";
 import { PostProvider } from './context/PostContext';
+import { SavedPostsProvider } from './context/SavedPostsContext';
 import {
   SignUp,
   Login,
@@ -33,6 +34,7 @@ const App = () => {
         <UserContextProvider>
         <CommunityContextProvider>
         <PostProvider>
+        <SavedPostsProvider>
         <ScrollToTop />
           <Routes>
             <Route path="/" element={<Navigate to="/home" />} />
@@ -40,7 +42,7 @@ const App = () => {
             <Route path="/joinedCommunities/:userID" element={<JoinedCommunities />} />
             <Route path="/:username/joinedCommunities" element={<UserJoinedCommunity />} />
             <Route path="/like" element={<Like />} />
-            <Route path="/save" element={<Save />} />
+            <Route path="/save/:username" element={<Save />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/community/:communityID" element={<Community />} />
@@ -51,7 +53,7 @@ const App = () => {
             <Route path="/post/:postID" element={<FullPost />} />
             <Route path="/post/:postID/:section" element={<FullPost />} />
           </Routes>
-        {/* </ScrollToTop> */}
+        </SavedPostsProvider>
         </PostProvider>
         </CommunityContextProvider>
         </UserContextProvider>
