@@ -491,7 +491,7 @@ export default function CreatePostPopup({ setPopup, popup }) {
                           or drag and drop
                         </p>
                         <p className="text-xs text-white text-opacity-60">
-                          SVG, PNG, JPG or JPEG (MAX. 800x400px)
+                          SVG, PNG, JPG or JPEG (MAX. 1500x1500 px)
                         </p>
                       </div>
                       <input
