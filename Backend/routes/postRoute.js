@@ -8,6 +8,8 @@ const {
   GetUserPost,
   GetCommunityPost,
   GetAllJoinedCommunity,
+  PostComment,
+  GetPostComment
 } = require("../controllers/PostController");
 const router = require("express").Router();
 
@@ -37,5 +39,11 @@ router.put("/:id", UpdatePost);
 
 // Delete Post
 router.delete("/:id", DeletePost);
+
+// Post comment
+router.post("/comment", PostComment);
+
+// Get post comment
+router.get("/comment/:postID", GetPostComment);
 
 module.exports = router;

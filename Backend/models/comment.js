@@ -14,12 +14,8 @@ const commentSchema = new mongoose.Schema({
   content: {
     type: String,
     required: true,
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  }
+}, { timestamps: true });
 
 const Comment = mongoose.model("Comment", commentSchema);
 module.exports = Comment;

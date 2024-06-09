@@ -1,5 +1,6 @@
 const Post = require("../models/post");
 const User = require("../models/user");
+const Comment = require("../models/comment");
 const Community = require("../models/community");
 const mongoose = require("mongoose");
 
@@ -188,5 +189,38 @@ module.exports.GetAllJoinedCommunity = async (req, res, next) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
+// Post Comment
+module.exports.PostComment = async (req, res, next) => {
+  const { userID, postID, content } = req.body;
+  try {
+    const newComment = new Comment({
+      userID,
+      postID,
+      content,
+    });
+    const comments = await newComment.save();
+    res.status(200).json({ success: true, comments });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+// Get Post Comment
+module.exports.GetPostComment = async (req, res, next) => {
+  const { postID } = req.params;
+  try {
+    const comments = await Comment.find({ postID })
+      .populate("userID")
+      .sort({ createdAt: -1 });
+    res.status(200).json({ success: true, comments });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
