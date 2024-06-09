@@ -63,6 +63,21 @@ export default function Home() {
 		document.body.style.paddingRight = hamburger ? "15px" : "0";
 	}, [hamburger]);
 
+	const [post, setPost] = useState([]);
+
+	useEffect(() => {
+		const fetchAllPost = async () => {
+			try {
+				const res = await axios.get("/post/all");
+				setPost(res.data.post);
+				console.log(res.data.post);
+			} catch (error) {
+				toast.error(error.response.data.message);
+			}
+		};
+		fetchAllPost();
+	}, []);
+
 	return (
 		<div className="bg-dark-background scrollbar-thin">
 		<NavBar
@@ -95,9 +110,12 @@ export default function Home() {
 				</div>
 			}
 			{/* display post */}
+			{post.map((post, key) => {
+				return <Post key={key} post={post}/>;
+			})}
+			{/* <Post username={"test"} />
 			<Post username={"test"} />
-			<Post username={"test"} />
-			<Post username={"test"} />
+			<Post username={"test"} /> */}
 			</section>
 			<RightSideBar />
 		</div>

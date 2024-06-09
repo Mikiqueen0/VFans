@@ -1,16 +1,10 @@
 const Post = require("../models/post");
+const User = require("../models/user");
 
 // Create
 module.exports.CreatePost = async (req, res, next) => {
   const { userID, communityID, desc, image, video, tag } = req.body;
   try {
-    // const newPost = new Post({
-    //   userID: req.body.userID,
-    //   desc: req.body.desc,
-    //   image: req.body.image,
-    //   video: req.body.video,
-    //   tag: req.body.tag,
-    // });
     const newPost = new Post({
       userID,
       communityID,
@@ -43,10 +37,52 @@ module.exports.GetPost = async (req, res, next) => {
   }
 };
 
+// Get All Post By Username
+module.exports.GetUserPost = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const posts = await Post.find({ userID: user._id })
+      .populate('userID')
+      .populate('communityID')
+      .sort({ createdAt: -1 });
+    if (!posts) {
+      return res.status(404).json({ success: false, message: "Posts not found" });
+    }
+
+    res.status(200).json({ success: true, posts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// Get All Post By Username
+module.exports.GetCommunityPost = async (req, res, next) => {
+  const { communityID } = req.params;
+  try {
+    const posts = await Post.find({ communityID: communityID })
+      .populate('userID')
+      .populate('communityID')
+      .sort({ createdAt: -1 });
+    if (!posts) {
+      return res.status(404).json({ success: false, message: "Posts not found" });
+    }
+
+    res.status(200).json({ success: true, posts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 // Get All Post
 module.exports.GetAllPost = async (req, res, next) => {
   try {
-    const post = await Post.find();
+    const post = await Post.find().populate("userID").populate("communityID");
     if (!post) {
       return res
         .status(404)

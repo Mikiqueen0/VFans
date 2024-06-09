@@ -19,6 +19,7 @@ export default function Community() {
     const [communityData, setCommunityData] = useState({});
     const [loading, setLoading] = useState(true);
     const [joined, setJoined] = useState(false);
+    const [post, setPost] = useState([]);
 
     useEffect(() => {
         const fetchCommunity = async () => {
@@ -40,6 +41,17 @@ export default function Community() {
                 setLoading(false);
             }
         };
+
+        const fetchAllPost = async () => {
+			try {
+				const res = await axios.get(`/post/community/${communityID}`);
+                console.log(res.data.posts);
+				setPost(res.data.posts);
+			} catch (error) {
+				console.log("Error fetching posts: ", error);
+			}
+		};
+		fetchAllPost();
         fetchCommunity();
     }, [communityID, openSetting, joined]);
 
@@ -112,8 +124,9 @@ export default function Community() {
                     <div className="flex flex-col gap-3 max-md:px-[1.5rem] px-[4rem] text-white">
                         {/* filter */}
                         <Filter />
-                        <Post username={"test"}/>
-                        <Post username={"test"}/>
+                        {post.map((post, key) => {
+                            return <Post key={key} post={post} />;
+                        })}
                     </div>
                 </section>}
                 <CommunitySideBar communityData={communityData}/>

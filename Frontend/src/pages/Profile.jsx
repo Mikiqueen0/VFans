@@ -21,6 +21,7 @@ export default function Profile() {
     const hamburgerPopupRef = useRef(null);
     const [canEdit, setCanEdit] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [post, setPost] = useState([]);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -41,6 +42,17 @@ export default function Profile() {
                 setLoading(false);
             }
         };
+
+        const fetchAllPost = async () => {
+			try {
+				const res = await axios.get(`/post/profile/${profileUsername}`);
+				setPost(res.data.posts);
+			} catch (error) {
+				console.log("Error fetching posts: ", error);
+			}
+		};
+		fetchAllPost();
+
         fetchProfile();
     }, [user, profileUsername]);
     
@@ -229,8 +241,9 @@ export default function Profile() {
                         </div>
                     </div>
                     <div className="flex flex-col gap-3 max-md:px-[1.5rem] px-[4rem] text-white">
-                        <Post username={"test"}/>
-                        <Post username={"test"}/>
+                        {post.map((post, key) => {
+                            return <Post key={key} post={post} />;
+                        })}
                     </div>
                 </section>}
                 <RightSideBar />
