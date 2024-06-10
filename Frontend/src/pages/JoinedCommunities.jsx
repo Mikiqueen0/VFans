@@ -33,10 +33,11 @@ export default function JoinedCommunities() {
 	const navigate = useNavigate();
 	const location = useLocation();
     const { userID } = useParams();
-	const { filteredPosts } = usePost();
+	const { setPosts, filteredPosts } = usePost();
 	const [refresh, setRefresh] = useState(false);
-    const { fetchJoinedCommunityPosts } = useFetchJoinedCommunityPosts(userID);
+    // const { fetchJoinedCommunityPosts } = useFetchJoinedCommunityPosts(userID);
 	// useFetchJoinedCommunityPosts(user?._id, refresh);
+	// const [posts, setPosts] = useState([]);
 
 	useEffect(() => {
 		setSmallLoading(false);
@@ -47,9 +48,9 @@ export default function JoinedCommunities() {
 		};
 	}, []);
 
-    useEffect(() => {
-        fetchJoinedCommunityPosts();
-    }, [popup]);
+    // useEffect(() => {
+    //     fetchJoinedCommunityPosts();
+    // }, [popup]);
 
 	// useEffect(() => {
 	// 	setRefresh((prev) => !prev);
@@ -58,6 +59,24 @@ export default function JoinedCommunities() {
     //     const arrayClean = Array.from(cleanCommunity);
     //     console.log(arrayClean);
 	// }, [popup, location.pathname]);
+
+	const fetchJoinedCommunity = async () => {
+		setSmallLoading(true);
+		try {
+			const { data: fetchJoinedCommunityData } = await axios.get(`/post/user/community/${userID}`);
+			if(fetchJoinedCommunityData.success){
+				setPosts(fetchJoinedCommunityData.posts);
+			}
+		} catch (err) {
+			console.error("Error fetching community data", err);
+		} finally {
+			setSmallLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		fetchJoinedCommunity();
+	}, [popup, location.pathname]);
 
 	useEffect(() => {
 		document.body.style.overflow = popup ? "hidden" : "auto";

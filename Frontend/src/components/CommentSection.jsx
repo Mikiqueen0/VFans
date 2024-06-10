@@ -3,6 +3,7 @@ import useUser from '../hooks/useUser'
 import { useEffect, useRef, useState } from 'react'; 
 import { useParams, useNavigate } from 'react-router-dom';
 import { PaperAirplaneIcon } from '@heroicons/react/20/solid';
+import { FaSpinner } from "react-icons/fa";
 import FormatTime from "../utils/FormatTime";
 import axios from 'axios';
 
@@ -13,20 +14,20 @@ export default function CommentSection({ postID }) {
     const inputRef = useRef(null);
     const [commentField, setCommentField] = useState("");
     const [allComments, setAllComments] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchComments = async () => {
-            try {
-                const { data: fetchCommentsData } = await axios.get(`/post/comment/${postID}`);
-                if(fetchCommentsData.success){
-                    setAllComments(fetchCommentsData.comments);
-                }
-            } catch (err) {
-                console.error("Error fetching comments", err);
+    const fetchComments = async () => {
+        try {
+            const { data: fetchCommentsData } = await axios.get(`/post/comment/${postID}`);
+            if(fetchCommentsData.success){
+                setAllComments(fetchCommentsData.comments);
             }
-        };
-        fetchComments();
-    }, []);
+        } catch (err) {
+            console.error("Error fetching comments", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         if (section === "comments") {
@@ -50,9 +51,14 @@ export default function CommentSection({ postID }) {
         };
     };
 
+    useEffect(() => {
+        fetchComments();
+    }, [handleCommentSubmit]);
+
     return (
         <div className="text-white text-[14px] font-normal text-opacity-[78%] w-full my-1 bg-primary rounded-b-[10px]">
             {/* user comment field */}
+            
             <div className="h-[4rem] w-full flex items-center px-4">
                 <img src={user?.profileImage} alt="" className="size-[2.75rem] rounded-full"/>
                 <input
@@ -66,7 +72,12 @@ export default function CommentSection({ postID }) {
                 <PaperAirplaneIcon className="size-[2rem] text-emerald-green hover:text-emerald-500/70 duration-100 cursor-pointer" onClick={handleCommentSubmit}/>
             </div>
             {/* load comments here */}
-            {allComments.map((comment, key) => {
+            {loading && 
+                <div className="flex h-[40vh] items-center justify-center gap-3 max-sm:px-[1rem] px-[1rem] w-full text-white">
+                    <FaSpinner className="animate-spin text-4xl text-emerald-green" />
+                </div>
+            }
+            {!loading && allComments.map((comment, key) => {
                 return (
                     <div key={key} className="h-[5rem] w-full flex items-center px-4">
                         <img src={comment.userID?.profileImage} alt="" className="size-[2.75rem] rounded-full"/>

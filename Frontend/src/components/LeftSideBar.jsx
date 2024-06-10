@@ -1,7 +1,7 @@
 import React from "react";
 import { PageButton } from "./index";
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
@@ -18,20 +18,39 @@ import {
 	useFetchJoinedCommunityPosts, 
 	useFetchCommunityPosts 
 } from '../hooks/useFetchPost';
+import axios from "axios";
 
 
 export default function LeftSideBar({ name }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useUser();
   const { sidebarCommunity, setSidebarCommunity } = useStatus();
-	const { posts, selectedTags, setSelectedTags } = usePost();
+	const { selectedTags, setSelectedTags, filteredPosts } = usePost();
   const { communityList, setCommunityList } = useCommunity();
   const [userJoinedCommunity, setUserJoinedCommunity] = useState([]);
   const [tagFilter, setTagFilter] = useState([]); //tag list
   const [showtagAll, setShowtagAll] = useState(false);
-  useFetchAllPosts();
+  // const [posts, setTags] = useState([]);
+  // useFetchAllPosts();
 
-  const [tagData, setTagData] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [tagData, setTagData] = useState([]); 
+
+  // const fetchAllPosts = async () => {
+  //   try {
+  //     const res = await axios.get("/post/all");
+  //     if (res.data.success) {
+  //       setPosts(res.data.posts);
+  //     }
+  //   } catch (err) {
+  //     console.error("Error fetching community list", err);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchAllPosts();
+  // }, [location.pathname]);
 
 	useEffect(() => {
 		setSelectedTags(tagFilter);
@@ -48,8 +67,8 @@ export default function LeftSideBar({ name }) {
   };
 
   useEffect(() => {
-		setTagData(extractUniqueTags(posts));
-	}, [user]);
+		setTagData(extractUniqueTags(filteredPosts));
+	}, [filteredPosts]);
 
   const displayedTags = showtagAll ? tagData : tagData.slice(0, 4);
 

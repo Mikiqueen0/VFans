@@ -21,7 +21,7 @@ export default function Profile() {
     const navigate = useNavigate();
     const { user, setUser } = useUser();
     const { communityList } = useCommunity();
-    const { filteredPosts } = usePost();
+    const { setPosts, filteredPosts } = usePost();
     const { profileUsername } = useParams();
     const [profile, setProfile] = useState({});
     const [profileDataCopy, setProfileDataCopy] = useState({});
@@ -31,9 +31,8 @@ export default function Profile() {
     const hamburgerPopupRef = useRef(null);
     const [canEdit, setCanEdit] = useState(false);
     const [loading, setLoading] = useState(true);
-    // const [post, setPost] = useState([]);
     const [communityJoined, setCommunityJoined] = useState([]);
-    useFetchUserPosts(profileUsername);
+    // useFetchUserPosts(profileUsername);
 
     useEffect(() => {
         document.body.style.overflow = hamburger ? "hidden" : "auto";
@@ -41,30 +40,45 @@ export default function Profile() {
         
     }, [hamburger]);
 
-    useEffect(() => {
-        const fetchProfile = async () => {
-            setLoading(true);
-            try {
-                const fetchProfile = await axios.get(`/user/profile/${profileUsername}`, { withCredentials: true });
-                if(fetchProfile.status){
-                    setProfile(fetchProfile.data.user);
-                    setProfileDataCopy(fetchProfile.data.user);
-                    setCanEdit(user._id === fetchProfile.data.user._id);
-                    const userCommunities = communityList.filter(community => {
-						return community.members.includes(fetchProfile.data.user._id);
-					});
-					setCommunityJoined(userCommunities);
-                }else{
-                    console.error('Failed to fetch user profile');
-                }
-            } catch (err) {
-                console.error("Error fetching profile", err);
-            } finally {
-                setLoading(false);
+    const fetchProfile = async () => {
+        setLoading(true);
+        try {
+            const fetchProfile = await axios.get(`/user/profile/${profileUsername}`, { withCredentials: true });
+            if(fetchProfile.status){
+                setProfile(fetchProfile.data.user);
+                setProfileDataCopy(fetchProfile.data.user);
+                setCanEdit(user._id === fetchProfile.data.user._id);
+                const userCommunities = communityList.filter(community => {
+                    return community.members.includes(fetchProfile.data.user._id);
+                });
+                setCommunityJoined(userCommunities);
+            }else{
+                console.error('Failed to fetch user profile');
             }
-        };
+        } catch (err) {
+            console.error("Error fetching profile", err);
+        } finally {
+        }
+    };
 
+    const fetchPosts = async () => {
+        try {
+            const fetchPosts = await axios.get(`/post/user/${profileUsername}`);
+            if(fetchPosts.status){
+                setPosts(fetchPosts.data.posts);
+            }else{
+                console.error('Failed to fetch user posts');
+            }
+        } catch (err) {
+            console.error("Error fetching posts", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchProfile();
+        fetchPosts();
     }, [user, profileUsername]);
     
     const[changeProfile, setChangeProfile] = useState(false);

@@ -36,20 +36,21 @@ export default function FullPost() {
 		};
 	}, []);
 
+	const fetchPostByID = async () => {
+		setLoading(true);
+		try {
+			const { data: fetchPostData } = await axios.get(`/post/${postID}`);
+			if(fetchPostData.success){
+				setPost(fetchPostData.posts);
+			}
+		} catch (err) {
+			console.error("Error fetching post data", err);
+		} finally {
+			setLoading(false);
+		}
+	};
+
     useEffect(() => {
-        const fetchPostByID = async () => {
-            setLoading(true);
-            try {
-                const { data: fetchPostData } = await axios.get(`/post/${postID}`);
-                if(fetchPostData.success){
-                    setPost(fetchPostData.posts);
-                }
-            } catch (err) {
-                console.error("Error fetching post data", err);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchPostByID();
     }, []);
 

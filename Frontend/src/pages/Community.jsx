@@ -27,40 +27,55 @@ export default function Community() {
     const [loading, setLoading] = useState(true);
     const [joined, setJoined] = useState(false);
     const [post, setPost] = useState([]);
-    const { filteredPosts } = usePost();
+    const { setPosts, filteredPosts } = usePost();
     const [refresh, setRefresh] = useState(false);
     useFetchCommunityPosts(communityID, refresh);
-    const { fetchCommunityPosts } = useFetchCommunityPosts(communityID);
+    // const { fetchCommunityPosts } = useFetchCommunityPosts(communityID);
     
 
-    useEffect(() => {
-        const fetchCommunity = async () => {
-            if(openSetting) return;
-            setLoading(true);
-            try {
-                const { data: fetchCommunityData } = await axios.get(`/community/${communityID}`);
-                if(fetchCommunityData.success){
-                    setCommunityData(fetchCommunityData.community);
-                    if (fetchCommunityData.community && user) {
-                        if (fetchCommunityData.community.members.includes(user._id)) {
-                            setJoined(true);
-                        }
+    const fetchCommunity = async () => {
+        if(openSetting) return;
+        setLoading(true);
+        try {
+            const { data: fetchCommunityData } = await axios.get(`/community/${communityID}`);
+            if(fetchCommunityData.success){
+                setCommunityData(fetchCommunityData.community);
+                if (fetchCommunityData.community && user) {
+                    if (fetchCommunityData.community.members.includes(user._id)) {
+                        setJoined(true);
                     }
                 }
-            } catch (err) {
-                console.error("Error fetching community data", err);
-            } finally {
-                setLoading(false);
             }
-        };
+        } catch (err) {
+            console.error("Error fetching community data", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchCommunity();
-    }, [communityID, openSetting, joined, popup]);
+    const fetchCommunityPosts = async () => {
+        setLoading(true);
+        try {
+            const { data: fetchCommunityPosts } = await axios.get(`/post/community/${communityID}`);
+            if(fetchCommunityPosts.success){
+                setPosts(fetchCommunityPosts.posts);
+            }
+        } catch (err) {
+            console.error("Error fetching community posts", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-		// setRefresh((prev) => !prev);
+        fetchCommunity();
         fetchCommunityPosts();
-	}, [popup, communityID]);
+    }, [communityID, openSetting, joined, popup]);
+
+    // useEffect(() => {
+	// 	// setRefresh((prev) => !prev);
+    //     fetchCommunityPosts();
+	// }, [popup, communityID]);
 
     useEffect(() => {
         document.body.style.overflow = hamburger ? "hidden" : "auto";

@@ -21,7 +21,6 @@ export default function Post({ post }) {
 
   useEffect(() => {
     fetchSaveCount();
-    console.log(post);
   }, []);
 
   const fetchSaveCount = async () => {

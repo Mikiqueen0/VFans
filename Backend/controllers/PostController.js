@@ -131,8 +131,9 @@ module.exports.UpdatePost = async (req, res, next) => {
 
 // Delete
 module.exports.DeletePost = async (req, res, next) => {
+  const { postID } = req.params;
   try {
-    const posts = await Post.findByIdAndDelete(req.params.id);
+    const posts = await Post.findByIdAndDelete({ postID });
     if (!posts) {
       return res
         .status(404)
@@ -212,13 +213,14 @@ module.exports.GetAllJoinedCommunity = async (req, res, next) => {
 
     // Find posts from these communities
     const posts = await Post.find({ communityID: { $in: communityIds } })
-      .populate("userID", "username email")
-      .populate("communityID", "name");
+      .populate("userID")
+      .populate("communityID")
+      .sort({ createdAt: -1 });
 
-    res.status(200).json({ posts });
+    res.status(200).json({ success: true, posts });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

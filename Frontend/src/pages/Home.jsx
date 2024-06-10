@@ -32,23 +32,43 @@ export default function Home() {
 	const hamburgerPopupRef = useRef(null);
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { filteredPosts } = usePost();
+	const { setPosts, filteredPosts } = usePost();
 	const [refresh, setRefresh] = useState(false);
-	const { fetchAllPosts } = useFetchAllPosts();
+	// const { fetchAllPosts } = useFetchAllPosts();
 
-	useEffect(() => {
-		setSmallLoading(false);
-		window.onload = () => {
-			setTimeout(() => {
-				setLoading(false);
-				console.log(smallLoading);
-			}, 1000);
+
+	// const [post, setPost] = useState([]);
+
+	const fetchAllPost = async () => {
+		setSmallLoading(true);
+		try {
+			const res = await axios.get("/post/all");
+			setPosts(res.data.posts);
+		} catch (error) {
+			console.log("Error fetching posts: ", error);
+		} finally {
+			setSmallLoading(false);
 		};
-	}, []);
+	};
 
 	useEffect(() => {
-		fetchAllPosts();
+		fetchAllPost();
 	}, [popup, location.pathname]);
+
+
+	// useEffect(() => {
+	// 	fetchAllPost();
+	// }, [popup, location.pathname]);
+
+	// useEffect(() => {
+	// 	setSmallLoading(false);
+	// 	window.onload = () => {
+	// 		setTimeout(() => {
+	// 			setLoading(false);
+	// 			console.log(smallLoading);
+	// 		}, 1000);
+	// 	};
+	// }, []);
 
 	// useEffect(() => {
 	// 	setRefresh((prev) => !prev);
@@ -85,23 +105,6 @@ export default function Home() {
 		document.body.style.overflow = hamburger ? "hidden" : "auto";
 		document.body.style.paddingRight = hamburger ? "15px" : "0";
 	}, [hamburger]);
-
-	// const [post, setPost] = useState([]);
-
-	// useEffect(() => {
-	// 	const fetchAllPost = async () => {
-	// 		// setSmallLoading(true);
-	// 		try {
-	// 			const res = await axios.get("/post/all");
-	// 			setPost(res.data.post);
-	// 		} catch (error) {
-	// 			console.log("Error fetching posts: ", error);
-	// 		} finally {
-	// 			setSmallLoading(false);
-	// 		};
-	// 	};
-	// 	fetchAllPost();
-	// }, [popup]);
 
 	return (
 		<div className="bg-dark-background scrollbar-thin">

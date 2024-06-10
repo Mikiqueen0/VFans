@@ -41,7 +41,7 @@ router.get("/user/community/:userID", GetAllJoinedCommunity);
 router.put("/:id", UpdatePost);
 
 // Delete Post
-router.delete("/:id", DeletePost);
+router.delete("/:postID", DeletePost);
 
 // Post comment
 router.post("/comment", PostComment);
