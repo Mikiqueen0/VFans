@@ -29,8 +29,8 @@ module.exports.LikePost = async (req, res, next) => {
 module.exports.GetLikeCount = async (req, res, next) => {
   const postID = req.params.id;
   try {
-    const likeCount = await Like.countDocuments({ postID });
-    res.status(200).json({ success: true, likeCount });
+    const allLike = await Like.find({ postID });
+    res.status(200).json({ success: true, allLike });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: error.message });

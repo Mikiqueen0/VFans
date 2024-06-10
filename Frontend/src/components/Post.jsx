@@ -49,10 +49,11 @@ export default function Post({ post }) {
 
   const fetchLikeCount = async () => {
     try {
-      const res = await axios.get(`/like/likeCount/${post._id}`);
+      const res = await axios.get(`/like/likeCount/${post?._id}`);
       if (res.data.success) {
-        console.log(res.data.likeCount);
-        setLikeCount(res.data.likeCount);
+        const isPostLiked = res.data.allLike.some((like) => like.userID === user._id);
+        setIsLiked(isPostLiked);
+        setLikeCount(res.data.allLike.length);
       }
     } catch (err) {
       console.error("Error fetching like count", err);
@@ -70,19 +71,7 @@ export default function Post({ post }) {
 
   const handleSave = () => {
     savePost(user?._id, post?._id);
-    // try {
-    //   const res = await axios.post(`/post/save`, {
-    //     userID: user._id,
-    //     postID: post._id
-    //   });
-    //   if (res.data.success) {
-    //     // console.log("Post saved: ", res.data.save);
-    //     setIsSaved(res.data.save ? true : false);
-    //     fetchSaveCount();
-    //   }
-    // } catch (err) {
-    //   console.error("Error saving post", err);
-    // }
+
   };
 
   const handleLike = async () => {
@@ -92,8 +81,7 @@ export default function Post({ post }) {
         postID: post._id,
       });
       if (res.data.success) {
-        console.log("Post liked: ", res.data.like);
-        setIsLiked(res.data.like.deleteCount === 1 ? false : true);
+        fetchLikeCount();
       }
     } catch (err) {
       console.error("Error liking post", err);
