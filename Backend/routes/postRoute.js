@@ -12,7 +12,9 @@ const {
   GetPostComment,
   SavePost,
   GetPostSaved,
-  GetSaveOnPost
+  GetSaveOnPost,
+  LikePost,
+  GetLikeCount,
 } = require("../controllers/PostController");
 const router = require("express").Router();
 
