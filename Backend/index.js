@@ -8,6 +8,7 @@ const userRoute = require("./routes/userRoute");
 const postRoute = require("./routes/postRoute");
 const communityRoute = require("./routes/communityRoute");
 const likeRoute = require("./routes/likeRoute");
+const saveRoute = require("./routes/saveRoute");
 const { MONGO_URI, PORT } = process.env;
 
 const app = express();
@@ -35,6 +36,7 @@ app.use("/user", userRoute);
 app.use("/post", postRoute);
 app.use("/community", communityRoute);
 app.use("/like", likeRoute);
+app.use("/save", saveRoute);
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);

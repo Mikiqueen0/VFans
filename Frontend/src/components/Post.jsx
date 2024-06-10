@@ -3,17 +3,21 @@ import postTestImage from "../assets/images/postImage.png";
 import {
   EllipsisHorizontalIcon,
   BookmarkIcon,
+  XMarkIcon,
+  HeartIcon,
+  ChatBubbleBottomCenterIcon
 } from "@heroicons/react/20/solid";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { CommentSection } from "./index";
 import FormatTime from "../utils/FormatTime";
 import useUser from "../hooks/useUser";
 import useSavedPost from "../hooks/useSavedPost";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { IoMdHeartEmpty } from "react-icons/io";
-import { IoMdHeart } from "react-icons/io";
+// import { IoMdHeartEmpty } from "react-icons/io";
+// import { IoMdHeart } from "react-icons/io";
 export default function Post({ post }) {
+  const location = useLocation();
   const navigate = useNavigate();
   const postCreator = post?.userID;
   const postCommunity = post?.communityID;
@@ -23,40 +27,49 @@ export default function Post({ post }) {
   const [isLiked, setIsLiked] = useState(false);
   const [saveCount, setSaveCount] = useState(0);
   const [likeCount, setLikeCount] = useState(0);
-  const { savedPosts, fetchSavedPosts, savePost } = useSavedPost();
+  const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
     // Fetch the initial like count
     fetchLikeCount();
     fetchSaveCount();
-  }, []);
+    fetchCommentCount();
+  });
 
-  const fetchSaveCount = async () => {
+  const fetchLikeCount = async () => {
     try {
-      const res = await axios.get(`/post/saveCount/${post?._id}`);
+      const res = await axios.get(`/like/likeCount/${post?._id}`);
       if (res.data.success) {
-        const savedPosts = res.data.savedPosts;
-        setSaveCount(savedPosts?.length);
-        const isPostSaved = savedPosts.some(
-          (post) => post?.userID === user?._id
-        );
-        setIsSaved(isPostSaved);
+        const isPostLiked = res.data.allLike.some((like) => like.userID === user?._id);
+        setIsLiked(isPostLiked);
+        setLikeCount(res.data.allLike.length);
       }
     } catch (err) {
       console.error("Error fetching save count", err);
     }
   };
 
-  const fetchLikeCount = async () => {
+  const fetchSaveCount = async () => {
     try {
-      const res = await axios.get(`/like/likeCount/${post?._id}`);
+      const res = await axios.get(`/save/save/${post?._id}`);
       if (res.data.success) {
-        const isPostLiked = res.data.allLike.some((like) => like.userID === user._id);
-        setIsLiked(isPostLiked);
-        setLikeCount(res.data.allLike.length);
+        const isPostSaved = res.data.allSave.some((save) => save.userID === user?._id);
+        setIsSaved(isPostSaved);
+        setSaveCount(res.data.allSave.length);
       }
     } catch (err) {
-      console.error("Error fetching like count", err);
+      console.error("Error fetching save count", err);
+    }
+  };
+
+  const fetchCommentCount = async () => {
+    try {
+      const res = await axios.get(`/post/commentCount/${post?._id}`);
+      if (res.data.success) {
+        setCommentCount(res.data.comments);
+      }
+    } catch (err) {
+      console.error("Error fetching comment count", err);
     }
   };
 
@@ -69,9 +82,18 @@ export default function Post({ post }) {
     }
   };
 
-  const handleSave = () => {
-    savePost(user?._id, post?._id);
-
+  const handleSave = async () => {
+    try {
+      const res = await axios.post(`/save/${post._id}`, {
+        userID: user._id,
+        postID: post._id,
+      });
+      if (res.data.success) {
+        fetchSaveCount();
+      }
+    } catch (err) {
+      console.error("Error saving post", err);
+    }
   };
 
   const handleLike = async () => {
@@ -86,6 +108,10 @@ export default function Post({ post }) {
     } catch (err) {
       console.error("Error liking post", err);
     }
+  };
+
+  const test = () => {
+    console.log(post?.userID, user?._id);
   };
 
   return (
@@ -105,7 +131,7 @@ export default function Post({ post }) {
             />
             <p
               className="font-normal text-[15px] text-opacity-90 text-white hover:underline cursor-pointer"
-              onClick={() => navigate(`/community/${postCommunity?._id}`)}
+              onClick={(e) => {e.stopPropagation(); navigate(`/community/${postCommunity?._id}`);}}
             >
               {postCommunity?.name}
             </p>
@@ -113,7 +139,7 @@ export default function Post({ post }) {
               Posted by{" "}
               <span
                 className="hover:underline cursor-pointer"
-                onClick={() => navigate(`/profile/${postCreator?.username}`)}
+                onClick={(e) => {e.stopPropagation(); navigate(`/profile/${postCreator?.username}`);}}
               >
                 {postCreator?.username}
               </span>
@@ -123,8 +149,8 @@ export default function Post({ post }) {
               </span>
             </p>
           </div>
-
-          <EllipsisHorizontalIcon className="text-white size-6" />
+          <p>{test}</p>
+          {post?.userID === user?._id && <XMarkIcon className="text-white size-6 hover:text-red-500 duration-100" />}
         </div>
         <div className="flex gap-2 pt-3">
           {Array.isArray(post?.tag) &&
@@ -186,9 +212,9 @@ export default function Post({ post }) {
         </div>
         <div className="flex flex-row items-center justify-around gap-8 text-[14px] font-medium text-opacity-90 text-white mt-5">
           <div className="flex items-center">
-            <IoMdHeart
-              className={`size-6 opacity-90 stroke-white cursor-pointer ${
-                isLiked ? "fill-emerald-green" : ""
+            <HeartIcon
+              className={`size-6 opacity-90 stroke-white stroke-2 cursor-pointer ${
+                isLiked ? "fill-emerald-green stroke-emerald-green" : "fill-none"
               }`}
               onClick={(e) => {
                 e.stopPropagation();
@@ -197,18 +223,20 @@ export default function Post({ post }) {
             />
             <p className="w-6 text-center">{likeCount}</p>
           </div>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleClickPost(false);
-            }}
-          >
-            Comment
-          </button>
+          <div className="flex items-center">
+            <ChatBubbleBottomCenterIcon
+              className={`size-6 opacity-90 stroke-white stroke-2 fill-none cursor-pointer`}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClickPost(false);
+              }}
+            />
+            <p className="w-6 text-center">{commentCount}</p>
+          </div>
           <div className="flex items-center">
             <BookmarkIcon
-              className={`size-6 opacity-90 stroke-white cursor-pointer ${
-                isSaved ? "fill-white" : "fill-none stroke-2"
+              className={`size-6 opacity-90 stroke-white stroke-2 cursor-pointer ${
+                isSaved ? "fill-white" : "fill-none"
               }`}
               onClick={(e) => {
                 e.stopPropagation();

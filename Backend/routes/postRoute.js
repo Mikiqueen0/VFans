@@ -10,11 +10,7 @@ const {
   GetAllJoinedCommunity,
   PostComment,
   GetPostComment,
-  SavePost,
-  GetPostSaved,
-  GetSaveOnPost,
-  LikePost,
-  GetLikeCount,
+  GetPostCommentNumber
 } = require("../controllers/PostController");
 const router = require("express").Router();
 
@@ -51,13 +47,7 @@ router.post("/comment", PostComment);
 // Get post comment
 router.get("/comment/:postID", GetPostComment);
 
-// Get user saved post
-router.post("/save", SavePost);
-
-// Get user saved post
-router.get("/save/:username", GetPostSaved);
-
-// Get all save on post
-router.get("/saveCount/:postID", GetSaveOnPost);
+// Get post comment
+router.get("/commentCount/:postID", GetPostCommentNumber);
 
 module.exports = router;

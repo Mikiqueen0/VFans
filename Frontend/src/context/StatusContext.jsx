@@ -29,7 +29,7 @@ import PropTypes from "prop-types";
 const StatusContext = createContext({});
 export function StatusContextProvider({ children }) {
     const [hamburger, setHamburger] = useState(false);
-    const [sidebarCommunity, setSidebarCommunity] = useState(false);
+    const [sidebarCommunity, setSidebarCommunity] = useState(true);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

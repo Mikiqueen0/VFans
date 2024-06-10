@@ -89,7 +89,7 @@ export default function FullPost() {
                     </button>
                 </div>
                 {/* display post */}
-                <Post post={post}/>
+                <Post post={post} userData={user}/>
             </section>)}
 			<RightSideBar />
 		</div>

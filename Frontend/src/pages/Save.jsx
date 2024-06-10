@@ -14,8 +14,8 @@ export default function Save() {
     const { username } = useParams();
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
-    // const [savedPosts, setSavedPosts] = useState([]);
-    const { savedPosts, fetchSavedPosts, savePost } = useSavedPost();
+    const [savedPosts, setSavedPosts] = useState([]);
+    // const { savedPosts, fetchSavedPosts, savePost } = useSavedPost();
 
     useEffect(() => {
         document.body.style.overflow = hamburger ? "hidden" : "auto";
@@ -23,23 +23,24 @@ export default function Save() {
         
     }, [hamburger]);
 
-    // const fetchSavedPosts = async () => {
-    //     setLoading(true);
-    //     try {
-    //         const { data: fetchSavedPosts } = await axios.get(`/post/save/${username}`);
-    //         if(fetchSavedPosts.success){
-    //             setSavedPosts(fetchSavedPosts.savedPosts);
-    //         }
-    //     } catch (err) {
-    //         console.error("Error fetching community data", err);
-    //     } finally {
-    //         setLoading(false);
-    //     };
-    // };
+    const fetchSavedPosts = async (username) => {
+        setLoading(true);
+        try {
+            const fetchSavedPosts = await axios.get(`/save/allSavePost/${username}`);
+            if(fetchSavedPosts.status){
+                const filteredData = fetchSavedPosts.data.allSave.filter(item => item.postID !== null);
+                setSavedPosts(filteredData);
+                console.log(filteredData);
+            }
+        } catch (err) {
+            console.error("Error fetching community data", err);
+        } finally {
+            setLoading(false);
+        };
+    };
     
 
     useEffect(() => {
-        console.log(username);
         fetchSavedPosts(username);
         setLoading(false);
     }, []);

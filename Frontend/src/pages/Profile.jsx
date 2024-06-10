@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import { NavBar, LeftSideBar, RightSideBar, Post } from "../components/index";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { FaSpinner } from "react-icons/fa";
 import useUser from "../hooks/useUser"; 
@@ -32,6 +32,7 @@ export default function Profile() {
     const [canEdit, setCanEdit] = useState(false);
     const [loading, setLoading] = useState(true);
     const [communityJoined, setCommunityJoined] = useState([]);
+    const location = useLocation();
     // useFetchUserPosts(profileUsername);
 
     useEffect(() => {
@@ -40,6 +41,10 @@ export default function Profile() {
         
     }, [hamburger]);
 
+    useEffect(() => {
+        setTab("post");
+    }, [location.pathname]);
+
     const fetchProfile = async () => {
         setLoading(true);
         try {
@@ -47,7 +52,7 @@ export default function Profile() {
             if(fetchProfile.status){
                 setProfile(fetchProfile.data.user);
                 setProfileDataCopy(fetchProfile.data.user);
-                setCanEdit(user._id === fetchProfile.data.user._id);
+                setCanEdit(user?._id === fetchProfile.data.user?._id);
                 const userCommunities = communityList.filter(community => {
                     return community.members.includes(fetchProfile.data.user._id);
                 });
@@ -63,6 +68,7 @@ export default function Profile() {
 
     const fetchPosts = async () => {
         try {
+            setLoading(true);
             const fetchPosts = await axios.get(`/post/user/${profileUsername}`);
             if(fetchPosts.status){
                 setPosts(fetchPosts.data.posts);
@@ -76,10 +82,41 @@ export default function Profile() {
         }
     };
 
+    const fetchPostsLike = async () => {
+        try {
+            setLoading(true);
+            const fetchPosts = await axios.get(`/like/likePost/${profileUsername}`);
+            if(fetchPosts.status){
+                const postIDs = fetchPosts.data.allLike.map(post => post.postID);
+                setPosts(postIDs);
+                console.log(postIDs);
+            }else{
+                console.error('Failed to fetch user posts');
+            }
+        } catch (err) {
+            console.error("Error fetching posts", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchProfile();
-        fetchPosts();
+        if(tab === "like"){
+            fetchPostsLike();
+        } else if (tab === "post"){
+            fetchPosts();
+        }
     }, [user, profileUsername]);
+
+    const handleChangeTab = (tabName) => {
+        setTab(tabName);
+        if(tabName === "like"){
+            fetchPostsLike();
+        } else if (tabName === "post"){
+            fetchPosts();
+        }
+    };
     
     const[changeProfile, setChangeProfile] = useState(false);
 
@@ -177,7 +214,7 @@ export default function Profile() {
                     {/* user info */}
                     <div className={`w-full h-[24rem] rounded-[10px] flex flex-col justify-end relative cursor-pointer`}>
                         {!canEdit ? (
-                            <div className="w-full h-full relative border border-red-500">
+                            <div className="w-full h-full relative">
                                 <img
                                     src={profileDataCopy.profileBanner}
                                     alt="background"
@@ -262,7 +299,7 @@ export default function Profile() {
                                     </p>
                                 }
                                 {!editBio && canEdit && 
-                                    (<p className="text-emerald-green underline text-[14px] text-end cursor-pointer" onClick={() => {setEditBio(true); setChangeProfile(true);}}>Edit Bio</p>)
+                                    (<p className="text-emerald-green underline w-fit self-end text-[14px] text-end cursor-pointer" onClick={() => {setEditBio(true); setChangeProfile(true);}}>Edit Bio</p>)
                                 }
                             </div>
                             {changeProfile && 
@@ -272,9 +309,9 @@ export default function Profile() {
                                 </div>
                             }
                             <div className="flex ml-[1.5rem] mt-1">
-                                <button name="post" onClick={(e) => setTab(e.target.name)} className={`py-2 px-6 hover:bg-lighter-primary transition-all duration-200 ${tab === "post" ? 
+                                <button name="post" onClick={(e) => handleChangeTab(e.target.name)} className={`py-2 px-6 hover:bg-lighter-primary transition-all duration-200 ${tab === "post" ? 
                                 "border-b-2 border-emerald-green" : "border-b-2 border-primary"} `}>Post</button>
-                                <button name="like" onClick={(e) => setTab(e.target.name)} className={`py-2 px-6 hover:bg-lighter-primary transition-all duration-200 ${tab === "like" ? 
+                                <button name="like" onClick={(e) => handleChangeTab(e.target.name)} className={`py-2 px-6 hover:bg-lighter-primary transition-all duration-200 ${tab === "like" ? 
                                 "border-b-2 border-emerald-green" : "border-b-2 border-primary"}`}>Like</button>
                             </div>
                         </div>
@@ -284,7 +321,7 @@ export default function Profile() {
                             (<div className="text-white text-center opacity-70 mt-4">No post found . . .</div>)
                             : 
                             (filteredPosts?.map((post, key) => {
-                                return <Post key={key} post={post}/>;
+                                return <Post key={key} post={post} userData={user}/>;
                             }))
                         }
                     </div>
