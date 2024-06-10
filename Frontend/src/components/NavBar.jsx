@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, Fragment } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { Menu, Transition } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { ChevronDownIcon, BookmarkIcon, ArrowLeftEndOnRectangleIcon, UserIcon } from "@heroicons/react/20/solid";
 import logo from "../assets/images/white-vfans.png";
 import searchIcon from "../assets/images/search.png";
 import profileTestIcon from "../assets/images/test-profile.jpg";
@@ -187,72 +187,8 @@ export default function NavBar({
 										"block px-4 py-2 text-sm text-white"
 										)}
 									>
-										<img
-										src={profileIcon}
-										alt="profile"
-										className="inline-flex h-5 mr-2"
-										/>
+										<UserIcon className="inline-flex size-5 mr-2"/>
 										Profile
-									</Link>
-									)}
-								</Menu.Item>
-								<Menu.Item>
-									{({ active }) => (
-									<Link
-										to={`#`}
-										className={classNames(
-										active
-											? "bg-dark-background text-opacity-90"
-											: "text-opacity-[78%]",
-										"block px-4 py-2 text-sm text-white"
-										)}
-									>
-										<img
-										src={settingIcon}
-										alt="setting"
-										className="inline-flex h-5 mr-2"
-										/>
-										Setting
-									</Link>
-									)}
-								</Menu.Item>
-								<Menu.Item>
-									{({ active }) => (
-									<Link
-										to={`/login`}
-										className={classNames(
-										active
-											? "bg-dark-background text-opacity-90"
-											: "text-opacity-[78%]",
-										"block px-4 py-2 text-sm text-white"
-										)}
-									>
-										<img
-										src=""
-										alt="login"
-										className="inline-flex h-5 mr-2"
-										/>
-										Login
-									</Link>
-									)}
-								</Menu.Item>
-								<Menu.Item>
-									{({ active }) => (
-									<Link
-										to={`/signup`}
-										className={classNames(
-										active
-											? "bg-dark-background text-opacity-90"
-											: "text-opacity-[78%]",
-										"block px-4 py-2 text-sm text-white"
-										)}
-									>
-										<img
-										src=""
-										alt="signup"
-										className="inline-flex h-5 mr-2"
-										/>
-										Sign up
 									</Link>
 									)}
 								</Menu.Item>
@@ -267,32 +203,8 @@ export default function NavBar({
 										"block px-4 py-2 text-sm text-white"
 										)}
 									>
-										<img
-										src=""
-										alt="save"
-										className="inline-flex h-5 mr-2"
-										/>
+										<BookmarkIcon className="inline-flex mr-2 size-5"/>
 										Save
-									</Link>
-									)}
-								</Menu.Item>
-								<Menu.Item>
-									{({ active }) => (
-									<Link
-										to={`like`}
-										className={classNames(
-										active
-											? "bg-dark-background text-opacity-90"
-											: "text-opacity-[78%]",
-										"block px-4 py-2 text-sm text-white"
-										)}
-									>
-										<img
-										src=""
-										alt="like"
-										className="inline-flex h-5 mr-2"
-										/>
-										Like
 									</Link>
 									)}
 								</Menu.Item>
@@ -309,11 +221,7 @@ export default function NavBar({
 										)}
 										onClick={logout}
 										>
-										<img
-											src={logoutIcon}
-											alt="logout"
-											className="inline-flex w-5 mr-2"
-										/>
+										<ArrowLeftEndOnRectangleIcon className="inline-flex size-5 mr-2"/>
 										Log out
 										</button>
 									)}

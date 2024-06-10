@@ -110,10 +110,6 @@ export default function Post({ post }) {
     }
   };
 
-  const test = () => {
-    console.log(post?.userID, user?._id);
-  };
-
   return (
     <div>
       <div
@@ -149,7 +145,6 @@ export default function Post({ post }) {
               </span>
             </p>
           </div>
-          <p>{test}</p>
           {post?.userID === user?._id && <XMarkIcon className="text-white size-6 hover:text-red-500 duration-100" />}
         </div>
         <div className="flex gap-2 pt-3">

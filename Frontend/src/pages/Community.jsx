@@ -145,7 +145,7 @@ export default function Community() {
                     </div>
                     <div className="flex flex-col gap-3 max-md:px-[1.5rem] px-[4rem] text-white">
                         {/* filter */}
-                        <Filter />
+                        {/* <Filter /> */}
                         {filteredPosts?.length === 0 ? 
                             (<div className="text-white text-center opacity-70 mt-4">No post found . . .</div>)
                             : 

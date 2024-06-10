@@ -26,7 +26,7 @@ export default function LeftSideBar({ name }) {
   const location = useLocation();
   const { user } = useUser();
   const { sidebarCommunity, setSidebarCommunity } = useStatus();
-	const { selectedTags, setSelectedTags, filteredPosts } = usePost();
+	const { selectedTags, setSelectedTags } = usePost();
   const { communityList, setCommunityList } = useCommunity();
   const [userJoinedCommunity, setUserJoinedCommunity] = useState([]);
   const [tagFilter, setTagFilter] = useState([]); //tag list
@@ -37,20 +37,20 @@ export default function LeftSideBar({ name }) {
   const [posts, setPosts] = useState([]);
   const [tagData, setTagData] = useState([]); 
 
-  // const fetchAllPosts = async () => {
-  //   try {
-  //     const res = await axios.get("/post/all");
-  //     if (res.data.success) {
-  //       setPosts(res.data.posts);
-  //     }
-  //   } catch (err) {
-  //     console.error("Error fetching community list", err);
-  //   }
-  // };
+  const fetchAllPosts = async () => {
+    try {
+      const res = await axios.get("/post/all");
+      if (res.data.success) {
+        setPosts(res.data.posts);
+      }
+    } catch (err) {
+      console.error("Error fetching community list", err);
+    }
+  };
 
-  // useEffect(() => {
-  //   fetchAllPosts();
-  // }, [location.pathname]);
+  useEffect(() => {
+    fetchAllPosts();
+  }, [location.pathname, user]);
 
 	useEffect(() => {
 		setSelectedTags(tagFilter);
@@ -67,8 +67,8 @@ export default function LeftSideBar({ name }) {
   };
 
   useEffect(() => {
-		setTagData(extractUniqueTags(filteredPosts));
-	}, [filteredPosts]);
+		setTagData(extractUniqueTags(posts));
+	}, [posts]);
 
   const displayedTags = showtagAll ? tagData : tagData.slice(0, 4);
 
@@ -124,7 +124,7 @@ export default function LeftSideBar({ name }) {
             Tag
           </h1>
           <div>
-            <div className="flex flex-wrap gap-3 mb-3">
+            <div className="flex flex-wrap gap-3 mb-3 px-2">
               {displayedTags.map((tag, index) => (
                 <button
                   type="button"
@@ -135,7 +135,7 @@ export default function LeftSideBar({ name }) {
                     tagFilter.includes(tag)
                       ? "emerald-green"
                       : "dark-background"
-                  } rounded-[20px] py-[0.6rem] px-[0.8rem] flex items-center`}
+                  } rounded-[10px] py-[0.3rem] px-[0.4rem] pr-[0.5rem] flex items-center border border-emerald-green/70`}
                   onClick={() =>
                     tagFilter.includes(tag) ? removeTag(tag) : addTag(tag)
                   }

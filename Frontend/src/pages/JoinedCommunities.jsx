@@ -105,7 +105,7 @@ export default function JoinedCommunities() {
 			}
 			{!smallLoading && <section className="flex flex-col gap-3 max-sm:px-[1rem] px-[4rem] w-[800px]">
 			{/* filter */}
-			<Filter />
+			{/* <Filter /> */}
 			{/* Create Post */}
 			{user && 
 				<div className="bg-primary rounded-[10px] px-5 py-2">
